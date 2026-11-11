@@ -3,9 +3,6 @@ name: Conferir dados do MDA Wiki
 # Rodar manualmente (Actions > Conferir dados do MDA Wiki > Run workflow).
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "scripts/conferir-mda.mjs"
 
 permissions:
   contents: write

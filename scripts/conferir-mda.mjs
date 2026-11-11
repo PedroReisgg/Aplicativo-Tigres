@@ -72,7 +72,7 @@ async function main() {
   // 2) especialidades que só aparecem como texto
   for (const l of links) {
     const k = key(l.url);
-    if (conhecidas.has(k) || [...conhecidas].some((c) => lev(c, k) <= 2)) continue;
+    if (conhecidas.has(k) || [...conhecidas].some((c) => lev(c, k) <= Math.min(2, Math.floor(k.length / 8)))) continue;
     const img = await pageImage(l.url);
     if (!img) continue;
     const codigo = codeFromImg(img, null);
@@ -88,20 +88,21 @@ async function main() {
   // 3) releitura de todas as especialidades
   await pool(esps, 6, async (e, i) => {
     let r = await scrapeEspecialidade({ ...e });
-    if (nLinhas(r.requisitos) < 2) {
+    if (nLinhas(r.requisitos) < 1) {
       // link do wiki quebrado: tenta o link alternativo com nome parecido
       const k = key(e.url);
-      const alts = [...new Set(links.filter((l) => l.url !== e.url && lev(key(l.url), k) <= 3).map((l) => l.url))];
+      const tol = Math.min(3, Math.floor(k.length / 8)); // nomes curtos (ex.: "ADRA") não podem casar com outros
+      const alts = tol ? [...new Set(links.filter((l) => l.url !== e.url && lev(key(l.url), k) <= tol).map((l) => l.url))] : [];
       for (const u of alts) {
         const r2 = await scrapeEspecialidade({ ...e, url: u });
-        if (nLinhas(r2.requisitos) >= 2) {
+        if (nLinhas(r2.requisitos) >= 1) {
           rel.linksCorrigidos.push(`${e.codigo}: ${e.url} -> ${u}`);
           r = { ...r2, url: u };
           break;
         }
       }
     }
-    if (nLinhas(r.requisitos) >= 2 && r.requisitos !== e.requisitos) {
+    if (nLinhas(r.requisitos) >= 1 && r.requisitos !== e.requisitos) {
       if (nLinhas(r.requisitos) >= nLinhas(e.requisitos)) {
         rel.requisitosAtualizados.push(`${e.codigo} ${e.nome} (${nLinhas(e.requisitos)} -> ${nLinhas(r.requisitos)} linhas)`);
         e.requisitos = r.requisitos;
@@ -109,7 +110,7 @@ async function main() {
       }
     }
     for (const f of ["nivel", "ano", "origem"]) if (r[f] != null && e[f] == null) e[f] = r[f];
-    if (nLinhas(e.requisitos) < 2) rel.semRequisitos.push(`${e.codigo} ${e.nome} ${e.url}`);
+    if (nLinhas(e.requisitos) < 1) rel.semRequisitos.push(`${e.codigo} ${e.nome} ${e.url}`);
     // imagem
     const file = path.join(IMG, e.codigo.toLowerCase() + ".webp");
     if (!(await exists(file))) {

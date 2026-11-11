@@ -4,7 +4,27 @@ import fs from "node:fs";
 
 const classes = JSON.parse(fs.readFileSync("data/mda/classes.json", "utf8"));
 const cats = JSON.parse(fs.readFileSync("data/mda/categorias.json", "utf8"));
-const esps = JSON.parse(fs.readFileSync("data/mda/especialidades.json", "utf8"));
+const espsBrutas = JSON.parse(fs.readFileSync("data/mda/especialidades.json", "utf8"));
+
+// A mesma especialidade aparece em duas áreas no wiki (ex.: Ensinos Bíblicos também está em
+// Atividades Missionárias). Fica um registro só, na área mais específica.
+const chave = (e) =>
+  e.nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "") + "|" + e.codigo.replace(/^([A-Z]+-\d+)-\d+$/, "$1");
+const MAIS_ESPECIFICA = ["ensinos-biblicos"];
+const porChave = new Map();
+const duplicadas = []; // [codigo duplicado, codigo mantido]
+for (const e of espsBrutas) {
+  const k = chave(e);
+  const ja = porChave.get(k);
+  if (!ja) {
+    porChave.set(k, { ...e });
+    continue;
+  }
+  duplicadas.push([e.codigo, ja.codigo]);
+  if (MAIS_ESPECIFICA.includes(e.categoria)) ja.categoria = e.categoria;
+  if ((e.requisitos || "").length > (ja.requisitos || "").length) ja.requisitos = e.requisitos;
+}
+const esps = [...porChave.values()];
 
 const q = (v) => (v === null || v === undefined || v === "" ? "null" : `'${String(v).replace(/'/g, "''")}'`);
 const n = (v) => (v === null || v === undefined || Number.isNaN(v) ? "null" : String(v));
@@ -31,7 +51,8 @@ const CAT_COR = {
   mestrados: "#A16207",
 };
 
-const byUrl = new Map(esps.map((e) => [e.url.normalize("NFC").toLowerCase(), e.codigo]));
+const canon = new Map(duplicadas);
+const byUrl = new Map(espsBrutas.map((e) => [e.url.normalize("NFC").toLowerCase(), canon.get(e.codigo) || e.codigo]));
 const codeOf = (url) => byUrl.get(url.normalize("NFC").toLowerCase()) || null;
 
 let sql = `-- Gerado por scripts/build-seed.mjs a partir do MDA Wiki (https://mda.wiki.br)\n-- Pode ser rodado mais de uma vez.\nbegin;\n\n`;
@@ -57,6 +78,19 @@ for (let i = 0; i < rows.length; i += 100) {
   sql += `\non conflict (codigo) do update set nome = excluded.nome, categoria_slug = excluded.categoria_slug, tipo = excluded.tipo, nivel = excluded.nivel, ano = excluded.ano, origem = excluded.origem, imagem = excluded.imagem, url_mda = excluded.url_mda, requisitos = excluded.requisitos;\n\n`;
 }
 
+// Remove registros duplicados, levando os vínculos para o registro mantido
+if (duplicadas.length) {
+  sql += `-- Especialidades duplicadas no wiki\n`;
+  for (const [dup, keep] of duplicadas) {
+    sql += `delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = ${q(dup)} and b.especialidade_codigo = ${q(keep)} and a.class_id = b.class_id;\n`;
+    sql += `update public.class_especialidades set especialidade_codigo = ${q(keep)} where especialidade_codigo = ${q(dup)};\n`;
+    sql += `delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = ${q(dup)} and b.especialidade_codigo = ${q(keep)} and a.desbravador_id = b.desbravador_id;\n`;
+    sql += `update public.desbravador_especialidades set especialidade_codigo = ${q(keep)} where especialidade_codigo = ${q(dup)};\n`;
+    sql += `update public.caderno_itens set especialidades = array_replace(especialidades, ${q(dup)}, ${q(keep)}) where ${q(dup)} = any(especialidades);\n`;
+  }
+  sql += `delete from public.especialidades where codigo in (${duplicadas.map(([d]) => q(d)).join(", ")});\n\n`;
+}
+
 // Caderno
 const ROMAN = /^([IVX]+)\s*-\s*/;
 const itens = [];
@@ -70,7 +104,14 @@ for (const c of classes) {
     const m = ROMAN.exec(s.titulo);
     const prefix = avancada ? "AV" : m ? m[1] : String(si + 1);
     s.itens.forEach((it, ii) => {
-      const codigos = [...new Set((it.esp || []).concat((it.sub || []).flatMap((x) => x.esp || [])).map(codeOf).filter(Boolean))];
+      const codigos = [
+        ...new Set(
+          (it.esp || [])
+            .concat((it.sub || []).flatMap((x) => (x.esp || []).concat((x.sub || []).flatMap((y) => y.esp || []))))
+            .map(codeOf)
+            .filter(Boolean)
+        ),
+      ];
       const detalhes = (it.sub || []).map((x) => ({ t: x.t, sub: (x.sub || []).map((y) => ({ t: y.t })) }));
       itens.push({
         cid,
@@ -112,6 +153,7 @@ sql += uniq.map(([c, cod]) => `(${c}, ${q(cod)}, true)`).join(",\n");
 sql += `\non conflict (class_id, especialidade_codigo) do update set obrigatoria = true;\n\ncommit;\n`;
 
 fs.writeFileSync("supabase/seed.sql", sql);
+console.log("duplicadas removidas:", duplicadas.length);
 console.log("seed.sql:", (sql.length / 1024).toFixed(0), "KB |", itens.length, "itens |", esps.length, "especialidades |", uniq.length, "vínculos");
 const semCodigo = classes
   .flatMap((c) => c.secoes.flatMap((s) => s.itens.flatMap((it) => (it.esp || []).concat((it.sub || []).flatMap((x) => x.esp || [])))))

@@ -3285,7 +3285,7 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
 14. Elaborar uma lista de critérios, limites e condições para um relacionamento amoroso pessoal.
 15. Conhecer qual a importância dos pais de ambas as partes numa relação amorosa dos filhos.
 16. Compreender o plano de Deus para o sexo e fazer um voto pessoal de honrar esse plano.'),
-('AMEB-001', 'Escrituras Sagradas', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-001.webp', 'https://mda.wiki.br/Especialidade_de_Escrituras_Sagradas', '1. Saber quem é o autor da Bíblia, como foi escrita e por que devemos acreditar nela. (2 Pedro 1:20-21; Jeremias 1:4-5; 2 Timóteo 3:16 e 17)
+('AMEB-001', 'Escrituras Sagradas', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-001.webp', 'https://mda.wiki.br/Especialidade_de_Escrituras_Sagradas', '1. Saber quem é o autor da Bíblia, como foi escrita e por que devemos acreditar nela. (2 Pedro 1:20-21; Jeremias 1:4-5; 2 Timóteo 3:16 e 17)
 2. Entender qual é a diferença entre revelação especial e revelação geral, considerando a maneira com que Deus se revela para a humanidade. (Hebreus 1:1-2; Romanos 1:20)
 3. Explicar por que as orientações bíblicas são mais importantes do que as tradições e as opiniões das pessoas. (Marcos 7:7-9)
 4. Conhecer quem é o personagem principal da Bíblia. (João 1:1-4)
@@ -3293,7 +3293,7 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
 6. Memorizar e recitar na ordem correta os nomes dos 66 livros da Bíblia.
 7. Compartilhar com um amigo qual é o propósito da mensagem que a Bíblia apresenta. (2 Timóteo 3:16-17; João 5:39)
 8. Escolher alguém e dar de presente uma Bíblia e um estudo bíblico.'),
-('AMEB-002', 'Trindade', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-002.webp', 'https://mda.wiki.br/Especialidade_de_Trindade', '1. Identificar as palavras no plural encontradas nos versos de Gênesis 1:26; 3:22; 11:7 onde podemos claramente perceber que a Bíblia apresenta um Deus triúno, ou seja, que a Divindade é composta por três pessoas distintas.
+('AMEB-002', 'Trindade', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-002.webp', 'https://mda.wiki.br/Especialidade_de_Trindade', '1. Identificar as palavras no plural encontradas nos versos de Gênesis 1:26; 3:22; 11:7 onde podemos claramente perceber que a Bíblia apresenta um Deus triúno, ou seja, que a Divindade é composta por três pessoas distintas.
 2. Definir quem é o Deus único apresentado por Jesus em João 10:30 e 1º Timóteo 1:17 identificando cada uma das três pessoas da Divindade encontradas nos versos de Mateus 28:19 e Lucas 3:21-22.
 3. Entender quais são os atributos incomunicáveis de Deus, ou seja, aquilo que exclusivamente Ele é e é capaz de fazer. (João 5:26; Efésios 1:5; 1º João 3:20; Salmo 139:7-12; Salmo 90:2)
 4. Explicar quais são os atributos comunicáveis que Deus, ou seja, as características ou virtudes que ele possui e que compartilha com os seres humanos. (Romanos 3:24; 5:8; Salmo 145:9; 2º Pedro 3:15; Salmo 99:9; João 17:25; Salmo 31:5)
@@ -3302,7 +3302,7 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
 7. Compartilhar com um amigo como é possível conhecer a Deus. (Salmo 19:1; Hebreus 11:6)
 8. Mencionar um episódio ou verso da Bíblia em que seja possível identificar a presença das três pessoas da Trindade.
 9. Fazer um desenho ou pintura que represente a Trindade de Acordo com o que foi aprendido nesta especialidade.'),
-('AMEB-003', 'Deus Pai', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-003.webp', 'https://mda.wiki.br/Especialidade_de_Deus_Pai', '1. Saber por qual motivo Deus pode ser considerado nosso Pai. (Gênesis 1:27; Isaías 64:8)
+('AMEB-003', 'Deus Pai', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-003.webp', 'https://mda.wiki.br/Especialidade_de_Deus_Pai', '1. Saber por qual motivo Deus pode ser considerado nosso Pai. (Gênesis 1:27; Isaías 64:8)
 2. Entender qual foi a maior demonstração de amor por nós dada por Deus Pai. (Romanos 5:8)
 3. Definir qual a importância, para nós, das duas virtudes de Deus Pai encontradas nos seguintes versos: Lucas 6:36; Mateus 5:48.
 4. Identificar na oração ensinada por Jesus, a quem devemos nos dirigir quando falamos com Deus. (Mateus 6:9-13)
@@ -3310,21 +3310,21 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
 6. Memorizar e recitar Efésios 1:3.
 7. Compartilhar com um amigo sobre o grande amor demonstrado por Deus, o Pai. (1 João 3:1-2)
 8. Se você tivesse que escolher um símbolo ou objeto para representar a Deus, qual seria? Mostrar e explicar à sua unidade.'),
-('AMEB-004', 'Deus Filho', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-004.webp', 'https://mda.wiki.br/Especialidade_de_Deus_Filho', '1. Saber por que Deus Filho recebeu o nome Jesus. (Mateus 1:21)
+('AMEB-004', 'Deus Filho', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-004.webp', 'https://mda.wiki.br/Especialidade_de_Deus_Filho', '1. Saber por que Deus Filho recebeu o nome Jesus. (Mateus 1:21)
 2. Entender qual foi a participação de Jesus na criação do mundo, ao ser Ele identificado por João como o "Verbo" ou "Palavra" de Deus. (João 1:2-3; Colossenses 1:16-17)
 3. Explicar qual foi a participação de Jesus, no plano de Deus, para salvar o ser humano da morte. (Lucas 19:10)
 4. Conhecer o que a Bíblia diz sobre a natureza divina de Jesus. (João 10:30; Hebreus 1:3; João 1:1; Colossenses 2:9)
 5. Estudar o que a Bíblia ensina sobre a natureza humana de Jesus. (João 1:14; Hebreus 4:15; 1 João 4:2; Filipenses 2:6-8)
 6. Memorizar e recitar os nomes ou títulos que o profeta Isaías usa para Jesus. (Isaías 9:6; 7:14)
 7. Compartilhar com um amigo quais são as promessas que Jesus faz aos que creem Nele. (João 11:25-26; 14:1-3)'),
-('AMEB-005', 'Deus Espírito Santo', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-005.webp', 'https://mda.wiki.br/Especialidade_de_Deus_Espírito_Santo', '1. Entender como a Bíblia descreve o Espírito Santo como uma das três pessoas distintas da Trindade. (2 Coríntios 13:14; Mat. 28:19; João 16:14-15)
+('AMEB-005', 'Deus Espírito Santo', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-005.webp', 'https://mda.wiki.br/Especialidade_de_Deus_Espírito_Santo', '1. Entender como a Bíblia descreve o Espírito Santo como uma das três pessoas distintas da Trindade. (2 Coríntios 13:14; Mat. 28:19; João 16:14-15)
 2. Saber se o Espírito Santo participou ou não da criação do mundo. (Gênesis 1:1-2)
 3. Definir como os cristãos primitivos identificavam o Espírito Santo como uma pessoa distinta na Divindade. (Atos 5:3; 13:2; 15:28)
 4. Conhecer a promessa feita por Jesus em João 14:16-17.
 5. Explicar qual é a missão do Espírito Santo no trabalho de salvação das pessoas. (João 16:7-11)
 6. Memorizar e recitar Gálatas 5:22-23.
 7. Compartilhar com um amigo o que uma pessoa precisa fazer para receber o Espírito Santo. (Atos 5:32)'),
-('AMEB-006', 'Criação do Mundo', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-006.webp', 'https://mda.wiki.br/Especialidade_de_Criação_do_Mundo', '1. Saber como a Bíblia descreve a origem de todas as coisas e quem foi que fez o nosso mundo. (Gênesis 1:1 e 2; João 1:1-3)
+('AMEB-006', 'Criação do Mundo', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-006.webp', 'https://mda.wiki.br/Especialidade_de_Criação_do_Mundo', '1. Saber como a Bíblia descreve a origem de todas as coisas e quem foi que fez o nosso mundo. (Gênesis 1:1 e 2; João 1:1-3)
 2. Compreender o que Hebreus 11:3 ensina sobre como Deus criou o universo, mesmo sem usar matéria visível ou preexistente.
 3. Conhecer a forma como Deus criou todas as coisas. (Salmo 33:9)
 4. Citar qual foi a ordem dada por Deus aos primeiros seres humanos criados por Ele. (Gênesis 1:27-28)
@@ -3333,7 +3333,7 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
 7. Compartilhar com um amigo como Paulo expressa a dependência total que todos nós temos de Deus. (Atos 17:28)
 8. Escolher, durante um acampamento ou caminhada, três elementos da natureza que representem, na sua compreensão, Deus como Criador, e apresentar ao grupo uma aplicação prática de cada um deles.
 9. Conhecer e cantar, individualmente ou com sua unidade, um hino que fale sobre a criação ou sobre o Criador.'),
-('AMEB-007', 'Natureza da Humanidade', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-007.webp', 'https://mda.wiki.br/Especialidade_de_Natureza_da_Humanidade', '1. Saber qual é a origem da vida humana e citar qual material foi usado para a criação do homem. (Gênesis 1:27; 2:7)
+('AMEB-007', 'Natureza da Humanidade', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-007.webp', 'https://mda.wiki.br/Especialidade_de_Natureza_da_Humanidade', '1. Saber qual é a origem da vida humana e citar qual material foi usado para a criação do homem. (Gênesis 1:27; 2:7)
 2. Explicar por que os nossos primeiros pais, que foram criados para viver para sempre, perderam essa condição de imortalidade. (Gênesis 2:16-17; 3:22)
 3. Definir o que é o pecado. (1 João 3:4; Tiago 4:17; Romanos 14:23)
 4. Entender qual é a consequência do pecado. (Romanos 6:23; Ezequiel 18:4, 20)
@@ -3341,7 +3341,7 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
 6. Memorizar e recitar 1 João 5:11-12.
 7. Compartilhar com um amigo o que Deus fez para resolver o problema do pecado. (João 3:16)
 8. Demonstrar de forma prática, para sua unidade ou outro grupo, os elementos que Deus utilizou na criação do ser humano (pode ser por meio de dramatização ou outra forma ilustrativa).'),
-('AMEB-008', 'Grande Conflito', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-008.webp', 'https://mda.wiki.br/Especialidade_de_Grande_Conflito', '1. Saber como a Bíblia descreve a origem, a glória e a queda do anjo Lúcifer, usando as figuras dos reis de Tiro e Babilônia como ilustrações. (Ezequiel 28:12, 15; Isaías 14:12-14)
+('AMEB-008', 'Grande Conflito', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-008.webp', 'https://mda.wiki.br/Especialidade_de_Grande_Conflito', '1. Saber como a Bíblia descreve a origem, a glória e a queda do anjo Lúcifer, usando as figuras dos reis de Tiro e Babilônia como ilustrações. (Ezequiel 28:12, 15; Isaías 14:12-14)
 2. Conhecer quantos anjos se uniram a Lúcifer em sua rebelião contra Deus. (Apocalipse 12:4)
 3. Entender o que aconteceu no céu entre os anjos fiéis e os anjos rebeldes. (Apocalipse 12:7-9)
 4. Explicar como Satanás introduziu o pecado na Terra. (Gênesis 3:1-6)
@@ -3353,22 +3353,28 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
   b) Mateus 4 - Jesus no Deserto fortalecido pelos anjos;
   c) Atos 5 - Apóstolos libertos da prisão pelos anjos.
 9. Fazer um desenho ou ilustração representando o Grande Conflito e explicar seu significado.'),
-('AMEB-009', 'Vida, morte e ressureição de Cristo', 'atividades-missionarias', 'especialidade', null, null, null, '/esp/ameb-009.webp', 'https://mda.wiki.br/Especialidade_de_Vida,_morte_e_ressureição_de_Cristo', ''),
-('AMEB-010', 'Experiência da Salvação', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-010.webp', 'https://mda.wiki.br/Especialidade_de_Experiência_da_Salvação', '1. Saber o que é necessário fazer para receber a salvação que Deus oferece a todos os seres humanos. (Atos 16:31; Romanos 10:9; Efésios 2:8-9)
+('AMEB-009', 'Vida, morte e ressureição de Cristo', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-009.webp', 'https://mda.wiki.br/Especialidade_de_Vida,_Morte_e_Ressurreição_de_Cristo', '1. Saber como 1 Pedro 2:22-23 descreve a vida perfeita que Cristo viveu.
+2. Reconhecer quem foi o único ser humano que nunca pecou. (Hebreus 4:15)
+3. Conhecer o que Cristo conquistou por meio da sua morte. (Romanos 5:10; Apocalipse 5:9)
+4. Explicar por que Jesus precisou morrer mesmo sem ter cometido nenhum pecado. (1 Timóteo 1:15; Romanos 5:8)
+5. Definir qual é a importância da ressurreição de Jesus para a nossa salvação. (1 Coríntios 15:20-23)
+6. Memorizar e recitar Isaías 53:4-5.
+7. Compartilhar com um amigo qual foi o propósito da vinda, morte e ressurreição de Jesus. (Lucas 19:10; João 3:16-17; Hebreus 7:25; Atos 4:12)'),
+('AMEB-010', 'Experiência da Salvação', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-010.webp', 'https://mda.wiki.br/Especialidade_de_Experiência_da_Salvação', '1. Saber o que é necessário fazer para receber a salvação que Deus oferece a todos os seres humanos. (Atos 16:31; Romanos 10:9; Efésios 2:8-9)
 2. Entender por que devemos obedecer a Deus mesmo sabendo que não somos salvos pelas nossas boas ações. (João 14:15, 21, 23)
 3. Conhecer o que Jesus fez para garantir o perdão e a salvação da humanidade. (Lucas 23:46; Isaías 53:5; Apocalipse 5:9)
 4. Explicar o que precisamos fazer para receber o perdão dos nossos pecados. (1 João 1:9)
 5. Definir o que Jesus nos orienta a fazer depois que somos perdoados. (João 5:14; 8:11)
 6. Memorizar e recitar Marcos 16:15-16.
 7. Compartilhar com um amigo qual é a maior vitória que podemos alcançar, segundo a Bíblia. (1 Coríntios 15:51-54)'),
-('AMEB-011', 'Crescimento em Cristo', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-011.webp', 'https://mda.wiki.br/Especialidade_de_Crescimento_em_Cristo', '1. Saber o que Cristo conquistou por meio de sua morte e ressurreição. (1 Coríntios 15:20-21)
+('AMEB-011', 'Crescimento em Cristo', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-011.webp', 'https://mda.wiki.br/Especialidade_de_Crescimento_em_Cristo', '1. Saber o que Cristo conquistou por meio de sua morte e ressurreição. (1 Coríntios 15:20-21)
 2. Entender o que acontece na vida de quem mantém comunhão com Jesus. (1 João 1:5-7)
 3. Conhecer qual é o plano de Deus para a nossa vida, seguindo o exemplo do que se cumpriu na vida de Jesus. (Lucas 2:52)
 4. Explicar os resultados que aparecem na vida de quem segue a Jesus e recebe o Espírito Santo. (Gálatas 5:22-25)
 5. Definir a importância de manter comunhão com Deus por meio da oração. (Efésios 6:18)
 6. Memorizar e recitar Salmo 1:1-2 e Lucas 2:52.
 7. Compartilhar com um amigo como a vida de uma pessoa é transformada quando ela aceita Jesus como Senhor. (2 Coríntios 5:17)'),
-('AMEB-012', 'Igreja', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-012.webp', 'https://mda.wiki.br/Especialidade_de_Igreja', '1. Saber quem estabeleceu a Igreja cristã e qual é o seu único fundamento. (Mateus 16:18; 1 Coríntios 3:11; Efésios 2:19-20)
+('AMEB-012', 'Igreja', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-012.webp', 'https://mda.wiki.br/Especialidade_de_Igreja', '1. Saber quem estabeleceu a Igreja cristã e qual é o seu único fundamento. (Mateus 16:18; 1 Coríntios 3:11; Efésios 2:19-20)
 2. Reconhecer a quem pertence a Igreja. (Atos 20:28)
 3. Entender por que é importante que a Igreja preserve e ensine as verdades sobre Deus. (1 Timóteo 3:15; Mateus 28:19-20; João 17:17; 2 Timóteo 4:2-4)
 4. Explicar por que a Igreja é apresentada na Bíblia como o corpo de Cristo. (1 Coríntios 12:12, 27; Romanos 12:4-5; Colossenses 1:18)
@@ -3380,63 +3386,63 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
   b) Quais ministérios a sua igreja possui?
   c) O que é a comissão da igreja?
   d) Como a comissão da igreja funciona?'),
-('AMEB-013', 'Remanescente e sua Missão', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-013.webp', 'https://mda.wiki.br/Especialidade_de_Remanescente_e_sua_Missão', '1. Conhecer a profecia em que o apóstolo Paulo anuncia a apostasia da Igreja. (2 Tessalonicenses 2:3-4)
+('AMEB-013', 'Remanescente e sua Missão', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-013.webp', 'https://mda.wiki.br/Especialidade_de_Remanescente_e_sua_Missão', '1. Conhecer a profecia em que o apóstolo Paulo anuncia a apostasia da Igreja. (2 Tessalonicenses 2:3-4)
 2. Entender quais fatores levaram a Igreja a afastar-se das verdades sobre Deus. (Apocalipse 2:4; 2 Tessalonicenses 2:9-12)
 3. Saber quais são as características dos cristãos fiéis à verdade em todas as épocas. (Apocalipse 12:17; 14:12)
 4. Explicar qual é a missão do povo remanescente de Deus nos últimos dias. (Mateus 24:14; Apocalipse 14:6)
 5. Definir qual é o sinal ou selo de Deus que identifica a Igreja verdadeira nos últimos dias. (Apocalipse 7:2; Ezequiel 20:20)
 6. Memorizar e recitar Mateus 28:19.
 7. Compartilhar com um amigo qual é a missão de todo aquele que crê em Jesus. (Marcos 16:15-16)'),
-('AMEB-014', 'Unidade no Corpo de Cristo', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-014.webp', 'https://mda.wiki.br/Especialidade_de_Unidade_no_Corpo_de_Cristo', '1. Saber qual é o testemunho mais importante que a Igreja deve dar ao mundo. (João 17:21-23)
+('AMEB-014', 'Unidade no Corpo de Cristo', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-014.webp', 'https://mda.wiki.br/Especialidade_de_Unidade_no_Corpo_de_Cristo', '1. Saber qual é o testemunho mais importante que a Igreja deve dar ao mundo. (João 17:21-23)
 2. Conhecer quais atitudes devemos cultivar para manter a unidade da Igreja. (Efésios 4:2-3)
 3. Definir quem é o principal elo que une os membros da Igreja. (João 15:5)
 4. Entender como Jesus espera que seja o relacionamento entre os seus seguidores. (João 15:12-13, 17)
 5. Explicar quais atitudes causam divisão entre os membros da Igreja. (2 Timóteo 3:2-5; Tiago 3:16; Tiago 4:1-2)
 6. Memorizar e recitar Salmo 133:1.
 7. Compartilhar com um amigo qual deve ser a principal atitude de um cristão para promover a união na Igreja. (1 Coríntios 1:10)'),
-('AMEB-015', 'Batismo', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-015.webp', 'https://mda.wiki.br/Especialidade_de_Batismo', '1. Compreender o significado espiritual do batismo e o que ele representa para quem aceita Jesus. (Romanos 6:3-5)
+('AMEB-015', 'Batismo', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-015.webp', 'https://mda.wiki.br/Especialidade_de_Batismo', '1. Compreender o significado espiritual do batismo e o que ele representa para quem aceita Jesus. (Romanos 6:3-5)
 2. Saber qual é o requisito essencial para que alguém seja batizado. (Marcos 16:16)
 3. Definir outro requisito importante para o batismo, segundo a Bíblia. (Atos 2:38)
 4. Explicar o que a pessoa batizada deve fazer após entregar sua vida a Jesus. (Mateus 28:19-20)
 5. Entender o que é necessário para que um batismo seja realizado, de acordo com a Bíblia. (Mateus 3:6; João 3:23; Atos 8:38-39)
 6. Memorizar e recitar Mateus 3:16-17.
 7. Compartilhar com um amigo sobre a importância do batismo e convidá-lo a tomar essa decisão. (Atos 22:16)'),
-('AMEB-016', 'Ceia do Senhor', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-016.webp', 'https://mda.wiki.br/Especialidade_de_Ceia_do_Senhor', '1. Entender qual é a mensagem que anunciamos ao participar da Ceia do Senhor. (1 Coríntios 11:26)
+('AMEB-016', 'Ceia do Senhor', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-016.webp', 'https://mda.wiki.br/Especialidade_de_Ceia_do_Senhor', '1. Entender qual é a mensagem que anunciamos ao participar da Ceia do Senhor. (1 Coríntios 11:26)
 2. Conhecer o significado do pão e do suco de uva como símbolos na Ceia. (Mateus 26:26-29; João 6:35; João 15:1)
 3. Saber quem estabeleceu o lava-pés como parte da Ceia. (João 13:3-5)
 4. Explicar os dois significados do lava-pés ensinados por Jesus. (João 13:12-16; Mateus 6:14-15)
 5. Saber quando Jesus prometeu que voltará a celebrar a Ceia com os seus discípulos. (Mateus 26:29)
 6. Memorizar e recitar Lucas 22:19-20.
 7. Compartilhar com um amigo a importância da Ceia do Senhor, explicando a promessa de Jesus para os que participam. (João 6:54)'),
-('AMEB-017', 'Dons e Ministérios Espirituais', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-017.webp', 'https://mda.wiki.br/Especialidade_de_Dons_e_Ministérios_Espirituais', '1. Saber qual foi a missão que Jesus confiou aos seus discípulos. (Marcos 16:15-16)
+('AMEB-017', 'Dons e Ministérios Espirituais', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-017.webp', 'https://mda.wiki.br/Especialidade_de_Dons_e_Ministérios_Espirituais', '1. Saber qual foi a missão que Jesus confiou aos seus discípulos. (Marcos 16:15-16)
 2. Explicar de que forma os discípulos seriam capacitados para cumprir essa missão. (Atos 1:4, 8)
 3. Conhecer o resultado imediato da atuação do Espírito Santo na vida dos primeiros cristãos. (Atos 2)
 4. Entender como o Espírito Santo distribui os dons espirituais entre os membros da Igreja. (1 Coríntios 12:7-11)
 5. Definir qual é o propósito pelo qual os dons espirituais são concedidos. (Efésios 4:12-13)
 6. Memorizar e recitar 1 Pedro 2:9.
 7. Compartilhar com um amigo como é possível receber os dons espirituais. (Tiago 1:5-6)'),
-('AMEB-018', 'Dom de Profecia', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-018.webp', 'https://mda.wiki.br/Especialidade_de_Dom_de_Profecia', '1. Saber por meio de quem Deus transmite suas mensagens aos seres humanos. (Amós 3:7)
+('AMEB-018', 'Dom de Profecia', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-018.webp', 'https://mda.wiki.br/Especialidade_de_Dom_de_Profecia', '1. Saber por meio de quem Deus transmite suas mensagens aos seres humanos. (Amós 3:7)
 2. Conhecer quem são as pessoas que serviram de fundamento para o estabelecimento da Igreja. (Efésios 2:20-21)
 3. Entender qual é o propósito do dom de profecia dentro da Igreja. (1 Coríntios 14:4)
 4. Explicar quais são as duas principais características da igreja verdadeira nos últimos dias. (Apocalipse 12:17; 19:10)
 5. Definir quais são as marcas de um profeta verdadeiro. (Isaías 8:20; Mateus 7:16, 18-20; Gálatas 5:19-23)
 6. Memorizar e recitar 2 Pedro 1:20-21.
 7. Compartilhar com um amigo quais são os benefícios para quem confia nos profetas de Deus. (2 Crônicas 20:20)'),
-('AMEB-019', 'Lei de Deus', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-019.webp', 'https://mda.wiki.br/Especialidade_de_Lei_de_Deus', '1. Conhecer os 10 Mandamentos da Lei de Deus. (Êxodo 20:3-17; Deuteronômio 5:7-21)
+('AMEB-019', 'Lei de Deus', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-019.webp', 'https://mda.wiki.br/Especialidade_de_Lei_de_Deus', '1. Conhecer os 10 Mandamentos da Lei de Deus. (Êxodo 20:3-17; Deuteronômio 5:7-21)
 2. Descobrir se Jesus aboliu ou confirmou a importância da obediência à Lei de Deus para a Igreja cristã. (Mateus 5:17-18)
 3. Entender por que devemos obedecer aos mandamentos de Deus. (João 14:15; 15:10; 1 João 2:3-4)
 4. Explicar por que devemos guardar todos os 10 Mandamentos e não apenas alguns. (Tiago 2:10-11)
 5. Definir quais são os dois grandes princípios que resumem os 10 Mandamentos. (Lucas 10:27)
 6. Memorizar e recitar em ordem os 10 Mandamentos.
 7. Compartilhar com um amigo quais são os benefícios prometidos àqueles que obedecem à Lei de Deus. (Salmos 119:98-99, 165; 1 João 3:22)'),
-('AMEB-020', 'Sábado', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-020.webp', 'https://mda.wiki.br/Especialidade_de_Sábado', '1. Entender por que, quando e por quem o sábado foi estabelecido como um dia especial de repouso e adoração a Deus. (Gênesis 2:1-3; Êxodo 20:8-11)
+('AMEB-020', 'Sábado', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-020.webp', 'https://mda.wiki.br/Especialidade_de_Sábado', '1. Entender por que, quando e por quem o sábado foi estabelecido como um dia especial de repouso e adoração a Deus. (Gênesis 2:1-3; Êxodo 20:8-11)
 2. Conhecer qual era o dia que Jesus costumava santificar e ir à igreja para adorar a Deus, o Pai. (Lucas 4:16)
 3. Explicar qual era o dia que os seguidores de Jesus costumavam santificar e ir à igreja para adorar a Deus. (Atos 13:14, 27, 42, 44; 17:2; 18:4)
 4. Saber qual será o dia da semana em que os salvos se reunirão para adorar a Deus na nova Terra. (Isaías 66:22-23)
 5. Definir qual é o valor do sábado como sinal do nosso relacionamento com Deus. (Ezequiel 20:20)
 6. Memorizar e recitar Gênesis 2:2-3.
 7. Compartilhar com um amigo como devemos guardar o sábado e quais são os benefícios prometidos àqueles que obedecem a esse mandamento. (Isaías 58:13-14)'),
-('AMEB-021', 'Mordomia', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-021.webp', 'https://mda.wiki.br/Especialidade_de_Mordomia', '1. Com base em Salmo 24:1 e 1 Coríntios 6:20, quem é o legítimo proprietário deste mundo e das pessoas que nele habitam?
+('AMEB-021', 'Mordomia', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-021.webp', 'https://mda.wiki.br/Especialidade_de_Mordomia', '1. Com base em Salmo 24:1 e 1 Coríntios 6:20, quem é o legítimo proprietário deste mundo e das pessoas que nele habitam?
 2. De acordo com Deuteronômio 8:18 e Tiago 1:17, quem nos capacita a adquirir os recursos financeiros necessários para vivermos bem?
 3. Segundo 1 Coríntios 6:19-20, por que precisamos cuidar bem do nosso corpo?
 4. O que Efésios 5:15-16 ensina sobre o cuidado com a nossa maneira de viver e com o uso do tempo?
@@ -3451,28 +3457,28 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
 13. Compartilhar com um amigo sobre a importância de sermos fiéis a Deus nos dízimos e nas ofertas.
 14. Fazer uma simulação de orçamento mensal com base no valor da sua mesada ou de um salário-mínimo, com categorias como dízimos e ofertas, alimentação, roupas, transporte, entretenimento, etc.
 15. Após o estudo desta especialidade, explicar o que significa ser um mordomo cristão.'),
-('AMEB-022', 'Conduta Cristã', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-022.webp', 'https://mda.wiki.br/Especialidade_de_Conduta_Cristã', '1. Estudar como é possível viver no mundo sem se contaminar com práticas e valores contrários aos ensinos bíblicos. (Romanos 12:2; João 17:15-16; 1 João 2:15-17)
+('AMEB-022', 'Conduta Cristã', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-022.webp', 'https://mda.wiki.br/Especialidade_de_Conduta_Cristã', '1. Estudar como é possível viver no mundo sem se contaminar com práticas e valores contrários aos ensinos bíblicos. (Romanos 12:2; João 17:15-16; 1 João 2:15-17)
 2. Identificar quais foram os alimentos originalmente dados por Deus ao ser humano na criação. (Gênesis 1:29)
 3. Distinguir entre os animais puros e impuros mencionados na Bíblia, explicando por que alguns não são apropriados para consumo. (Levítico 11; Deuteronômio 14)
 4. Explicar os princípios bíblicos sobre a maneira cristã de se vestir. (1 Pedro 3:3-4)
 5. Compreender os princípios bíblicos sobre a pureza sexual e escrever um voto pessoal de se manter puro. (1 Coríntios 6:18-20; Mateus 5:27-28)
 6. Memorizar e recitar Filipenses 4:8.
 7. Compartilhar com um amigo os benefícios de viver segundo os princípios bíblicos e adotar práticas saudáveis.'),
-('AMEB-023', 'Matrimônio e Família', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-023.webp', 'https://mda.wiki.br/Especialidade_de_Matrimônio_e_Família', '1. Compreender o propósito pelo qual Deus criou a mulher para viver com o homem, segundo o plano da criação. (Gênesis 2:18-24)
+('AMEB-023', 'Matrimônio e Família', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-023.webp', 'https://mda.wiki.br/Especialidade_de_Matrimônio_e_Família', '1. Compreender o propósito pelo qual Deus criou a mulher para viver com o homem, segundo o plano da criação. (Gênesis 2:18-24)
 2. Conhecer como o casamento é descrito na Bíblia. (Gênesis 2:24; Mateus 19:6; Hebreus 13:4)
 3. Entender como deve ser o relacionamento entre marido e esposa de acordo com os princípios bíblicos. (Efésios 5:21-33)
 4. Identificar quanto tempo deve durar um casamento, segundo o plano de Deus. (Mateus 19:6; Romanos 7:1-2)
 5. Explicar as consequências que a infidelidade conjugal traz para a família, mostrando como isso fere o sétimo mandamento da Lei de Deus. (Êxodo 20:14; Provérbios 6:32-33)
 6. Memorizar e recitar 1 Coríntios 13:4-8.
 7. Compartilhar com um amigo como é possível ser verdadeiramente feliz no casamento, seguindo os ensinamentos da Bíblia. (Eclesiastes 4:9-12)'),
-('AMEB-024', 'Ministério de Cristo no Santuário Celestial', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-024.webp', 'https://mda.wiki.br/Especialidade_de_Ministério_de_Cristo_no_Santuário_Celestial', '1. Saber a ordem dada por Deus a Moisés para a construção do santuário terrestre e identificar qual modelo deveria ser seguido. (Êxodo 25:8-9, 40; Hebreus 9:24)
+('AMEB-024', 'Ministério de Cristo no Santuário Celestial', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-024.webp', 'https://mda.wiki.br/Especialidade_de_Ministério_de_Cristo_no_Santuário_Celestial', '1. Saber a ordem dada por Deus a Moisés para a construção do santuário terrestre e identificar qual modelo deveria ser seguido. (Êxodo 25:8-9, 40; Hebreus 9:24)
 2. Compreender qual é o ministério de Jesus no céu após Sua morte e ressurreição. (Hebreus 8:1-2)
 3. Saber como Jesus foi identificado durante Seu ministério na Terra. (João 1:29; Isaías 53:4-7)
 4. Relacionar o trabalho do sacerdote no santuário terrestre com o ministério de Cristo no santuário celestial. (Levítico 16:9, 15; Hebreus 9:1-28)
 5. Explicar a ordem dos principais eventos do ministério de Cristo em favor da salvação dos seres humanos. (1 Coríntios 15:3; Romanos 6:9; 1 Timóteo 2:5; Mateus 25:31-32; 1 Tessalonicenses 4:16-17; Apocalipse 20:12-15)
 6. Memorizar e recitar 1 Timóteo 2:5.
 7. Compartilhar com um amigo o que Jesus está fazendo hoje no céu e como isso se relaciona com a nossa salvação e futuro. (Hebreus 4:14-16)'),
-('AMEB-025', 'Segunda Vinda de Cristo', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-025.webp', 'https://mda.wiki.br/Especialidade_de_Segunda_Vinda_de_Cristo', '1. Conhecer a maior promessa que Jesus fez aos Seus seguidores. (João 14:1-3; Apocalipse 22:20)
+('AMEB-025', 'Segunda Vinda de Cristo', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-025.webp', 'https://mda.wiki.br/Especialidade_de_Segunda_Vinda_de_Cristo', '1. Conhecer a maior promessa que Jesus fez aos Seus seguidores. (João 14:1-3; Apocalipse 22:20)
 2. Entender como será a volta de Jesus, segundo a Bíblia. (Atos 1:11; Apocalipse 1:7; Mateus 16:27; 1 Tessalonicenses 5:2-3)
 3. Estudar o que acontecerá com os salvos e com os que rejeitaram a salvação no momento da volta de Cristo. (Mateus 24:30-31; 1 Tessalonicenses 4:16-17; Apocalipse 6:16-17; Apocalipse 20:5-6)
 4. Compreender o que a Bíblia ensina sobre o dia da volta de Jesus. (Mateus 24:36, 42)
@@ -3482,236 +3488,21 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
 on conflict (codigo) do update set nome = excluded.nome, categoria_slug = excluded.categoria_slug, tipo = excluded.tipo, nivel = excluded.nivel, ano = excluded.ano, origem = excluded.origem, imagem = excluded.imagem, url_mda = excluded.url_mda, requisitos = excluded.requisitos;
 
 insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, ano, origem, imagem, url_mda, requisitos) values
-('AMEB-026', 'Morte e Ressurreição', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-026.webp', 'https://mda.wiki.br/Especialidade_de_Morte_e_Ressurreição', '1. Saber quem é o único ser imortal, de acordo com a Bíblia. (1 Timóteo 6:15-16)
+('AMEB-026', 'Morte e Ressurreição', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-026.webp', 'https://mda.wiki.br/Especialidade_de_Morte_e_Ressurreição', '1. Saber quem é o único ser imortal, de acordo com a Bíblia. (1 Timóteo 6:15-16)
 2. Estudar como Deus criou o ser humano e qual foi a advertência dada a respeito da morte. (Gênesis 2:7, 16-17)
 3. Explicar como a morte passou a fazer parte da realidade humana. (Gênesis 3:4, 6, 19)
 4. Compreender o que a Bíblia explica sobre o tempo de vida dos seres humanos. (Romanos 5:12; Tiago 4:14; Jó 14:1-2)
 5. Definir qual é o meio pelo qual podemos receber a vida eterna. (Romanos 6:23; 2 Timóteo 1:10; 1 Coríntios 15:22)
 6. Memorizar e recitar João 5:28-29.
 7. Compartilhar com um amigo a solução que a Bíblia apresenta para o problema da morte. (1 Coríntios 15:51-54)'),
-('AMEB-027', 'Milênio e Fim do Pecado', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-027.webp', 'https://mda.wiki.br/Especialidade_de_Milênio_e_Fim_do_Pecado', '1. Saber para onde irão as pessoas salvas por Jesus após a Sua segunda vinda. (1 Tessalonicenses 4:16-17; João 14:2-3)
+('AMEB-027', 'Milênio e Fim do Pecado', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-027.webp', 'https://mda.wiki.br/Especialidade_de_Milênio_e_Fim_do_Pecado', '1. Saber para onde irão as pessoas salvas por Jesus após a Sua segunda vinda. (1 Tessalonicenses 4:16-17; João 14:2-3)
 2. Explicar o que acontecerá com os ímpios (aqueles que rejeitaram a salvação) no momento da volta de Jesus. (Apocalipse 6:15-17; Apocalipse 20:5)
 3. Compreender como será a condição da Terra durante o período de mil anos iniciado após o retorno de Jesus. (Jeremias 4:23-25)
 4. Estudar o que a Bíblia diz que os salvos farão durante o milênio. (Apocalipse 20:4-6; 1 Coríntios 6:2-3)
 5. Entender como terminará o grande conflito entre o bem e o mal, e qual será o destino final de Satanás e do pecado. (Apocalipse 21:2, 8; 20:5, 7-15)
 6. Memorizar e recitar Apocalipse 20:6.
 7. Compartilhar com um amigo como será o fim do pecado e o que acontecerá durante o milênio descrito em Apocalipse 20.'),
-('AMEB-028', 'Nova Terra', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-028.webp', 'https://mda.wiki.br/Especialidade_de_Nova_Terra', '1. Saber qual é a grande esperança dos filhos de Deus quanto ao destino da humanidade. (2 Pedro 3:13; Mateus 5:5; Apocalipse 21:1)
-2. Descrever o que acontecerá com a cidade santa, a Nova Jerusalém. (Apocalipse 21:2-3)
-3. Identificar quem serão os habitantes da nova Terra, segundo a Bíblia. (Apocalipse 22:3-4; 21:7)
-4. Identificar quem não fará parte da nova Terra. (Apocalipse 21:8; 22:15; 1 Coríntios 6:9-10; Gálatas 5:19-21)
-5. Refletir sobre como será viver com Jesus por toda a eternidade. (Apocalipse 5:13; 11:15; 21:4)
-6. Memorizar e recitar Mateus 5:5.
-7. Compartilhar com um amigo como será a vida na nova Terra, conforme as promessas bíblicas. (Salmo 16:11; Isaías 65:17-25)'),
-('AMEB-001-203', 'Escrituras Sagradas', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-001-203.webp', 'https://mda.wiki.br/Especialidade_de_Escrituras_Sagradas', '1. Saber quem é o autor da Bíblia, como foi escrita e por que devemos acreditar nela. (2 Pedro 1:20-21; Jeremias 1:4-5; 2 Timóteo 3:16 e 17)
-2. Entender qual é a diferença entre revelação especial e revelação geral, considerando a maneira com que Deus se revela para a humanidade. (Hebreus 1:1-2; Romanos 1:20)
-3. Explicar por que as orientações bíblicas são mais importantes do que as tradições e as opiniões das pessoas. (Marcos 7:7-9)
-4. Conhecer quem é o personagem principal da Bíblia. (João 1:1-4)
-5. Definir a maneira como podem ser testados os autores dos livros da Bíblia, se aquilo que está dizendo é realmente a palavra de Deus. (Mateus 7:16; Isaías 8:20)
-6. Memorizar e recitar na ordem correta os nomes dos 66 livros da Bíblia.
-7. Compartilhar com um amigo qual é o propósito da mensagem que a Bíblia apresenta. (2 Timóteo 3:16-17; João 5:39)
-8. Escolher alguém e dar de presente uma Bíblia e um estudo bíblico.'),
-('AMEB-002-204', 'Trindade', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-002-204.webp', 'https://mda.wiki.br/Especialidade_de_Trindade', '1. Identificar as palavras no plural encontradas nos versos de Gênesis 1:26; 3:22; 11:7 onde podemos claramente perceber que a Bíblia apresenta um Deus triúno, ou seja, que a Divindade é composta por três pessoas distintas.
-2. Definir quem é o Deus único apresentado por Jesus em João 10:30 e 1º Timóteo 1:17 identificando cada uma das três pessoas da Divindade encontradas nos versos de Mateus 28:19 e Lucas 3:21-22.
-3. Entender quais são os atributos incomunicáveis de Deus, ou seja, aquilo que exclusivamente Ele é e é capaz de fazer. (João 5:26; Efésios 1:5; 1º João 3:20; Salmo 139:7-12; Salmo 90:2)
-4. Explicar quais são os atributos comunicáveis que Deus, ou seja, as características ou virtudes que ele possui e que compartilha com os seres humanos. (Romanos 3:24; 5:8; Salmo 145:9; 2º Pedro 3:15; Salmo 99:9; João 17:25; Salmo 31:5)
-5. Saber qual foi a maneira que Deus escolheu para se revelar ao ser humano. (1º João 5:20)
-6. Memorizar e recitar 2º Coríntios 13:13 (13:14 na Nova Versão Internacional e Nova Versão Transformadora).
-7. Compartilhar com um amigo como é possível conhecer a Deus. (Salmo 19:1; Hebreus 11:6)
-8. Mencionar um episódio ou verso da Bíblia em que seja possível identificar a presença das três pessoas da Trindade.
-9. Fazer um desenho ou pintura que represente a Trindade de Acordo com o que foi aprendido nesta especialidade.'),
-('AMEB-003-205', 'Deus Pai', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-003-205.webp', 'https://mda.wiki.br/Especialidade_de_Deus_Pai', '1. Saber por qual motivo Deus pode ser considerado nosso Pai. (Gênesis 1:27; Isaías 64:8)
-2. Entender qual foi a maior demonstração de amor por nós dada por Deus Pai. (Romanos 5:8)
-3. Definir qual a importância, para nós, das duas virtudes de Deus Pai encontradas nos seguintes versos: Lucas 6:36; Mateus 5:48.
-4. Identificar na oração ensinada por Jesus, a quem devemos nos dirigir quando falamos com Deus. (Mateus 6:9-13)
-5. Explicar por que devemos considerar Jesus como a melhor forma de revelação de Deus Pai. (João 1:18; Mateus 11:27)
-6. Memorizar e recitar Efésios 1:3.
-7. Compartilhar com um amigo sobre o grande amor demonstrado por Deus, o Pai. (1 João 3:1-2)
-8. Se você tivesse que escolher um símbolo ou objeto para representar a Deus, qual seria? Mostrar e explicar à sua unidade.'),
-('AMEB-004-206', 'Deus Filho', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-004-206.webp', 'https://mda.wiki.br/Especialidade_de_Deus_Filho', '1. Saber por que Deus Filho recebeu o nome Jesus. (Mateus 1:21)
-2. Entender qual foi a participação de Jesus na criação do mundo, ao ser Ele identificado por João como o "Verbo" ou "Palavra" de Deus. (João 1:2-3; Colossenses 1:16-17)
-3. Explicar qual foi a participação de Jesus, no plano de Deus, para salvar o ser humano da morte. (Lucas 19:10)
-4. Conhecer o que a Bíblia diz sobre a natureza divina de Jesus. (João 10:30; Hebreus 1:3; João 1:1; Colossenses 2:9)
-5. Estudar o que a Bíblia ensina sobre a natureza humana de Jesus. (João 1:14; Hebreus 4:15; 1 João 4:2; Filipenses 2:6-8)
-6. Memorizar e recitar os nomes ou títulos que o profeta Isaías usa para Jesus. (Isaías 9:6; 7:14)
-7. Compartilhar com um amigo quais são as promessas que Jesus faz aos que creem Nele. (João 11:25-26; 14:1-3)'),
-('AMEB-005-207', 'Deus Espírito Santo', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-005-207.webp', 'https://mda.wiki.br/Especialidade_de_Deus_Espírito_Santo', '1. Entender como a Bíblia descreve o Espírito Santo como uma das três pessoas distintas da Trindade. (2 Coríntios 13:14; Mat. 28:19; João 16:14-15)
-2. Saber se o Espírito Santo participou ou não da criação do mundo. (Gênesis 1:1-2)
-3. Definir como os cristãos primitivos identificavam o Espírito Santo como uma pessoa distinta na Divindade. (Atos 5:3; 13:2; 15:28)
-4. Conhecer a promessa feita por Jesus em João 14:16-17.
-5. Explicar qual é a missão do Espírito Santo no trabalho de salvação das pessoas. (João 16:7-11)
-6. Memorizar e recitar Gálatas 5:22-23.
-7. Compartilhar com um amigo o que uma pessoa precisa fazer para receber o Espírito Santo. (Atos 5:32)'),
-('AMEB-006-208', 'Criação do Mundo', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-006-208.webp', 'https://mda.wiki.br/Especialidade_de_Criação_do_Mundo', '1. Saber como a Bíblia descreve a origem de todas as coisas e quem foi que fez o nosso mundo. (Gênesis 1:1 e 2; João 1:1-3)
-2. Compreender o que Hebreus 11:3 ensina sobre como Deus criou o universo, mesmo sem usar matéria visível ou preexistente.
-3. Conhecer a forma como Deus criou todas as coisas. (Salmo 33:9)
-4. Citar qual foi a ordem dada por Deus aos primeiros seres humanos criados por Ele. (Gênesis 1:27-28)
-5. Explicar quanto tempo Deus levou para criar o mundo e tudo o que nele existe. (Gênesis 1:2:1-2; Êxodo 20:11)
-6. Memorizar e falar quais foram as coisas criadas por Deus em cada um dos seis dias da criação. (Gênesis 1)
-7. Compartilhar com um amigo como Paulo expressa a dependência total que todos nós temos de Deus. (Atos 17:28)
-8. Escolher, durante um acampamento ou caminhada, três elementos da natureza que representem, na sua compreensão, Deus como Criador, e apresentar ao grupo uma aplicação prática de cada um deles.
-9. Conhecer e cantar, individualmente ou com sua unidade, um hino que fale sobre a criação ou sobre o Criador.'),
-('AMEB-007-209', 'Natureza da Humanidade', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-007-209.webp', 'https://mda.wiki.br/Especialidade_de_Natureza_da_Humanidade', '1. Saber qual é a origem da vida humana e citar qual material foi usado para a criação do homem. (Gênesis 1:27; 2:7)
-2. Explicar por que os nossos primeiros pais, que foram criados para viver para sempre, perderam essa condição de imortalidade. (Gênesis 2:16-17; 3:22)
-3. Definir o que é o pecado. (1 João 3:4; Tiago 4:17; Romanos 14:23)
-4. Entender qual é a consequência do pecado. (Romanos 6:23; Ezequiel 18:4, 20)
-5. Reconhecer a mentira contada pela serpente no Éden, que muitos ainda acreditam hoje, e saber quem é o único ser imortal. (Gênesis 3:4; 1 Timóteo 6:15-16)
-6. Memorizar e recitar 1 João 5:11-12.
-7. Compartilhar com um amigo o que Deus fez para resolver o problema do pecado. (João 3:16)
-8. Demonstrar de forma prática, para sua unidade ou outro grupo, os elementos que Deus utilizou na criação do ser humano (pode ser por meio de dramatização ou outra forma ilustrativa).'),
-('AMEB-008-210', 'Grande Conflito', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-008-210.webp', 'https://mda.wiki.br/Especialidade_de_Grande_Conflito', '1. Saber como a Bíblia descreve a origem, a glória e a queda do anjo Lúcifer, usando as figuras dos reis de Tiro e Babilônia como ilustrações. (Ezequiel 28:12, 15; Isaías 14:12-14)
-2. Conhecer quantos anjos se uniram a Lúcifer em sua rebelião contra Deus. (Apocalipse 12:4)
-3. Entender o que aconteceu no céu entre os anjos fiéis e os anjos rebeldes. (Apocalipse 12:7-9)
-4. Explicar como Satanás introduziu o pecado na Terra. (Gênesis 3:1-6)
-5. Definir quais foram os efeitos do pecado na humanidade. (Gênesis 6:5)
-6. Memorizar e recitar Deuteronômio 1:30.
-7. Compartilhar com um amigo como podemos estar preparados para enfrentar o mal. (Efésios 6:13-18)
-8. Escolher uma história bíblica envolvendo a atuação dos anjos e, com o apoio da sua unidade ou grupo, encenar a história durante um acampamento, devocional, escola sabatina, culto jovem, etc.:
-  a) Daniel 6 - Daniel protegido pelos anjos na cova dos leões;
-  b) Mateus 4 - Jesus no Deserto fortalecido pelos anjos;
-  c) Atos 5 - Apóstolos libertos da prisão pelos anjos.
-9. Fazer um desenho ou ilustração representando o Grande Conflito e explicar seu significado.'),
-('AMEB-009-211', 'Vida, morte e ressureição de Cristo', 'ensinos-biblicos', 'especialidade', null, null, null, '/esp/ameb-009-211.webp', 'https://mda.wiki.br/Especialidade_de_Vida,_morte_e_ressureição_de_Cristo', ''),
-('AMEB-010-212', 'Experiência da Salvação', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-010-212.webp', 'https://mda.wiki.br/Especialidade_de_Experiência_da_Salvação', '1. Saber o que é necessário fazer para receber a salvação que Deus oferece a todos os seres humanos. (Atos 16:31; Romanos 10:9; Efésios 2:8-9)
-2. Entender por que devemos obedecer a Deus mesmo sabendo que não somos salvos pelas nossas boas ações. (João 14:15, 21, 23)
-3. Conhecer o que Jesus fez para garantir o perdão e a salvação da humanidade. (Lucas 23:46; Isaías 53:5; Apocalipse 5:9)
-4. Explicar o que precisamos fazer para receber o perdão dos nossos pecados. (1 João 1:9)
-5. Definir o que Jesus nos orienta a fazer depois que somos perdoados. (João 5:14; 8:11)
-6. Memorizar e recitar Marcos 16:15-16.
-7. Compartilhar com um amigo qual é a maior vitória que podemos alcançar, segundo a Bíblia. (1 Coríntios 15:51-54)'),
-('AMEB-011-213', 'Crescimento em Cristo', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-011-213.webp', 'https://mda.wiki.br/Especialidade_de_Crescimento_em_Cristo', '1. Saber o que Cristo conquistou por meio de sua morte e ressurreição. (1 Coríntios 15:20-21)
-2. Entender o que acontece na vida de quem mantém comunhão com Jesus. (1 João 1:5-7)
-3. Conhecer qual é o plano de Deus para a nossa vida, seguindo o exemplo do que se cumpriu na vida de Jesus. (Lucas 2:52)
-4. Explicar os resultados que aparecem na vida de quem segue a Jesus e recebe o Espírito Santo. (Gálatas 5:22-25)
-5. Definir a importância de manter comunhão com Deus por meio da oração. (Efésios 6:18)
-6. Memorizar e recitar Salmo 1:1-2 e Lucas 2:52.
-7. Compartilhar com um amigo como a vida de uma pessoa é transformada quando ela aceita Jesus como Senhor. (2 Coríntios 5:17)'),
-('AMEB-012-214', 'Igreja', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-012-214.webp', 'https://mda.wiki.br/Especialidade_de_Igreja', '1. Saber quem estabeleceu a Igreja cristã e qual é o seu único fundamento. (Mateus 16:18; 1 Coríntios 3:11; Efésios 2:19-20)
-2. Reconhecer a quem pertence a Igreja. (Atos 20:28)
-3. Entender por que é importante que a Igreja preserve e ensine as verdades sobre Deus. (1 Timóteo 3:15; Mateus 28:19-20; João 17:17; 2 Timóteo 4:2-4)
-4. Explicar por que a Igreja é apresentada na Bíblia como o corpo de Cristo. (1 Coríntios 12:12, 27; Romanos 12:4-5; Colossenses 1:18)
-5. Definir o significado das palavras de Jesus sobre a importância da unidade entre os membros da Igreja. (Mateus 18:19-20; João 17:20-21)
-6. Memorizar e recitar Hebreus 10:25.
-7. Compartilhar com um amigo porque é importante participar dos cultos e envolver-se nos ministérios da Igreja. (Hebreus 10:24-25)
-8. Entrevistar o pastor ou ancião da sua igreja e apresentar por escrito ao seu instrutor as seguintes respostas:
-  a) Como são feitas as nomeações dos líderes da igreja local?
-  b) Quais ministérios a sua igreja possui?
-  c) O que é a comissão da igreja?
-  d) Como a comissão da igreja funciona?'),
-('AMEB-013-215', 'Remanescente e sua Missão', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-013-215.webp', 'https://mda.wiki.br/Especialidade_de_Remanescente_e_sua_Missão', '1. Conhecer a profecia em que o apóstolo Paulo anuncia a apostasia da Igreja. (2 Tessalonicenses 2:3-4)
-2. Entender quais fatores levaram a Igreja a afastar-se das verdades sobre Deus. (Apocalipse 2:4; 2 Tessalonicenses 2:9-12)
-3. Saber quais são as características dos cristãos fiéis à verdade em todas as épocas. (Apocalipse 12:17; 14:12)
-4. Explicar qual é a missão do povo remanescente de Deus nos últimos dias. (Mateus 24:14; Apocalipse 14:6)
-5. Definir qual é o sinal ou selo de Deus que identifica a Igreja verdadeira nos últimos dias. (Apocalipse 7:2; Ezequiel 20:20)
-6. Memorizar e recitar Mateus 28:19.
-7. Compartilhar com um amigo qual é a missão de todo aquele que crê em Jesus. (Marcos 16:15-16)'),
-('AMEB-014-216', 'Unidade no Corpo de Cristo', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-014-216.webp', 'https://mda.wiki.br/Especialidade_de_Unidade_no_Corpo_de_Cristo', '1. Saber qual é o testemunho mais importante que a Igreja deve dar ao mundo. (João 17:21-23)
-2. Conhecer quais atitudes devemos cultivar para manter a unidade da Igreja. (Efésios 4:2-3)
-3. Definir quem é o principal elo que une os membros da Igreja. (João 15:5)
-4. Entender como Jesus espera que seja o relacionamento entre os seus seguidores. (João 15:12-13, 17)
-5. Explicar quais atitudes causam divisão entre os membros da Igreja. (2 Timóteo 3:2-5; Tiago 3:16; Tiago 4:1-2)
-6. Memorizar e recitar Salmo 133:1.
-7. Compartilhar com um amigo qual deve ser a principal atitude de um cristão para promover a união na Igreja. (1 Coríntios 1:10)'),
-('AMEB-015-217', 'Batismo', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-015-217.webp', 'https://mda.wiki.br/Especialidade_de_Batismo', '1. Compreender o significado espiritual do batismo e o que ele representa para quem aceita Jesus. (Romanos 6:3-5)
-2. Saber qual é o requisito essencial para que alguém seja batizado. (Marcos 16:16)
-3. Definir outro requisito importante para o batismo, segundo a Bíblia. (Atos 2:38)
-4. Explicar o que a pessoa batizada deve fazer após entregar sua vida a Jesus. (Mateus 28:19-20)
-5. Entender o que é necessário para que um batismo seja realizado, de acordo com a Bíblia. (Mateus 3:6; João 3:23; Atos 8:38-39)
-6. Memorizar e recitar Mateus 3:16-17.
-7. Compartilhar com um amigo sobre a importância do batismo e convidá-lo a tomar essa decisão. (Atos 22:16)'),
-('AMEB-016-218', 'Ceia do Senhor', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-016-218.webp', 'https://mda.wiki.br/Especialidade_de_Ceia_do_Senhor', '1. Entender qual é a mensagem que anunciamos ao participar da Ceia do Senhor. (1 Coríntios 11:26)
-2. Conhecer o significado do pão e do suco de uva como símbolos na Ceia. (Mateus 26:26-29; João 6:35; João 15:1)
-3. Saber quem estabeleceu o lava-pés como parte da Ceia. (João 13:3-5)
-4. Explicar os dois significados do lava-pés ensinados por Jesus. (João 13:12-16; Mateus 6:14-15)
-5. Saber quando Jesus prometeu que voltará a celebrar a Ceia com os seus discípulos. (Mateus 26:29)
-6. Memorizar e recitar Lucas 22:19-20.
-7. Compartilhar com um amigo a importância da Ceia do Senhor, explicando a promessa de Jesus para os que participam. (João 6:54)'),
-('AMEB-017-219', 'Dons e Ministérios Espirituais', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-017-219.webp', 'https://mda.wiki.br/Especialidade_de_Dons_e_Ministérios_Espirituais', '1. Saber qual foi a missão que Jesus confiou aos seus discípulos. (Marcos 16:15-16)
-2. Explicar de que forma os discípulos seriam capacitados para cumprir essa missão. (Atos 1:4, 8)
-3. Conhecer o resultado imediato da atuação do Espírito Santo na vida dos primeiros cristãos. (Atos 2)
-4. Entender como o Espírito Santo distribui os dons espirituais entre os membros da Igreja. (1 Coríntios 12:7-11)
-5. Definir qual é o propósito pelo qual os dons espirituais são concedidos. (Efésios 4:12-13)
-6. Memorizar e recitar 1 Pedro 2:9.
-7. Compartilhar com um amigo como é possível receber os dons espirituais. (Tiago 1:5-6)'),
-('AMEB-018-220', 'Dom de Profecia', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-018-220.webp', 'https://mda.wiki.br/Especialidade_de_Dom_de_Profecia', '1. Saber por meio de quem Deus transmite suas mensagens aos seres humanos. (Amós 3:7)
-2. Conhecer quem são as pessoas que serviram de fundamento para o estabelecimento da Igreja. (Efésios 2:20-21)
-3. Entender qual é o propósito do dom de profecia dentro da Igreja. (1 Coríntios 14:4)
-4. Explicar quais são as duas principais características da igreja verdadeira nos últimos dias. (Apocalipse 12:17; 19:10)
-5. Definir quais são as marcas de um profeta verdadeiro. (Isaías 8:20; Mateus 7:16, 18-20; Gálatas 5:19-23)
-6. Memorizar e recitar 2 Pedro 1:20-21.
-7. Compartilhar com um amigo quais são os benefícios para quem confia nos profetas de Deus. (2 Crônicas 20:20)'),
-('AMEB-019-221', 'Lei de Deus', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-019-221.webp', 'https://mda.wiki.br/Especialidade_de_Lei_de_Deus', '1. Conhecer os 10 Mandamentos da Lei de Deus. (Êxodo 20:3-17; Deuteronômio 5:7-21)
-2. Descobrir se Jesus aboliu ou confirmou a importância da obediência à Lei de Deus para a Igreja cristã. (Mateus 5:17-18)
-3. Entender por que devemos obedecer aos mandamentos de Deus. (João 14:15; 15:10; 1 João 2:3-4)
-4. Explicar por que devemos guardar todos os 10 Mandamentos e não apenas alguns. (Tiago 2:10-11)
-5. Definir quais são os dois grandes princípios que resumem os 10 Mandamentos. (Lucas 10:27)
-6. Memorizar e recitar em ordem os 10 Mandamentos.
-7. Compartilhar com um amigo quais são os benefícios prometidos àqueles que obedecem à Lei de Deus. (Salmos 119:98-99, 165; 1 João 3:22)'),
-('AMEB-020-222', 'Sábado', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-020-222.webp', 'https://mda.wiki.br/Especialidade_de_Sábado', '1. Entender por que, quando e por quem o sábado foi estabelecido como um dia especial de repouso e adoração a Deus. (Gênesis 2:1-3; Êxodo 20:8-11)
-2. Conhecer qual era o dia que Jesus costumava santificar e ir à igreja para adorar a Deus, o Pai. (Lucas 4:16)
-3. Explicar qual era o dia que os seguidores de Jesus costumavam santificar e ir à igreja para adorar a Deus. (Atos 13:14, 27, 42, 44; 17:2; 18:4)
-4. Saber qual será o dia da semana em que os salvos se reunirão para adorar a Deus na nova Terra. (Isaías 66:22-23)
-5. Definir qual é o valor do sábado como sinal do nosso relacionamento com Deus. (Ezequiel 20:20)
-6. Memorizar e recitar Gênesis 2:2-3.
-7. Compartilhar com um amigo como devemos guardar o sábado e quais são os benefícios prometidos àqueles que obedecem a esse mandamento. (Isaías 58:13-14)'),
-('AMEB-021-223', 'Mordomia', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-021-223.webp', 'https://mda.wiki.br/Especialidade_de_Mordomia', '1. Com base em Salmo 24:1 e 1 Coríntios 6:20, quem é o legítimo proprietário deste mundo e das pessoas que nele habitam?
-2. De acordo com Deuteronômio 8:18 e Tiago 1:17, quem nos capacita a adquirir os recursos financeiros necessários para vivermos bem?
-3. Segundo 1 Coríntios 6:19-20, por que precisamos cuidar bem do nosso corpo?
-4. O que Efésios 5:15-16 ensina sobre o cuidado com a nossa maneira de viver e com o uso do tempo?
-5. Ler a parábola dos talentos (Mateus 25:14-30) e explicar o que ela ensina sobre como devemos usar os dons e talentos que Deus nos confiou.
-6. Qual é o percentual da nossa renda que Deus nos ordenou devolver como reconhecimento de que tudo provém Dele? (Levítico 27:30; Deuteronômio 14:22)
-7. De acordo com a Bíblia, qual deve ser o destino dos dízimos? (Números 18:21; 1 Coríntios 9:13-14)
-8. Ainda segundo a Bíblia, qual deve ser o destino das ofertas? (Êxodo 36:3; 2 Reis 12:4-5; 2 Crônicas 24:5)
-9. Qual deve ser a nossa atitude ao entregarmos as nossas ofertas a Deus? (2 Coríntios 9:7)
-10. Comparar os textos de Malaquias 3:8 e os outros estudados nesta especialidade para diferenciar dízimos e ofertas.
-11. Conversar com o tesoureiro, ancião e/ou pastor da sua igreja para entender o que é feito com os recursos recebidos de dízimos e ofertas e descobrir como as ofertas são usadas em sua igreja.
-12. Memorizar e recitar Malaquias 3:10.
-13. Compartilhar com um amigo sobre a importância de sermos fiéis a Deus nos dízimos e nas ofertas.
-14. Fazer uma simulação de orçamento mensal com base no valor da sua mesada ou de um salário-mínimo, com categorias como dízimos e ofertas, alimentação, roupas, transporte, entretenimento, etc.
-15. Após o estudo desta especialidade, explicar o que significa ser um mordomo cristão.'),
-('AMEB-022-224', 'Conduta Cristã', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-022-224.webp', 'https://mda.wiki.br/Especialidade_de_Conduta_Cristã', '1. Estudar como é possível viver no mundo sem se contaminar com práticas e valores contrários aos ensinos bíblicos. (Romanos 12:2; João 17:15-16; 1 João 2:15-17)
-2. Identificar quais foram os alimentos originalmente dados por Deus ao ser humano na criação. (Gênesis 1:29)
-3. Distinguir entre os animais puros e impuros mencionados na Bíblia, explicando por que alguns não são apropriados para consumo. (Levítico 11; Deuteronômio 14)
-4. Explicar os princípios bíblicos sobre a maneira cristã de se vestir. (1 Pedro 3:3-4)
-5. Compreender os princípios bíblicos sobre a pureza sexual e escrever um voto pessoal de se manter puro. (1 Coríntios 6:18-20; Mateus 5:27-28)
-6. Memorizar e recitar Filipenses 4:8.
-7. Compartilhar com um amigo os benefícios de viver segundo os princípios bíblicos e adotar práticas saudáveis.'),
-('AMEB-023-225', 'Matrimônio e Família', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-023-225.webp', 'https://mda.wiki.br/Especialidade_de_Matrimônio_e_Família', '1. Compreender o propósito pelo qual Deus criou a mulher para viver com o homem, segundo o plano da criação. (Gênesis 2:18-24)
-2. Conhecer como o casamento é descrito na Bíblia. (Gênesis 2:24; Mateus 19:6; Hebreus 13:4)
-3. Entender como deve ser o relacionamento entre marido e esposa de acordo com os princípios bíblicos. (Efésios 5:21-33)
-4. Identificar quanto tempo deve durar um casamento, segundo o plano de Deus. (Mateus 19:6; Romanos 7:1-2)
-5. Explicar as consequências que a infidelidade conjugal traz para a família, mostrando como isso fere o sétimo mandamento da Lei de Deus. (Êxodo 20:14; Provérbios 6:32-33)
-6. Memorizar e recitar 1 Coríntios 13:4-8.
-7. Compartilhar com um amigo como é possível ser verdadeiramente feliz no casamento, seguindo os ensinamentos da Bíblia. (Eclesiastes 4:9-12)'),
-('AMEB-024-226', 'Ministério de Cristo no Santuário Celestial', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-024-226.webp', 'https://mda.wiki.br/Especialidade_de_Ministério_de_Cristo_no_Santuário_Celestial', '1. Saber a ordem dada por Deus a Moisés para a construção do santuário terrestre e identificar qual modelo deveria ser seguido. (Êxodo 25:8-9, 40; Hebreus 9:24)
-2. Compreender qual é o ministério de Jesus no céu após Sua morte e ressurreição. (Hebreus 8:1-2)
-3. Saber como Jesus foi identificado durante Seu ministério na Terra. (João 1:29; Isaías 53:4-7)
-4. Relacionar o trabalho do sacerdote no santuário terrestre com o ministério de Cristo no santuário celestial. (Levítico 16:9, 15; Hebreus 9:1-28)
-5. Explicar a ordem dos principais eventos do ministério de Cristo em favor da salvação dos seres humanos. (1 Coríntios 15:3; Romanos 6:9; 1 Timóteo 2:5; Mateus 25:31-32; 1 Tessalonicenses 4:16-17; Apocalipse 20:12-15)
-6. Memorizar e recitar 1 Timóteo 2:5.
-7. Compartilhar com um amigo o que Jesus está fazendo hoje no céu e como isso se relaciona com a nossa salvação e futuro. (Hebreus 4:14-16)'),
-('AMEB-025-227', 'Segunda Vinda de Cristo', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-025-227.webp', 'https://mda.wiki.br/Especialidade_de_Segunda_Vinda_de_Cristo', '1. Conhecer a maior promessa que Jesus fez aos Seus seguidores. (João 14:1-3; Apocalipse 22:20)
-2. Entender como será a volta de Jesus, segundo a Bíblia. (Atos 1:11; Apocalipse 1:7; Mateus 16:27; 1 Tessalonicenses 5:2-3)
-3. Estudar o que acontecerá com os salvos e com os que rejeitaram a salvação no momento da volta de Cristo. (Mateus 24:30-31; 1 Tessalonicenses 4:16-17; Apocalipse 6:16-17; Apocalipse 20:5-6)
-4. Compreender o que a Bíblia ensina sobre o dia da volta de Jesus. (Mateus 24:36, 42)
-5. Listar alguns dos sinais que mostram que a volta de Jesus está próxima. (Apocalipse 6:12-13; Lucas 21:10-11; Mateus 24:12, 14; 2 Timóteo 3:1-5)
-6. Memorizar e recitar Isaías 25:9.
-7. Compartilhar com um amigo a esperança da volta de Jesus e o que devemos fazer para estarmos preparados para esse grande dia. (Tito 2:11-14)'),
-('AMEB-026-228', 'Morte e Ressurreição', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-026-228.webp', 'https://mda.wiki.br/Especialidade_de_Morte_e_Ressurreição', '1. Saber quem é o único ser imortal, de acordo com a Bíblia. (1 Timóteo 6:15-16)
-2. Estudar como Deus criou o ser humano e qual foi a advertência dada a respeito da morte. (Gênesis 2:7, 16-17)
-3. Explicar como a morte passou a fazer parte da realidade humana. (Gênesis 3:4, 6, 19)
-4. Compreender o que a Bíblia explica sobre o tempo de vida dos seres humanos. (Romanos 5:12; Tiago 4:14; Jó 14:1-2)
-5. Definir qual é o meio pelo qual podemos receber a vida eterna. (Romanos 6:23; 2 Timóteo 1:10; 1 Coríntios 15:22)
-6. Memorizar e recitar João 5:28-29.
-7. Compartilhar com um amigo a solução que a Bíblia apresenta para o problema da morte. (1 Coríntios 15:51-54)'),
-('AMEB-027-229', 'Milênio e Fim do Pecado', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-027-229.webp', 'https://mda.wiki.br/Especialidade_de_Milênio_e_Fim_do_Pecado', '1. Saber para onde irão as pessoas salvas por Jesus após a Sua segunda vinda. (1 Tessalonicenses 4:16-17; João 14:2-3)
-2. Explicar o que acontecerá com os ímpios (aqueles que rejeitaram a salvação) no momento da volta de Jesus. (Apocalipse 6:15-17; Apocalipse 20:5)
-3. Compreender como será a condição da Terra durante o período de mil anos iniciado após o retorno de Jesus. (Jeremias 4:23-25)
-4. Estudar o que a Bíblia diz que os salvos farão durante o milênio. (Apocalipse 20:4-6; 1 Coríntios 6:2-3)
-5. Entender como terminará o grande conflito entre o bem e o mal, e qual será o destino final de Satanás e do pecado. (Apocalipse 21:2, 8; 20:5, 7-15)
-6. Memorizar e recitar Apocalipse 20:6.
-7. Compartilhar com um amigo como será o fim do pecado e o que acontecerá durante o milênio descrito em Apocalipse 20.'),
-('AMEB-028-230', 'Nova Terra', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-028-230.webp', 'https://mda.wiki.br/Especialidade_de_Nova_Terra', '1. Saber qual é a grande esperança dos filhos de Deus quanto ao destino da humanidade. (2 Pedro 3:13; Mateus 5:5; Apocalipse 21:1)
+('AMEB-028', 'Nova Terra', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-028.webp', 'https://mda.wiki.br/Especialidade_de_Nova_Terra', '1. Saber qual é a grande esperança dos filhos de Deus quanto ao destino da humanidade. (2 Pedro 3:13; Mateus 5:5; Apocalipse 21:1)
 2. Descrever o que acontecerá com a cidade santa, a Nova Jerusalém. (Apocalipse 21:2-3)
 3. Identificar quem serão os habitantes da nova Terra, segundo a Bíblia. (Apocalipse 22:3-4; 21:7)
 4. Identificar quem não fará parte da nova Terra. (Apocalipse 21:8; 22:15; 1 Coríntios 6:9-10; Gálatas 5:19-21)
@@ -5263,10 +5054,7 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
   d) Facão
   e) Cavadeira
   f) Picareta
-9. Construir um móvel simples de acampamento, usando nós e amarras (miniatura ou tamanho real).')
-on conflict (codigo) do update set nome = excluded.nome, categoria_slug = excluded.categoria_slug, tipo = excluded.tipo, nivel = excluded.nivel, ano = excluded.ano, origem = excluded.origem, imagem = excluded.imagem, url_mda = excluded.url_mda, requisitos = excluded.requisitos;
-
-insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, ano, origem, imagem, url_mda, requisitos) values
+9. Construir um móvel simples de acampamento, usando nós e amarras (miniatura ou tamanho real).'),
 ('AR-002', 'Cultura Física', 'atividades-recreativas', 'especialidade', 2, 1929, 'Associação Geral', '/esp/ar-002.webp', 'https://mda.wiki.br/Especialidade_de_Cultura_Física', '1. Fazer um relatório citando, pelo menos, 10 benefícios de se manter um bom condicionamento físico.
 2. Definir os seguintes exercícios. Citar alguns exemplos em cada modalidade:
   a) Isométrico
@@ -5767,7 +5555,10 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
 7. Demonstrar, em águas abertas, seus conhecimentos no mergulho livre.
 8. Registrar um mergulho realizado, incluindo data, local, fauna observada, tempo de mergulho, etc.'),
 ('AR-029', 'Salvamento de Afogados - avançado', 'atividades-recreativas', 'especialidade', 3, 1963, 'Associação Geral', '/esp/ar-029.webp', 'https://mda.wiki.br/Especialidade_de_Salvamento_de_Afogados_-_avançado', '1. Ter a especialidade de Salvamento de afogados.
-2. Fazer um curso de salvamento de afogados, com carga horária mínima de 50 horas, em instituição que emita um certificado com selo da International Life Saving Fedaration (ILS) ou de instituição equivalente em seu país.'),
+2. Fazer um curso de salvamento de afogados, com carga horária mínima de 50 horas, em instituição que emita um certificado com selo da International Life Saving Fedaration (ILS) ou de instituição equivalente em seu país.')
+on conflict (codigo) do update set nome = excluded.nome, categoria_slug = excluded.categoria_slug, tipo = excluded.tipo, nivel = excluded.nivel, ano = excluded.ano, origem = excluded.origem, imagem = excluded.imagem, url_mda = excluded.url_mda, requisitos = excluded.requisitos;
+
+insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, ano, origem, imagem, url_mda, requisitos) values
 ('AR-030', 'Saltos Ornamentais', 'atividades-recreativas', 'especialidade', 3, 1964, 'Associação Geral', '/esp/ar-030.webp', 'https://mda.wiki.br/Especialidade_de_Saltos_Ornamentais', '1. Demonstrar os seguintes saltos:
   a) Frente
   b) Trás
@@ -7417,10 +7208,7 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
   d) Uma mesa com quatro bases e, pelo menos, 4 amarras
   e) Uma sapateira com duas bases
   f) Estrutura para um fogão suspenso
-  g) Uma pia de louça contendo coletor de água até uma fossa séptica')
-on conflict (codigo) do update set nome = excluded.nome, categoria_slug = excluded.categoria_slug, tipo = excluded.tipo, nivel = excluded.nivel, ano = excluded.ano, origem = excluded.origem, imagem = excluded.imagem, url_mda = excluded.url_mda, requisitos = excluded.requisitos;
-
-insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, ano, origem, imagem, url_mda, requisitos) values
+  g) Uma pia de louça contendo coletor de água até uma fossa séptica'),
 ('AR-102', 'Pioneirias - avançado', 'atividades-recreativas', 'especialidade', 3, 2012, 'Divisão Sul Americana', '/esp/ar-102.webp', 'https://mda.wiki.br/Especialidade_de_Pioneirias_-_avançado', '1. Ter a especialidade de Pioneirias
 2. Ter, no mínimo, 14 anos de idade.
 3. Qual a importância de fazer cavas na madeira antes de fazer amarras em pontaletes?
@@ -8026,7 +7814,10 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
 13. Citar o nome de 3 doenças comuns que podem ser controladas/evitadas com uma dieta apropriada.
 14. Por que o Governo de alguns países determina a inclusão de iodo, ferro, ácido fólico e flúor em alimentos básicos como farináceos, sal e água? Qual o impacto desta medida na saúde da população?
 15. Planejar e executar um cardápio para dois dias, contendo uma dieta ovo-lacto-vegetariana balanceada, utilizando as informações da pirâmide alimentar. Utilizar vegetais comuns em sua região e de acordo com a época do ano.
-16. Quais foram as vantagens que Daniel e seus amigos tiveram por escolherem uma alimentação saudável e vegetariana?'),
+16. Quais foram as vantagens que Daniel e seus amigos tiveram por escolherem uma alimentação saudável e vegetariana?')
+on conflict (codigo) do update set nome = excluded.nome, categoria_slug = excluded.categoria_slug, tipo = excluded.tipo, nivel = excluded.nivel, ano = excluded.ano, origem = excluded.origem, imagem = excluded.imagem, url_mda = excluded.url_mda, requisitos = excluded.requisitos;
+
+insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, ano, origem, imagem, url_mda, requisitos) values
 ('CS-009', 'Alerta Vermelho', 'ciencia-e-saude', 'especialidade', 1, 1986, 'Associação Geral', '/esp/cs-009.webp', 'https://mda.wiki.br/Especialidade_de_Alerta_Vermelho', '1. Explicar o que deve ser feito para evitar ferimentos e/ou morte cinco das situações a seguir:
   a) Incêndio em sua casa, ou na casa de um vizinho, ou em prédio público
   b) Se estiver perdido, de carro, num lugar ermo ou deserto
@@ -8185,7 +7976,24 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
 8. O que são fibras alimentares? Qual a importância delas para o processo digestivo? O que acontece se os alimentos permanecerem por mais tempo dentro do trato gastrointestinal?
 9. Demonstrar a digestão do amido em açúcar, utilizando o teste do iodo.
 10. Onde ocorre a digestão/absorção dos seguintes elementos: carboidratos, proteínas, lipídios, vitaminas, minerais e água?'),
-('CS-016', 'Ossos, Músculos e Articulações', 'ciencia-e-saude', 'especialidade', null, null, null, '/esp/cs-016.webp', 'https://mda.wiki.br/Especialidade_de_Ossos,_Músculos_e_Articulações', ''),
+('CS-016', 'Ossos, Músculos e Articulações', 'ciencia-e-saude', 'especialidade', 2, 1999, 'Associação Geral', '/esp/cs-016.webp', 'https://mda.wiki.br/Especialidade_de_Ossos_Músculos_e_Articulações', '1. Qual a diferença entre endoesqueleto e exoesqueleto? Qual desses tipos de esqueleto os humanos têm?
+2. Citar, pelo menos, três funções do sistema muscoesquelético.
+3. Definir:
+  a) Esqueleto axial
+  b) Esqueleto apendicular
+4. Descrever a classificação dos ossos de acordo com o seu formato, ilustrando-os.
+5. Quantos ossos um ser humano adulto tem?
+6. Desenhar ou colar uma figura de esqueleto humano, identificando, no mínimo, 10 ossos, sem repeti-los.
+7. Definir diáfise, metáfise e epífise, ilustrando-os.
+8. O que é disco epifisário e qual a sua importância?
+9. O que são articulações? Descrever os 3 tipos com as suas subdivisões, ilustrando todas.
+10. Fazer um modelo de uma das 6 articulações sinoviais.
+11. O que é fratura óssea? Como é feita a correção médica?
+12. Ilustrar, com desenho ou gravuras, a coluna vertebral, dividindo-a em suas 5 regiões. Quantas vértebras formam cada região?
+13. O que é osteoporose? Quais os locais mais comuns de fratura? Qual é a idade de risco? Quem é o público mais afetado? Qual o melhor exame para detectá-la? Citar alguns cuidados que ajudam a prevenir a osteoporose.
+14. Quais são as principais funções dos músculos esqueléticos?
+15. Identificar os seguintes músculos: trapézio, deltoide, peitoral maior, bíceps, quadríceps, tríceps, reto abdominal, serratil anterior, glúteo máximo, grande dorsal, gastrocnêmio e sóleo.
+16. Descrever o mecanismo de contração muscular.'),
 ('CS-017', 'Sistema Nervoso', 'ciencia-e-saude', 'especialidade', 3, 1999, 'Associação Geral', '/esp/cs-017.webp', 'https://mda.wiki.br/Especialidade_de_Sistema_Nervoso', '1. Fazer um diagrama ou modelo do sistema nervoso humano central, incluindo as seguintes partes: cérebro, cerebelo, ponte, medula espinhal. Descrever a função básica de cada um.
 2. O que é um neurônio? Desenhar um neurônio e identificar as suas partes. O que é sinapse?
 3. Quais são as principais diferenças do sistema nervoso somático e sistema nervoso autônomo? Diferenciar Sistema Nervoso Autônomo Simpático e Sistema Nervoso Autônomo Parassimpático, descrevendo as principais atividades relacionadas a cada um deles.
@@ -9325,7 +9133,7 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
   b) Descrever as castas de cupins e abelhas
   c) Comparar os graus de inteligência exibidos por um gafanhoto ou besouro, com a formiga, abelha ou vespa.
 10. Citar 3 exemplos de insetos que podem ser considerados tanto benéficos quanto prejudiciais.'),
-('EN-031', 'Mamíferos - avançado', 'estudos-da-natureza', 'especialidade', 2, 1949, 'Associação Geral', null, 'https://mda.wiki.br/Especialidade_de_Mamíferos_-_avançado', '1. Ter a especialidade de Mamíferos.
+('EN-031', 'Mamíferos - avançado', 'estudos-da-natureza', 'especialidade', 2, 1949, 'Associação Geral', '/esp/en-031.webp', 'https://mda.wiki.br/Especialidade_de_Mamíferos_-_avançado', '1. Ter a especialidade de Mamíferos.
 2. Que mamíferos de sua região são protegidos por lei? Por quê?
 3. Como o processo de nascimento e cuidado dos filhotes difere os monotremos e marsupiais de todas as outras ordens de mamíferos?
 4. Mencionar cinco maneiras diferentes pelas quais os mamíferos protegem a si mesmos e aos seus filhotes e dar um exemplo de cada uma.
@@ -9469,10 +9277,7 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
   i) Abertura genital
   j) Intersecção dos lobos caudais
   k) Pedúnculo caudal
-7. Ser capaz de identificar, pelo menos, 15 espécies de cetáceos, ao vivo, por fotografia, ilustração ou documentário.')
-on conflict (codigo) do update set nome = excluded.nome, categoria_slug = excluded.categoria_slug, tipo = excluded.tipo, nivel = excluded.nivel, ano = excluded.ano, origem = excluded.origem, imagem = excluded.imagem, url_mda = excluded.url_mda, requisitos = excluded.requisitos;
-
-insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, ano, origem, imagem, url_mda, requisitos) values
+7. Ser capaz de identificar, pelo menos, 15 espécies de cetáceos, ao vivo, por fotografia, ilustração ou documentário.'),
 ('EN-038', 'Ervas', 'estudos-da-natureza', 'especialidade', 2, null, 'Divisão do Sul do Pacífico', '/esp/en-038.webp', 'https://mda.wiki.br/Especialidade_de_Ervas', '1. Relacionar 25 ervas culinárias e o uso de cada uma.
 2. Relacionar 25 ervas medicinais e o uso de cada uma.
 3. Preparar um prato ou bebida (suco ou chá) usando ervas.
@@ -10014,7 +9819,10 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
 6. Responder as seguintes perguntas sobre sanguessugas:
   a) Onde elas vivem?
   b) O que elas comem?
-  c) Como elas são prejudiciais ao ser humano?'),
+  c) Como elas são prejudiciais ao ser humano?')
+on conflict (codigo) do update set nome = excluded.nome, categoria_slug = excluded.categoria_slug, tipo = excluded.tipo, nivel = excluded.nivel, ano = excluded.ano, origem = excluded.origem, imagem = excluded.imagem, url_mda = excluded.url_mda, requisitos = excluded.requisitos;
+
+insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, ano, origem, imagem, url_mda, requisitos) values
 ('EN-066', 'Vermes - avançado', 'estudos-da-natureza', 'especialidade', 2, 2006, 'Divisão Norte Americana', '/esp/en-066.webp', 'https://mda.wiki.br/Especialidade_de_Vermes_-_avançado', '1. Ter a especialidade de Vermes.
 2. Descrever as três principais classes de platelmintos.
 3. Dar um exemplo de nematóide e descrever seu ciclo de vida.
@@ -11076,7 +10884,7 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
 5. Quais são as três maneiras diferentes de assar uma pizza. Descrever as diferenças em detalhes.
 6. Qual é a temperatura ideal para assar uma pizza em: forno à lenha e em forno elétrico?
 7. Preparar uma pizza margherita.'),
-('ME-001', 'ADRA', 'mestrados', 'mestrado', null, 2012, 'Associação Geral', '/esp/me-001.webp', 'https://mda.wiki.br/Mestrado_em_ADRA', '1. Ter 7 especialidades em ADRA (AD).'),
+('ME-001', 'ADRA', 'mestrados', 'mestrado', 2, 2012, 'Associação Geral', '/esp/me-001.webp', 'https://mda.wiki.br/Mestrado_em_ADRA', '1. Ter 7 especialidades em ADRA (AD).'),
 ('ME-002', 'Artes e Habilidades Manuais', 'mestrados', 'mestrado', null, 1976, 'Associação Geral', '/esp/me-002.webp', 'https://mda.wiki.br/Mestrado_em_Artes_e_Habilidades_Manuais', '1. Ter sete especialidades em Artes e habilidades manuais (HM).'),
 ('ME-003', 'Atividades Agrícolas', 'mestrados', 'mestrado', null, 1976, 'Associação Geral', '/esp/me-003.webp', 'https://mda.wiki.br/Mestrado_em_Atividades_Agrícolas', '1. Ter sete especialidades em Atividades agrícolas e afins (AA).'),
 ('ME-004', 'Testificação', 'mestrados', 'mestrado', null, 1976, 'Associação Geral', '/esp/me-004.webp', 'https://mda.wiki.br/Mestrado_em_Testificação', '1. Ter sete das seguintes especialidades:
@@ -11443,6 +11251,149 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
 ('ME-016', 'Ensinos Bíblicos', 'mestrados', 'mestrado', null, 2025, 'Divisão Sul Americana', '/esp/me-016.webp', 'https://mda.wiki.br/Mestrado_em_Ensinos_Bíblicos', '1. Ter 14 especialidades em Ensinos bíblicos (AM-EB).')
 on conflict (codigo) do update set nome = excluded.nome, categoria_slug = excluded.categoria_slug, tipo = excluded.tipo, nivel = excluded.nivel, ano = excluded.ano, origem = excluded.origem, imagem = excluded.imagem, url_mda = excluded.url_mda, requisitos = excluded.requisitos;
 
+-- Especialidades duplicadas no wiki
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-001-203' and b.especialidade_codigo = 'AMEB-001' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-001' where especialidade_codigo = 'AMEB-001-203';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-001-203' and b.especialidade_codigo = 'AMEB-001' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-001' where especialidade_codigo = 'AMEB-001-203';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-001-203', 'AMEB-001') where 'AMEB-001-203' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-002-204' and b.especialidade_codigo = 'AMEB-002' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-002' where especialidade_codigo = 'AMEB-002-204';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-002-204' and b.especialidade_codigo = 'AMEB-002' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-002' where especialidade_codigo = 'AMEB-002-204';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-002-204', 'AMEB-002') where 'AMEB-002-204' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-003-205' and b.especialidade_codigo = 'AMEB-003' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-003' where especialidade_codigo = 'AMEB-003-205';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-003-205' and b.especialidade_codigo = 'AMEB-003' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-003' where especialidade_codigo = 'AMEB-003-205';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-003-205', 'AMEB-003') where 'AMEB-003-205' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-004-206' and b.especialidade_codigo = 'AMEB-004' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-004' where especialidade_codigo = 'AMEB-004-206';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-004-206' and b.especialidade_codigo = 'AMEB-004' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-004' where especialidade_codigo = 'AMEB-004-206';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-004-206', 'AMEB-004') where 'AMEB-004-206' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-005-207' and b.especialidade_codigo = 'AMEB-005' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-005' where especialidade_codigo = 'AMEB-005-207';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-005-207' and b.especialidade_codigo = 'AMEB-005' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-005' where especialidade_codigo = 'AMEB-005-207';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-005-207', 'AMEB-005') where 'AMEB-005-207' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-006-208' and b.especialidade_codigo = 'AMEB-006' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-006' where especialidade_codigo = 'AMEB-006-208';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-006-208' and b.especialidade_codigo = 'AMEB-006' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-006' where especialidade_codigo = 'AMEB-006-208';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-006-208', 'AMEB-006') where 'AMEB-006-208' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-007-209' and b.especialidade_codigo = 'AMEB-007' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-007' where especialidade_codigo = 'AMEB-007-209';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-007-209' and b.especialidade_codigo = 'AMEB-007' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-007' where especialidade_codigo = 'AMEB-007-209';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-007-209', 'AMEB-007') where 'AMEB-007-209' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-008-210' and b.especialidade_codigo = 'AMEB-008' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-008' where especialidade_codigo = 'AMEB-008-210';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-008-210' and b.especialidade_codigo = 'AMEB-008' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-008' where especialidade_codigo = 'AMEB-008-210';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-008-210', 'AMEB-008') where 'AMEB-008-210' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-009-211' and b.especialidade_codigo = 'AMEB-009' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-009' where especialidade_codigo = 'AMEB-009-211';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-009-211' and b.especialidade_codigo = 'AMEB-009' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-009' where especialidade_codigo = 'AMEB-009-211';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-009-211', 'AMEB-009') where 'AMEB-009-211' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-010-212' and b.especialidade_codigo = 'AMEB-010' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-010' where especialidade_codigo = 'AMEB-010-212';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-010-212' and b.especialidade_codigo = 'AMEB-010' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-010' where especialidade_codigo = 'AMEB-010-212';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-010-212', 'AMEB-010') where 'AMEB-010-212' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-011-213' and b.especialidade_codigo = 'AMEB-011' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-011' where especialidade_codigo = 'AMEB-011-213';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-011-213' and b.especialidade_codigo = 'AMEB-011' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-011' where especialidade_codigo = 'AMEB-011-213';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-011-213', 'AMEB-011') where 'AMEB-011-213' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-012-214' and b.especialidade_codigo = 'AMEB-012' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-012' where especialidade_codigo = 'AMEB-012-214';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-012-214' and b.especialidade_codigo = 'AMEB-012' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-012' where especialidade_codigo = 'AMEB-012-214';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-012-214', 'AMEB-012') where 'AMEB-012-214' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-013-215' and b.especialidade_codigo = 'AMEB-013' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-013' where especialidade_codigo = 'AMEB-013-215';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-013-215' and b.especialidade_codigo = 'AMEB-013' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-013' where especialidade_codigo = 'AMEB-013-215';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-013-215', 'AMEB-013') where 'AMEB-013-215' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-014-216' and b.especialidade_codigo = 'AMEB-014' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-014' where especialidade_codigo = 'AMEB-014-216';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-014-216' and b.especialidade_codigo = 'AMEB-014' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-014' where especialidade_codigo = 'AMEB-014-216';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-014-216', 'AMEB-014') where 'AMEB-014-216' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-015-217' and b.especialidade_codigo = 'AMEB-015' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-015' where especialidade_codigo = 'AMEB-015-217';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-015-217' and b.especialidade_codigo = 'AMEB-015' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-015' where especialidade_codigo = 'AMEB-015-217';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-015-217', 'AMEB-015') where 'AMEB-015-217' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-016-218' and b.especialidade_codigo = 'AMEB-016' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-016' where especialidade_codigo = 'AMEB-016-218';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-016-218' and b.especialidade_codigo = 'AMEB-016' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-016' where especialidade_codigo = 'AMEB-016-218';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-016-218', 'AMEB-016') where 'AMEB-016-218' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-017-219' and b.especialidade_codigo = 'AMEB-017' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-017' where especialidade_codigo = 'AMEB-017-219';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-017-219' and b.especialidade_codigo = 'AMEB-017' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-017' where especialidade_codigo = 'AMEB-017-219';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-017-219', 'AMEB-017') where 'AMEB-017-219' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-018-220' and b.especialidade_codigo = 'AMEB-018' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-018' where especialidade_codigo = 'AMEB-018-220';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-018-220' and b.especialidade_codigo = 'AMEB-018' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-018' where especialidade_codigo = 'AMEB-018-220';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-018-220', 'AMEB-018') where 'AMEB-018-220' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-019-221' and b.especialidade_codigo = 'AMEB-019' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-019' where especialidade_codigo = 'AMEB-019-221';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-019-221' and b.especialidade_codigo = 'AMEB-019' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-019' where especialidade_codigo = 'AMEB-019-221';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-019-221', 'AMEB-019') where 'AMEB-019-221' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-020-222' and b.especialidade_codigo = 'AMEB-020' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-020' where especialidade_codigo = 'AMEB-020-222';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-020-222' and b.especialidade_codigo = 'AMEB-020' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-020' where especialidade_codigo = 'AMEB-020-222';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-020-222', 'AMEB-020') where 'AMEB-020-222' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-021-223' and b.especialidade_codigo = 'AMEB-021' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-021' where especialidade_codigo = 'AMEB-021-223';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-021-223' and b.especialidade_codigo = 'AMEB-021' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-021' where especialidade_codigo = 'AMEB-021-223';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-021-223', 'AMEB-021') where 'AMEB-021-223' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-022-224' and b.especialidade_codigo = 'AMEB-022' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-022' where especialidade_codigo = 'AMEB-022-224';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-022-224' and b.especialidade_codigo = 'AMEB-022' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-022' where especialidade_codigo = 'AMEB-022-224';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-022-224', 'AMEB-022') where 'AMEB-022-224' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-023-225' and b.especialidade_codigo = 'AMEB-023' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-023' where especialidade_codigo = 'AMEB-023-225';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-023-225' and b.especialidade_codigo = 'AMEB-023' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-023' where especialidade_codigo = 'AMEB-023-225';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-023-225', 'AMEB-023') where 'AMEB-023-225' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-024-226' and b.especialidade_codigo = 'AMEB-024' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-024' where especialidade_codigo = 'AMEB-024-226';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-024-226' and b.especialidade_codigo = 'AMEB-024' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-024' where especialidade_codigo = 'AMEB-024-226';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-024-226', 'AMEB-024') where 'AMEB-024-226' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-025-227' and b.especialidade_codigo = 'AMEB-025' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-025' where especialidade_codigo = 'AMEB-025-227';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-025-227' and b.especialidade_codigo = 'AMEB-025' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-025' where especialidade_codigo = 'AMEB-025-227';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-025-227', 'AMEB-025') where 'AMEB-025-227' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-026-228' and b.especialidade_codigo = 'AMEB-026' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-026' where especialidade_codigo = 'AMEB-026-228';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-026-228' and b.especialidade_codigo = 'AMEB-026' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-026' where especialidade_codigo = 'AMEB-026-228';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-026-228', 'AMEB-026') where 'AMEB-026-228' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-027-229' and b.especialidade_codigo = 'AMEB-027' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-027' where especialidade_codigo = 'AMEB-027-229';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-027-229' and b.especialidade_codigo = 'AMEB-027' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-027' where especialidade_codigo = 'AMEB-027-229';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-027-229', 'AMEB-027') where 'AMEB-027-229' = any(especialidades);
+delete from public.class_especialidades a using public.class_especialidades b where a.especialidade_codigo = 'AMEB-028-230' and b.especialidade_codigo = 'AMEB-028' and a.class_id = b.class_id;
+update public.class_especialidades set especialidade_codigo = 'AMEB-028' where especialidade_codigo = 'AMEB-028-230';
+delete from public.desbravador_especialidades a using public.desbravador_especialidades b where a.especialidade_codigo = 'AMEB-028-230' and b.especialidade_codigo = 'AMEB-028' and a.desbravador_id = b.desbravador_id;
+update public.desbravador_especialidades set especialidade_codigo = 'AMEB-028' where especialidade_codigo = 'AMEB-028-230';
+update public.caderno_itens set especialidades = array_replace(especialidades, 'AMEB-028-230', 'AMEB-028') where 'AMEB-028-230' = any(especialidades);
+delete from public.especialidades where codigo in ('AMEB-001-203', 'AMEB-002-204', 'AMEB-003-205', 'AMEB-004-206', 'AMEB-005-207', 'AMEB-006-208', 'AMEB-007-209', 'AMEB-008-210', 'AMEB-009-211', 'AMEB-010-212', 'AMEB-011-213', 'AMEB-012-214', 'AMEB-013-215', 'AMEB-014-216', 'AMEB-015-217', 'AMEB-016-218', 'AMEB-017-219', 'AMEB-018-220', 'AMEB-019-221', 'AMEB-020-222', 'AMEB-021-223', 'AMEB-022-224', 'AMEB-023-225', 'AMEB-024-226', 'AMEB-025-227', 'AMEB-026-228', 'AMEB-027-229', 'AMEB-028-230');
+
 -- Itens do caderno (não apaga itens personalizados)
 delete from public.caderno_itens where personalizado = false and (class_id, codigo) not in (values (1::smallint, 'I.1'), (1::smallint, 'I.2'), (1::smallint, 'I.3'), (1::smallint, 'I.4'), (1::smallint, 'I.5'), (1::smallint, 'I.6'), (1::smallint, 'II.1'), (1::smallint, 'II.2'), (1::smallint, 'II.3'), (1::smallint, 'III.1'), (1::smallint, 'III.2'), (1::smallint, 'IV.1'), (1::smallint, 'IV.2'), (1::smallint, 'V.1'), (1::smallint, 'V.2'), (1::smallint, 'V.3'), (1::smallint, 'VI.1'), (1::smallint, 'VII.1'), (1::smallint, 'VII.2'), (1::smallint, 'VII.3'), (1::smallint, 'VIII.1'), (1::smallint, 'VIII.2'), (1::smallint, 'VIII.3'), (1::smallint, 'VIII.4'), (1::smallint, 'IX.1'), (1::smallint, 'AV.1'), (1::smallint, 'AV.2'), (1::smallint, 'AV.3'), (1::smallint, 'AV.4'), (1::smallint, 'AV.5'), (1::smallint, 'AV.6'), (1::smallint, 'AV.7'), (1::smallint, 'AV.8'), (1::smallint, 'AV.9'), (2::smallint, 'I.1'), (2::smallint, 'I.2'), (2::smallint, 'I.3'), (2::smallint, 'I.4'), (2::smallint, 'I.5'), (2::smallint, 'I.6'), (2::smallint, 'II.1'), (2::smallint, 'II.2'), (2::smallint, 'II.3'), (2::smallint, 'II.4'), (2::smallint, 'III.1'), (2::smallint, 'III.2'), (2::smallint, 'V.1'), (2::smallint, 'V.2'), (2::smallint, 'V.3'), (2::smallint, 'V.4'), (2::smallint, 'VI.1'), (2::smallint, 'VI.2'), (2::smallint, 'VII.1'), (2::smallint, 'VII.2'), (2::smallint, 'VII.3'), (2::smallint, 'VIII.1'), (2::smallint, 'VIII.2'), (2::smallint, 'VIII.3'), (2::smallint, 'IX.1'), (2::smallint, 'AV.1'), (2::smallint, 'AV.2'), (2::smallint, 'AV.3'), (2::smallint, 'AV.4'), (2::smallint, 'AV.5'), (2::smallint, 'AV.6'), (2::smallint, 'AV.7'), (2::smallint, 'AV.8'), (2::smallint, 'AV.9'), (2::smallint, 'AV.10'), (2::smallint, 'AV.11'), (2::smallint, 'AV.12'), (3::smallint, 'I.1'), (3::smallint, 'I.2'), (3::smallint, 'I.3'), (3::smallint, 'I.4'), (3::smallint, 'I.5'), (3::smallint, 'I.6'), (3::smallint, 'II.1'), (3::smallint, 'II.2'), (3::smallint, 'II.3'), (3::smallint, 'II.4'), (3::smallint, 'III.1'), (3::smallint, 'III.2'), (3::smallint, 'IV.1'), (3::smallint, 'IV.2'), (3::smallint, 'V.1'), (3::smallint, 'VI.1'), (3::smallint, 'VI.2'), (3::smallint, 'VII.1'), (3::smallint, 'VII.2'), (3::smallint, 'VIII.1'), (3::smallint, 'VIII.2'), (3::smallint, 'VIII.3'), (3::smallint, 'IX.1'), (3::smallint, 'AV.1'), (3::smallint, 'AV.2'), (3::smallint, 'AV.3'), (3::smallint, 'AV.4'), (3::smallint, 'AV.5'), (3::smallint, 'AV.6'), (3::smallint, 'AV.7'), (3::smallint, 'AV.8'), (3::smallint, 'AV.9'), (3::smallint, 'AV.10'), (3::smallint, 'AV.11'), (4::smallint, 'I.1'), (4::smallint, 'I.2'), (4::smallint, 'I.3'), (4::smallint, 'I.4'), (4::smallint, 'I.5'), (4::smallint, 'II.1'), (4::smallint, 'II.2'), (4::smallint, 'II.3'), (4::smallint, 'II.4'), (4::smallint, 'II.5'), (4::smallint, 'II.6'), (4::smallint, 'III.1'), (4::smallint, 'III.2'), (4::smallint, 'IV.1'), (4::smallint, 'V.1'), (4::smallint, 'V.2'), (4::smallint, 'VI.1'), (4::smallint, 'VI.2'), (4::smallint, 'VII.1'), (4::smallint, 'VII.2'), (4::smallint, 'VIII.1'), (4::smallint, 'VIII.2'), (4::smallint, 'VIII.3'), (4::smallint, 'IX.1'), (4::smallint, 'AV.1'), (4::smallint, 'AV.2'), (4::smallint, 'AV.3'), (4::smallint, 'AV.4'), (4::smallint, 'AV.5'), (4::smallint, 'AV.6'), (4::smallint, 'AV.7'), (4::smallint, 'AV.8'), (4::smallint, 'AV.9'), (4::smallint, 'AV.10'), (5::smallint, 'I.1'), (5::smallint, 'I.2'), (5::smallint, 'I.3'), (5::smallint, 'I.4'), (5::smallint, 'I.5'), (5::smallint, 'II.1'), (5::smallint, 'II.2'), (5::smallint, 'II.3'), (5::smallint, 'II.4'), (5::smallint, 'II.5'), (5::smallint, 'II.6'), (5::smallint, 'III.1'), (5::smallint, 'III.2'), (5::smallint, 'III.3'), (5::smallint, 'IV.1'), (5::smallint, 'IV.2'), (5::smallint, 'V.1'), (5::smallint, 'VI.1'), (5::smallint, 'VI.2'), (5::smallint, 'VI.3'), (5::smallint, 'VII.1'), (5::smallint, 'VII.2'), (5::smallint, 'VIII.1'), (5::smallint, 'VIII.2'), (5::smallint, 'IX.1'), (5::smallint, 'AV.1'), (5::smallint, 'AV.2'), (5::smallint, 'AV.3'), (5::smallint, 'AV.4'), (5::smallint, 'AV.5'), (5::smallint, 'AV.6'), (5::smallint, 'AV.7'), (5::smallint, 'AV.8'), (5::smallint, 'AV.9'), (5::smallint, 'AV.10'), (5::smallint, 'AV.11'), (6::smallint, 'I.1'), (6::smallint, 'I.2'), (6::smallint, 'I.3'), (6::smallint, 'I.4'), (6::smallint, 'I.5'), (6::smallint, 'II.1'), (6::smallint, 'II.2'), (6::smallint, 'II.3'), (6::smallint, 'II.4'), (6::smallint, 'II.5'), (6::smallint, 'II.6'), (6::smallint, 'III.1'), (6::smallint, 'III.2'), (6::smallint, 'IV.1'), (6::smallint, 'V.1'), (6::smallint, 'V.2'), (6::smallint, 'VI.1'), (6::smallint, 'VI.2'), (6::smallint, 'VI.3'), (6::smallint, 'VII.1'), (6::smallint, 'VII.2'), (6::smallint, 'VIII.1'), (6::smallint, 'VIII.2'), (6::smallint, 'VIII.3'), (6::smallint, 'VIII.4'), (6::smallint, 'IX.1'), (6::smallint, 'AV.1'), (6::smallint, 'AV.2'), (6::smallint, 'AV.3'), (6::smallint, 'AV.4'), (6::smallint, 'AV.5'), (6::smallint, 'AV.6'), (6::smallint, 'AV.7'), (6::smallint, 'AV.8'), (6::smallint, 'AV.9'), (6::smallint, 'AV.10'));
 
@@ -11654,7 +11605,7 @@ insert into public.caderno_itens (class_id, secao, secao_ordem, ordem, codigo, t
 (6, 'VIII - Arte de Acampar', 8, 3, 'VIII.3', 'Construir e utilizar um móvel de acampamento em tamanho real, com nós e amarras.', '[]'::jsonb, '{}'::text[], false),
 (6, 'VIII - Arte de Acampar', 8, 4, 'VIII.4', 'Completar uma especialidade, não realizada anteriormente, que possa ser contada para um dos Mestrados abaixo:', '[{"t":"Aquática","sub":[]},{"t":"Esportes","sub":[]},{"t":"Atividades Recreativas","sub":[]},{"t":"Vida Campestre","sub":[]}]'::jsonb, array['ME-007', 'ME-008', 'ME-010', 'ME-009']::text[], false),
 (6, 'IX - Estilo de Vida', 9, 1, 'IX.1', 'Completar uma especialidade, não realizada anteriormente, em alguma das seguintes áreas:', '[{"t":"Atividades agrícolas","sub":[]},{"t":"Ciência e saúde","sub":[]},{"t":"Habilidades domésticas","sub":[]},{"t":"Atividades profissionais","sub":[]}]'::jsonb, '{}'::text[], false),
-(6, 'Classe Avançada - Guia de Exploração', 10, 1, 'AV.1', 'Completar a especialidade de Mordomia.', '[]'::jsonb, array['AMEB-021-223']::text[], true),
+(6, 'Classe Avançada - Guia de Exploração', 10, 1, 'AV.1', 'Completar a especialidade de Mordomia.', '[]'::jsonb, array['AMEB-021']::text[], true),
 (6, 'Classe Avançada - Guia de Exploração', 10, 2, 'AV.2', 'Ler o livro "O maior discurso de Cristo" e escrever uma página sobre o efeito da leitura em sua vida.', '[]'::jsonb, '{}'::text[], true),
 (6, 'Classe Avançada - Guia de Exploração', 10, 3, 'AV.3', 'Cumprir um dos seguintes itens:', '[{"t":"Trazer dois amigos para assistir a duas diferentes reuniões da igreja.","sub":[]},{"t":"Ajudar a planejar e participar de, no mínimo, quatro domingos em uma série de evangelismo jovem.","sub":[]}]'::jsonb, '{}'::text[], true),
 (6, 'Classe Avançada - Guia de Exploração', 10, 4, 'AV.4', 'Escrever uma página ou apresentar uma palestra sobre como influenciar amigos para Cristo.', '[]'::jsonb, '{}'::text[], true),
@@ -11715,7 +11666,7 @@ insert into public.class_especialidades (class_id, especialidade_codigo, obrigat
 (6, 'ME-008', true),
 (6, 'ME-010', true),
 (6, 'ME-009', true),
-(6, 'AMEB-021-223', true),
+(6, 'AMEB-021', true),
 (6, 'HD-006', true),
 (6, 'AR-057', true)
 on conflict (class_id, especialidade_codigo) do update set obrigatoria = true;

@@ -3,25 +3,18 @@
  "requisitosAtualizados": [
   "AMEB-009 Vida, morte e ressureição de Cristo (0 -> 7 linhas)",
   "AMEB-009-211 Vida, morte e ressureição de Cristo (0 -> 7 linhas)",
-  "CS-016 Ossos, Músculos e Articulações (0 -> 18 linhas)",
-  "ME-001 ADRA (1 -> 16 linhas)"
+  "CS-016 Ossos, Músculos e Articulações (0 -> 18 linhas)"
  ],
  "linksCorrigidos": [
   "AMEB-009: https://mda.wiki.br/Especialidade_de_Vida,_morte_e_ressureição_de_Cristo -> https://mda.wiki.br/Especialidade_de_Vida,_Morte_e_Ressurreição_de_Cristo",
   "AMEB-009-211: https://mda.wiki.br/Especialidade_de_Vida,_morte_e_ressureição_de_Cristo -> https://mda.wiki.br/Especialidade_de_Vida,_Morte_e_Ressurreição_de_Cristo",
-  "CS-016: https://mda.wiki.br/Especialidade_de_Ossos,_Músculos_e_Articulações -> https://mda.wiki.br/Especialidade_de_Ossos_Músculos_e_Articulações",
-  "ME-001: https://mda.wiki.br/Mestrado_em_ADRA -> https://mda.wiki.br/Especialidade_de_E.V.A."
+  "CS-016: https://mda.wiki.br/Especialidade_de_Ossos,_Músculos_e_Articulações -> https://mda.wiki.br/Especialidade_de_Ossos_Músculos_e_Articulações"
  ],
  "imagensBaixadas": [
   "EN-031"
  ],
  "novas": [],
- "semRequisitos": [
-  "ME-002 Artes e Habilidades Manuais https://mda.wiki.br/Mestrado_em_Artes_e_Habilidades_Manuais",
-  "ME-003 Atividades Agrícolas https://mda.wiki.br/Mestrado_em_Atividades_Agrícolas",
-  "ME-015 Habilidades Domésticas https://mda.wiki.br/Mestrado_em_Habilidades_Domésticas",
-  "ME-016 Ensinos Bíblicos https://mda.wiki.br/Mestrado_em_Ensinos_Bíblicos"
- ],
+ "semRequisitos": [],
  "semImagem": [],
  "classes": {
   "Amigo": {
