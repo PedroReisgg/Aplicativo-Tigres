@@ -1,0 +1,36 @@
+name: Atualizar dados do MDA Wiki
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/scrape-mda.mjs"
+      - ".github/workflows/scrape-mda.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scrape-mda-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-save linkedom@0.18.15
+      - run: node scripts/scrape-mda.mjs
+      - name: Commit dos dados
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/mda public/esp
+          git diff --cached --quiet && echo "Sem mudanças" && exit 0
+          git commit -m "chore(dados): atualiza especialidades e cartões do MDA Wiki"
+          git pull --rebase origin "${GITHUB_REF_NAME}" || true
+          git push origin "HEAD:${GITHUB_REF_NAME}"
