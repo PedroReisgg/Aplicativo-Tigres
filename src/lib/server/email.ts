@@ -23,20 +23,25 @@ export function emailLayout(titulo: string, corpo: string) {
   </td></tr></table></body></html>`;
 }
 
-export async function sendEmail(opts: {
+type Mail = {
   to: string | string[];
   subject: string;
   html: string;
   text?: string;
   attachments?: { filename: string; content: Buffer | string }[];
   replyTo?: string;
-}) {
+};
+
+// Envia por SMTP (ex.: Gmail com senha de app) quando SMTP_USER/SMTP_PASS existem;
+// senão usa o Resend. O Gmail entrega para qualquer endereço sem precisar de domínio.
+export async function sendEmail(opts: Mail) {
+  if (process.env.SMTP_USER && process.env.SMTP_PASS) return sendSmtp(opts);
   const key = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM || "Tigres do Riacho <onboarding@resend.dev>";
   if (!key) {
-    console.warn("[email] RESEND_API_KEY ausente — e-mail não enviado para", opts.to, "\n" + (opts.text || opts.subject));
+    console.warn("[email] sem SMTP_USER/SMTP_PASS nem RESEND_API_KEY — e-mail não enviado para", opts.to, "\n" + (opts.text || opts.subject));
     if (process.env.NODE_ENV !== "production") return { id: "dev" };
-    throw new Error("Envio de e-mail não configurado (RESEND_API_KEY).");
+    throw new Error("Envio de e-mail não configurado.");
   }
   const resend = new Resend(key);
   const { data, error } = await resend.emails.send({
@@ -50,4 +55,29 @@ export async function sendEmail(opts: {
   });
   if (error) throw new Error(error.message);
   return data;
+}
+
+async function sendSmtp(opts: Mail) {
+  const nodemailer = (await import("nodemailer")).default;
+  const user = process.env.SMTP_USER!;
+  const port = Number(process.env.SMTP_PORT || 465);
+  const transport = nodemailer.createTransport({
+    host: process.env.SMTP_HOST || "smtp.gmail.com",
+    port,
+    secure: port === 465,
+    auth: { user, pass: process.env.SMTP_PASS!.replace(/\s+/g, "") },
+  });
+  const info = await transport.sendMail({
+    from: `Tigres do Riacho <${user}>`,
+    to: opts.to,
+    subject: opts.subject,
+    html: opts.html,
+    text: opts.text,
+    replyTo: opts.replyTo,
+    attachments: opts.attachments?.map((a) => ({
+      filename: a.filename,
+      content: typeof a.content === "string" ? Buffer.from(a.content, "base64") : a.content,
+    })),
+  });
+  return { id: info.messageId };
 }

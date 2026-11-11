@@ -13,6 +13,14 @@ const nextConfig: NextConfig = {
           { key: "Service-Worker-Allowed", value: "/" },
         ],
       },
+      {
+        source: "/download/:file*.apk",
+        headers: [
+          { key: "Content-Type", value: "application/vnd.android.package-archive" },
+          { key: "Content-Disposition", value: 'attachment; filename="tigres-do-riacho.apk"' },
+          { key: "Cache-Control", value: "no-cache" },
+        ],
+      },
     ];
   },
 };
