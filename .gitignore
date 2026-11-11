@@ -13,3 +13,6 @@ android/.gradle/
 android/local.properties
 *.apk
 *.keystore
+
+# APK publicado para download
+!public/download/*.apk
