@@ -9,7 +9,7 @@ export function emailLayout(titulo: string, corpo: string) {
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#fff;border-radius:18px;overflow:hidden">
     <tr><td style="background:#1C130E;padding:22px 24px" align="left">
       <table role="presentation"><tr>
-        <td><img src="${SITE}/brand/logo.png" width="52" height="52" alt="Tigres do Riacho" style="display:block"></td>
+        <td><img src="${SITE}/brand/logo-relatorio.png" width="52" height="52" alt="Tigres do Riacho" style="display:block"></td>
         <td style="padding-left:12px;color:#fff;font:600 18px/1.2 Segoe UI,Arial,sans-serif;text-transform:uppercase;letter-spacing:.5px">Tigres do Riacho<br><span style="font-weight:400;font-size:12px;color:#C7B9AC;text-transform:none;letter-spacing:0">Clube de Desbravadores</span></td>
       </tr></table>
     </td></tr>

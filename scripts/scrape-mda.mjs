@@ -255,7 +255,11 @@ async function main() {
   console.log("OK", det.length, "erros:", det.filter((d) => d.erro).length);
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+export { BASE, CATEGORIAS, get, doc, clean, abs, codeFromImg, scrapeCategorias, scrapeEspecialidade, scrapeClasses, pool };
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
+}

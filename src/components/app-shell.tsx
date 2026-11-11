@@ -64,7 +64,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       {/* Sidebar desktop */}
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-[264px] flex-col bg-ink-900 text-ink-100 lg:flex">
         <Link href="/painel" className="flex items-center gap-3 px-5 pb-6 pt-6">
-          <Image src="/brand/logo.png" alt="" width={48} height={48} className="size-12" priority />
+          <Image src="/brand/logo.webp" alt="" width={48} height={48} className="size-12" priority />
           <div className="leading-tight">
             <div className="font-display text-lg font-semibold uppercase tracking-wide text-white">Tigres do Riacho</div>
             <div className="text-xs text-ink-400">Clube de Desbravadores</div>
@@ -119,7 +119,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-30 border-b border-white/5 bg-ink-900/95 pt-safe text-white backdrop-blur lg:hidden">
         <div className="flex h-14 items-center gap-3 px-4">
           <Link href="/painel" className="flex min-w-0 items-center gap-2.5">
-            <Image src="/brand/logo.png" alt="" width={36} height={36} className="size-9" priority />
+            <Image src="/brand/logo.webp" alt="" width={36} height={36} className="size-9" priority />
             <span className="truncate font-display text-[17px] font-semibold uppercase tracking-wide">Tigres do Riacho</span>
           </Link>
           <div className="ml-auto flex items-center gap-1">

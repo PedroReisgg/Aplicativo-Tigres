@@ -26,7 +26,7 @@ export default function InstalarPage() {
     <main className="min-h-dvh overflow-x-clip paper">
       <section className="relative overflow-hidden bg-ink-900 px-6 pb-14 pt-[max(2.5rem,env(safe-area-inset-top))] text-center text-white">
         <ClawMarks className="pointer-events-none absolute -right-10 -top-6 h-64 w-64 rotate-12 text-tiger-500/25" />
-        <Image src="/brand/logo.png" alt="Tigres do Riacho" width={120} height={120} className="relative mx-auto size-28" priority />
+        <Image src="/brand/logo.webp" alt="Tigres do Riacho" width={120} height={120} className="relative mx-auto size-28" priority />
         <h1 className="relative mt-4 font-display text-3xl font-semibold uppercase tracking-wide">Instale o app</h1>
         <p className="relative mx-auto mt-2 max-w-md text-ink-300">O mesmo app no Android, no iPhone e no computador. Tudo fica sincronizado.</p>
       </section>

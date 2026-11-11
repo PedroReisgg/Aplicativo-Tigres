@@ -260,7 +260,7 @@ function CadernoTab({
               {its.map((it) => {
                 const feitos = prog.filter((p) => p.item_id === it.id && p.status === "feito").length;
                 const refazer = prog.filter((p) => p.item_id === it.id && p.status === "refazer").length;
-                const open = aberto[it.id];
+                const open = aberto[it.id] ?? true;
                 return (
                   <Card key={it.id} className="p-4">
                     <div className="flex gap-3">

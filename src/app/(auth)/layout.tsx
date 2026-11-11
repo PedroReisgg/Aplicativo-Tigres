@@ -9,7 +9,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <ClawMarks className="pointer-events-none absolute -right-10 -top-6 h-[340px] w-[340px] rotate-[18deg] text-black/10 lg:h-[560px] lg:w-[560px]" />
         <ClawMarks className="pointer-events-none absolute -bottom-24 -left-16 hidden h-[380px] w-[380px] -rotate-[24deg] text-white/[.06] lg:block" />
         <div className="relative flex items-center gap-3 lg:hidden">
-          <Image src="/brand/logo.png" alt="Tigres do Riacho" width={64} height={64} className="size-16 drop-shadow-xl" priority />
+          <Image src="/brand/logo.webp" alt="Tigres do Riacho" width={64} height={64} className="size-16 drop-shadow-xl" priority />
           <div>
             <div className="font-display text-2xl font-semibold uppercase leading-none tracking-wide">Tigres do Riacho</div>
             <div className="mt-1 text-sm text-white/75">Clube de Desbravadores · desde 2002</div>
@@ -19,7 +19,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           <div className="text-sm font-semibold uppercase tracking-[.2em] text-white/70">Desde 2002</div>
         </div>
         <div className="relative hidden flex-col items-center lg:flex">
-          <Image src="/brand/logo.png" alt="Tigres do Riacho" width={360} height={360} className="w-[min(360px,70%)] drop-shadow-[0_24px_40px_rgba(0,0,0,.35)]" priority />
+          <Image src="/brand/logo.webp" alt="Tigres do Riacho" width={360} height={360} className="w-[min(360px,70%)] drop-shadow-[0_24px_40px_rgba(0,0,0,.35)]" priority />
         </div>
         <div className="relative hidden lg:block">
           <h2 className="font-display text-4xl font-semibold uppercase leading-[1.05] tracking-wide">
