@@ -3,14 +3,22 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase/client";
-import type { Classe, Profile } from "@/lib/types";
+import { CARGOS_LEITURA, CARGO_CONSELHEIRO, CARGO_INSTRUTOR, type Classe, type Profile } from "@/lib/types";
 
 interface AuthCtx {
   userId: string | null;
   profile: Profile | null;
   classes: Classe[];
   staffClassIds: number[];
+  /** Unidades que a pessoa coordena (conselheiro). */
+  unidadeIds: string[];
   isAdmin: boolean;
+  /** Secretaria, tesouraria e capelania: veem tudo, sem alterar. */
+  isLeitor: boolean;
+  /** Vê o clube inteiro (admin ou leitor). */
+  veTudo: boolean;
+  isInstrutor: boolean;
+  isConselheiro: boolean;
   isActive: boolean;
   isPending: boolean;
   loading: boolean;
@@ -77,12 +85,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const staffClassIds = (profile?.classes || []).map((c) => c.class_id);
     const isActive = profile?.status === "ativo";
     const isAdmin = !!profile?.is_admin && isActive;
+    const isLeitor = isActive && !isAdmin && CARGOS_LEITURA.includes(profile?.cargo || "");
+    const unidadeIds = (profile?.unidades || []).map((u) => u.unidade_id);
     return {
       userId,
       profile,
       classes,
       staffClassIds,
+      unidadeIds,
       isAdmin,
+      isLeitor,
+      veTudo: isAdmin || isLeitor,
+      isInstrutor: isActive && profile?.cargo === CARGO_INSTRUTOR,
+      isConselheiro: isActive && profile?.cargo === CARGO_CONSELHEIRO,
       isActive,
       isPending: profile?.status === "pendente",
       loading,

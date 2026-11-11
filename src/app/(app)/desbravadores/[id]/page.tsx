@@ -43,6 +43,8 @@ export default function DesbravadorPage() {
 
   const { d, itens, prog, esps, classEsp } = data;
   const pode = auth.canManageClass(d.class_id);
+  // o conselheiro da unidade também atualiza os dados do desbravador
+  const podeEditar = pode || (!!d.unidade_id && auth.isActive && auth.unidadeIds.includes(d.unidade_id));
   const base = itens.filter((i) => !i.avancada);
   const feito = (itemId: number) => prog.find((p) => p.item_id === itemId);
   const pctBase = base.length ? (base.filter((i) => feito(i.id)?.status === "feito").length / base.length) * 100 : 0;
@@ -89,7 +91,7 @@ export default function DesbravadorPage() {
               {!d.ativo && <Badge tone="red">Inativo</Badge>}
             </div>
           </div>
-          {pode && (
+          {podeEditar && (
             <div className="flex gap-2">
               <Button variant="secondary" icon={<Pencil className="size-4" />} onClick={() => setEditar(true)}>
                 Editar

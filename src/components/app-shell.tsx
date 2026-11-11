@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
-import { Award, Bell, BookOpen, Home, LogOut, Menu, ShieldCheck, UserRound, Users, X, Download } from "lucide-react";
+import { Award, Bell, BookOpen, Flag, Home, LogOut, Menu, ShieldCheck, UserRound, Users, X, Download } from "lucide-react";
 import { useAuth } from "./auth-provider";
 import { Avatar, cn } from "./ui";
 import { supabaseBrowser } from "@/lib/supabase/client";
@@ -16,7 +16,8 @@ const NAV: Item[] = [
   { href: "/classes", label: "Classes", icon: BookOpen },
   { href: "/especialidades", label: "Especialidades", icon: Award },
   { href: "/desbravadores", label: "Desbravadores", icon: Users, show: (a) => a.isActive },
-  { href: "/diretoria", label: "Diretoria", icon: ShieldCheck, show: (a) => a.isAdmin },
+  { href: "/unidades", label: "Unidades", icon: Flag, show: (a) => a.isActive },
+  { href: "/diretoria", label: "Diretoria", icon: ShieldCheck, show: (a) => a.veTudo },
 ];
 
 function useUnread() {

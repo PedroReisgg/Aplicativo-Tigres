@@ -7,7 +7,8 @@ import { Avatar, Button, Checkbox, Input, SearchInput, Select, Sheet, Textarea, 
 import { useAuth } from "./auth-provider";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { brToIso, isoToBr, isValidCPF, isValidEmail, isValidPhone, maskCPF, maskDate, maskPhone, normalize, onlyDigits, waLink } from "@/lib/format";
-import type { Desbravador, Especialidade } from "@/lib/types";
+import type { Desbravador, Especialidade, Unidade } from "@/lib/types";
+import { getUnidades } from "@/lib/api";
 
 export function EspIcon({ esp, size = 56, className }: { esp: Pick<Especialidade, "imagem" | "nome">; size?: number; className?: string }) {
   const [err, setErr] = useState(false);
@@ -73,7 +74,7 @@ type DForm = {
   telefone: string;
   email: string;
   endereco: string;
-  unidade: string;
+  unidade_id: string;
   class_id: string;
   observacoes: string;
 };
@@ -90,7 +91,7 @@ function toForm(d?: Partial<Desbravador> | null, classId?: number | null): DForm
     telefone: d?.telefone || "",
     email: d?.email || "",
     endereco: d?.endereco || "",
-    unidade: d?.unidade || "",
+    unidade_id: d?.unidade_id || "",
     class_id: String(d?.class_id ?? classId ?? ""),
     observacoes: d?.observacoes || "",
   };
@@ -122,8 +123,12 @@ export function DesbravadorSheet({
   classId?: number | null;
   onSaved: (d: Desbravador) => void;
 }) {
-  const { classes, isAdmin, staffClassIds, userId } = useAuth();
+  const { classes, isAdmin, staffClassIds, unidadeIds, isConselheiro, userId } = useAuth();
   const [f, setF] = useState<DForm>(toForm(desbravador, classId));
+  const [unidades, setUnidades] = useState<Unidade[]>([]);
+  useEffect(() => {
+    if (open) getUnidades().then(setUnidades).catch(() => setUnidades([]));
+  }, [open]);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [saving, setSaving] = useState(false);
   useEffect(() => {
@@ -141,12 +146,19 @@ export function DesbravadorSheet({
     onBlur: () => setTouched((t) => ({ ...t, [k]: true })),
     error: err(k),
   });
-  const opcoes = classes.filter((c) => isAdmin || staffClassIds.includes(c.id));
+  // conselheiro escolhe qualquer classe para os desbravadores da sua unidade
+  const opcoes = classes.filter((c) => isAdmin || isConselheiro || staffClassIds.includes(c.id) || String(c.id) === f.class_id);
+  const opcoesUnidade = unidades.filter((u) => isAdmin || !isConselheiro || unidadeIds.includes(u.id) || u.id === f.unidade_id);
+  const unidadeObrigatoria = isConselheiro && !isAdmin;
 
   async function salvar() {
     setTouched(Object.fromEntries(Object.keys(f).map((k) => [k, true])));
     if (Object.keys(errors).length) {
       toast.error("Confira os campos destacados.");
+      return;
+    }
+    if (unidadeObrigatoria && !f.unidade_id) {
+      toast.error("Escolha a unidade do desbravador.");
       return;
     }
     setSaving(true);
@@ -161,7 +173,7 @@ export function DesbravadorSheet({
       telefone: f.telefone || null,
       email: f.email.trim() || null,
       endereco: f.endereco.trim() || null,
-      unidade: f.unidade.trim() || null,
+      unidade_id: f.unidade_id || null,
       class_id: Number(f.class_id),
       observacoes: f.observacoes.trim() || null,
     };
@@ -217,7 +229,14 @@ export function DesbravadorSheet({
             </option>
           ))}
         </Select>
-        <Input label="Unidade" placeholder="Ex.: Leões" {...set("unidade")} />
+        <Select label="Unidade" required={unidadeObrigatoria} {...set("unidade_id")} hint={!unidades.length ? "O diretor cria as unidades na página Unidades." : undefined}>
+          <option value="">{unidadeObrigatoria ? "Escolha…" : "Sem unidade"}</option>
+          {opcoesUnidade.map((u) => (
+            <option key={u.id} value={u.id}>
+              {u.nome}
+            </option>
+          ))}
+        </Select>
         <Input label="CPF" inputMode="numeric" placeholder="000.000.000-00" {...set("cpf", maskCPF)} />
         <Input label="Telefone do desbravador" inputMode="tel" placeholder="(11) 98765-4321" {...set("telefone", maskPhone)} />
 

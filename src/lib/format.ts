@@ -56,7 +56,8 @@ export function isValidCPF(v: string) {
   return calc(9) === Number(c[9]) && calc(10) === Number(c[10]);
 }
 
-export const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((v || "").trim());
+// sem acentos: o servidor de login não aceita e-mail com "ã", "ç" etc.
+export const isValidEmail = (v: string) => /^[\x21-\x7e]+$/.test((v || "").trim()) && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((v || "").trim());
 
 export const PASSWORD_RULES = [
   { id: "len", label: "Pelo menos 8 caracteres", test: (s: string) => s.length >= 8 },

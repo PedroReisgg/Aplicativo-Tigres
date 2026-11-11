@@ -33,7 +33,7 @@ export function ReportPanel({
     setBusy(tipo);
     try {
       const blob = tipo === "xlsx" ? await excel() : await pdf();
-      downloadBlob(blob, fileName(base, tipo));
+      await downloadBlob(blob, fileName(base, tipo));
     } catch (e) {
       toast.error("Erro ao gerar: " + (e as Error).message);
     } finally {
@@ -47,7 +47,7 @@ export function ReportPanel({
       const blob = await pdf();
       const ok = await shareBlob(blob, fileName(base, "pdf"), titulo);
       if (!ok) {
-        downloadBlob(blob, fileName(base, "pdf"));
+        await downloadBlob(blob, fileName(base, "pdf"));
         toast.info("Seu navegador não compartilha arquivos; o PDF foi baixado.");
       }
     } catch (e) {

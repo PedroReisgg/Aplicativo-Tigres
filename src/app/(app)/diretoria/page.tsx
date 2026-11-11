@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Check, Clock, MessageSquare, ShieldCheck, UserCheck, Users } from "lucide-react";
+import { Check, Clock, Eye, MessageSquare, ShieldCheck, UserCheck, UserPlus, Users } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/components/auth-provider";
 import { Avatar, Badge, Button, Card, Checkbox, Confirm, EmptyState, Input, PageHeader, SearchInput, Select, Sheet, Skeleton, Tabs, Textarea } from "@/components/ui";
@@ -9,10 +9,11 @@ import { PhoneLink } from "@/components/domain";
 import { ReportPanel } from "@/components/report-panel";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { useData } from "@/lib/use-data";
-import { getDesbravadores, getMembros, notificar } from "@/lib/api";
+import { getDesbravadores, getMembros, getUnidades, notificar } from "@/lib/api";
+import { PasswordInput } from "@/components/auth-forms";
 import { clubReportExcel, clubReportPDF } from "@/lib/reports";
-import { isoToBr, normalize, timeAgo } from "@/lib/format";
-import { CARGOS, FUNCOES_CLASSE, type Profile } from "@/lib/types";
+import { brToIso, isoToBr, isStrongPassword, isValidEmail, isValidPhone, maskDate, maskPhone, normalize, timeAgo } from "@/lib/format";
+import { CARGOS, CARGOS_ADMIN, CARGO_CONSELHEIRO, CARGO_INSTRUTOR, DESCRICAO_CARGO, type Profile, type Unidade } from "@/lib/types";
 
 type Aba = "espera" | "membros" | "relacao";
 
@@ -20,30 +21,50 @@ export default function DiretoriaPage() {
   const auth = useAuth();
   const [aba, setAba] = useState<Aba>("espera");
   const [sel, setSel] = useState<Profile | null>(null);
+  const [novo, setNovo] = useState(false);
   const [q, setQ] = useState("");
   const { data, loading, reload } = useData(getMembros, []);
+  const { data: unidades } = useData(() => (auth.veTudo ? getUnidades() : Promise.resolve([])), [auth.veTudo]);
 
   const pendentes = (data || []).filter((m) => m.status === "pendente");
   const membros = (data || []).filter((m) => m.status !== "pendente");
   useEffect(() => {
-    if (!loading && data && !pendentes.length) setAba("membros");
+    if (!loading && data && (!pendentes.length || !auth.isAdmin)) setAba("membros");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
 
-  if (!auth.isAdmin) return <EmptyState icon={<ShieldCheck className="size-6" />} title="Área do diretor" description="Somente o diretor e os diretores associados acessam esta página." />;
+  if (!auth.veTudo)
+    return <EmptyState icon={<ShieldCheck className="size-6" />} title="Área da diretoria" description="Somente o diretor, os diretores associados, a secretaria, a tesouraria e a capelania acessam esta página." />;
 
   const lista = (aba === "espera" ? pendentes : membros).filter((m) => normalize(`${m.nome} ${m.email} ${m.cargo}`).includes(normalize(q)));
   const nomeClasse = (id: number) => auth.classes.find((c) => c.id === id);
+  const nomeUnidade = (id: string) => (unidades || []).find((u) => u.id === id);
 
   return (
     <div>
-      <PageHeader eyebrow="Administração" title="Diretoria" description="Aprove novos cadastros, defina cargos, classes e permissões." />
+      <PageHeader
+        eyebrow="Administração"
+        title="Diretoria"
+        description={auth.isAdmin ? "Aprove cadastros, crie acessos e defina cargos, classes e unidades." : "Toda a diretoria do clube e as planilhas para baixar."}
+        actions={
+          auth.isAdmin && (
+            <Button icon={<UserPlus className="size-4" />} onClick={() => setNovo(true)}>
+              Criar acesso
+            </Button>
+          )
+        }
+      />
+      {auth.isLeitor && (
+        <p className="mb-4 inline-flex items-center gap-2 rounded-xl bg-ink-100 px-3 py-2 text-sm text-ink-600">
+          <Eye className="size-4" /> Você vê tudo e baixa as planilhas, mas só o diretor faz alterações.
+        </p>
+      )}
       <div className="mb-5">
         <Tabs
           value={aba}
           onChange={setAba}
           items={[
-            { value: "espera", label: "Lista de espera", count: pendentes.length },
+            ...(auth.isAdmin ? [{ value: "espera" as Aba, label: "Lista de espera", count: pendentes.length }] : []),
             { value: "membros", label: "Membros", count: membros.length },
             { value: "relacao", label: "Relação do clube" },
           ]}
@@ -64,7 +85,7 @@ export default function DiretoriaPage() {
               description={aba === "espera" ? "Quando alguém da diretoria se cadastrar, aparece aqui para você aprovar." : undefined}
             />
           ) : (
-            <div className="grid gap-3 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               {lista.map((m) => (
                 <Card key={m.id} className="flex items-start gap-3 p-4">
                   <Avatar nome={m.nome} color={m.is_admin ? "#F26B1D" : "#3B2A1F"} size={44} />
@@ -72,9 +93,12 @@ export default function DiretoriaPage() {
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="truncate font-semibold">{m.nome}</span>
                       {m.is_admin && <Badge tone="tiger">Admin</Badge>}
+                      {m.status === "pendente" && m.cargo_solicitado && <Badge tone="blue">{m.cargo_solicitado}</Badge>}
                       {m.status === "inativo" && <Badge tone="red">Inativo</Badge>}
                     </div>
-                    <div className="truncate text-sm text-ink-500">{m.status === "pendente" ? `Cadastrou-se ${timeAgo(m.created_at)}` : m.cargo}</div>
+                    <div className="truncate text-sm text-ink-500">
+                      {m.status === "pendente" ? `Cadastrou-se ${timeAgo(m.created_at)}` : m.cargo}
+                    </div>
                     <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-xs text-ink-500">
                       {m.idade != null && <span>{m.idade} anos</span>}
                       <PhoneLink phone={m.telefone} />
@@ -84,51 +108,71 @@ export default function DiretoriaPage() {
                         {(m.classes || []).map((c) => (
                           <span key={c.class_id} className="inline-flex items-center gap-1 rounded-full bg-ink-100 px-2 py-0.5 text-[11px] font-semibold text-ink-700">
                             <span className="size-2 rounded-full" style={{ background: nomeClasse(c.class_id)?.cor }} />
-                            {nomeClasse(c.class_id)?.nome} · {c.funcao}
+                            Classe {nomeClasse(c.class_id)?.nome}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    {(m.unidades || []).length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {(m.unidades || []).map((u) => (
+                          <span key={u.unidade_id} className="inline-flex items-center gap-1 rounded-full bg-ink-100 px-2 py-0.5 text-[11px] font-semibold text-ink-700">
+                            <span className="size-2 rounded-full" style={{ background: nomeUnidade(u.unidade_id)?.cor }} />
+                            Unidade {nomeUnidade(u.unidade_id)?.nome}
                           </span>
                         ))}
                       </div>
                     )}
                   </div>
-                  <Button size="sm" variant={m.status === "pendente" ? "primary" : "secondary"} onClick={() => setSel(m)}>
-                    {m.status === "pendente" ? "Aprovar" : "Gerenciar"}
-                  </Button>
+                  {auth.isAdmin && (
+                    <Button size="sm" variant={m.status === "pendente" ? "primary" : "secondary"} onClick={() => setSel(m)}>
+                      {m.status === "pendente" ? "Aprovar" : "Gerenciar"}
+                    </Button>
+                  )}
                 </Card>
               ))}
             </div>
           )}
         </>
       )}
-      <MembroSheet membro={sel} onClose={() => setSel(null)} onSaved={() => reload(true)} />
+      <MembroSheet membro={sel} unidades={unidades || []} onClose={() => setSel(null)} onSaved={() => reload(true)} />
+      <NovoAcessoSheet open={novo} onClose={() => setNovo(false)} onSaved={() => reload(true)} />
     </div>
   );
 }
 
-function MembroSheet({ membro, onClose, onSaved }: { membro: Profile | null; onClose: () => void; onSaved: () => void }) {
+function MembroSheet({ membro, unidades, onClose, onSaved }: { membro: Profile | null; unidades: Unidade[]; onClose: () => void; onSaved: () => void }) {
   const auth = useAuth();
   const sb = supabaseBrowser();
   const [cargo, setCargo] = useState("");
-  const [outroCargo, setOutroCargo] = useState("");
   const [admin, setAdmin] = useState(false);
   const [status, setStatus] = useState<Profile["status"]>("ativo");
-  const [classes, setClasses] = useState<Map<number, string>>(new Map());
+  const [classes, setClasses] = useState<Set<number>>(new Set());
+  const [unids, setUnids] = useState<Set<string>>(new Set());
   const [msg, setMsg] = useState("");
   const [saving, setSaving] = useState(false);
   const [remover, setRemover] = useState(false);
 
   useEffect(() => {
     if (!membro) return;
-    const c = membro.cargo === "Aguardando aprovação" ? "Instrutor(a)" : membro.cargo;
-    setCargo(CARGOS.includes(c) ? c : "outro");
-    setOutroCargo(CARGOS.includes(c) ? "" : c);
-    setAdmin(membro.is_admin);
-    setStatus(membro.status === "pendente" ? "ativo" : membro.status);
-    setClasses(new Map((membro.classes || []).map((x) => [x.class_id, x.funcao])));
+    const pendente = membro.status === "pendente";
+    const c = pendente ? membro.cargo_solicitado || CARGO_INSTRUTOR : membro.cargo;
+    setCargo(CARGOS.includes(c) ? c : CARGO_INSTRUTOR);
+    setAdmin(pendente ? CARGOS_ADMIN.includes(c) : membro.is_admin);
+    setStatus(pendente ? "ativo" : membro.status);
+    setClasses(new Set((membro.classes || []).map((x) => x.class_id)));
+    setUnids(new Set((membro.unidades || []).map((x) => x.unidade_id)));
     setMsg("");
   }, [membro]);
 
   const souEu = membro?.id === auth.userId;
-  const cargoFinal = cargo === "outro" ? outroCargo.trim() || "Membro" : cargo;
+  const cargoFinal = cargo;
+  const ehInstrutor = cargo === CARGO_INSTRUTOR;
+  const ehConselheiro = cargo === CARGO_CONSELHEIRO;
+  function mudarCargo(c: string) {
+    setCargo(c);
+    setAdmin(CARGOS_ADMIN.includes(c));
+  }
 
   async function salvar() {
     if (!membro) return;
@@ -136,24 +180,40 @@ function MembroSheet({ membro, onClose, onSaved }: { membro: Profile | null; onC
     try {
       const up = await sb.from("profiles").update({ cargo: cargoFinal, is_admin: souEu ? true : admin, status: souEu ? "ativo" : status }).eq("id", membro.id);
       if (up.error) throw up.error;
-      const antes = new Map((membro.classes || []).map((x) => [x.class_id, x.funcao]));
-      const remover = [...antes.keys()].filter((k) => !classes.has(k));
+      // classes: só para instrutores
+      const antes = new Set((membro.classes || []).map((x) => x.class_id));
+      const depois = ehInstrutor ? classes : new Set<number>();
+      const remover = [...antes].filter((k) => !depois.has(k));
       if (remover.length) {
         const r = await sb.from("class_staff").delete().eq("profile_id", membro.id).in("class_id", remover);
         if (r.error) throw r.error;
       }
-      const ups = [...classes.entries()].filter(([k, v]) => antes.get(k) !== v).map(([class_id, funcao]) => ({ class_id, profile_id: membro.id, funcao }));
+      const ups = [...depois].filter((k) => !antes.has(k)).map((class_id) => ({ class_id, profile_id: membro.id, funcao: CARGO_INSTRUTOR }));
       if (ups.length) {
         const r = await sb.from("class_staff").upsert(ups);
         if (r.error) throw r.error;
       }
+      // unidades: só para conselheiros
+      const antesU = new Set((membro.unidades || []).map((x) => x.unidade_id));
+      const depoisU = ehConselheiro ? unids : new Set<string>();
+      const removerU = [...antesU].filter((k) => !depoisU.has(k));
+      if (removerU.length) {
+        const r = await sb.from("unidade_staff").delete().eq("profile_id", membro.id).in("unidade_id", removerU);
+        if (r.error) throw r.error;
+      }
+      const upsU = [...depoisU].filter((k) => !antesU.has(k)).map((unidade_id) => ({ unidade_id, profile_id: membro.id, funcao: CARGO_CONSELHEIRO }));
+      if (upsU.length) {
+        const r = await sb.from("unidade_staff").upsert(upsU);
+        if (r.error) throw r.error;
+      }
       const aprovado = membro.status === "pendente" && status === "ativo";
-      const nomesClasses = [...classes.keys()].map((k) => auth.classes.find((c) => c.id === k)?.nome).filter(Boolean);
-      if (aprovado || ups.length || remover.length) {
+      const nomesClasses = [...depois].map((k) => auth.classes.find((c) => c.id === k)?.nome).filter(Boolean);
+      const nomesUnidades = [...depoisU].map((k) => unidades.find((u) => u.id === k)?.nome).filter(Boolean);
+      if (aprovado || ups.length || remover.length || upsU.length || removerU.length || cargo !== membro.cargo) {
         await notificar(auth.userId!, [membro.id], {
           tipo: "acesso",
           titulo: aprovado ? "Seu acesso foi liberado!" : "Seu acesso foi atualizado",
-          mensagem: `Cargo: ${cargoFinal}.${nomesClasses.length ? ` Classe(s): ${nomesClasses.join(", ")}.` : ""}`,
+          mensagem: `Cargo: ${cargoFinal}.${nomesClasses.length ? ` Classe(s): ${nomesClasses.join(", ")}.` : ""}${nomesUnidades.length ? ` Unidade(s): ${nomesUnidades.join(", ")}.` : ""}`,
           link: "/painel",
         });
       }
@@ -212,21 +272,21 @@ function MembroSheet({ membro, onClose, onSaved }: { membro: Profile | null; onC
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <Select label="Cargo no clube" value={cargo} onChange={(e) => setCargo(e.target.value)}>
+              <Select label="Cargo no clube" value={cargo} onChange={(e) => mudarCargo(e.target.value)} hint={DESCRICAO_CARGO[cargo]}>
                 {CARGOS.map((c) => (
                   <option key={c}>{c}</option>
                 ))}
-                <option value="outro">Outro…</option>
               </Select>
-              {cargo === "outro" ? (
-                <Input label="Nome do cargo" value={outroCargo} onChange={(e) => setOutroCargo(e.target.value)} />
-              ) : (
-                <Select label="Situação" value={status} onChange={(e) => setStatus(e.target.value as Profile["status"])} disabled={souEu}>
-                  <option value="ativo">Ativo</option>
-                  <option value="inativo">Inativo (sem acesso)</option>
-                </Select>
-              )}
+              <Select label="Situação" value={status} onChange={(e) => setStatus(e.target.value as Profile["status"])} disabled={souEu}>
+                <option value="ativo">Ativo</option>
+                <option value="inativo">Inativo (sem acesso)</option>
+              </Select>
             </div>
+            {membro.status === "pendente" && membro.cargo_solicitado && (
+              <p className="-mt-3 text-sm text-ink-500">
+                No cadastro, escolheu <strong className="text-ink-800">{membro.cargo_solicitado}</strong>.
+              </p>
+            )}
 
             <label className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 ${admin ? "border-tiger-300 bg-tiger-50" : "border-ink-200"}`}>
               <Checkbox checked={admin || souEu} onChange={setAdmin} disabled={souEu} />
@@ -236,46 +296,73 @@ function MembroSheet({ membro, onClose, onSaved }: { membro: Profile | null; onC
               </span>
             </label>
 
-            <div>
-              <div className="mb-2 text-sm font-medium text-ink-800">Classes em que atua</div>
-              <div className="space-y-2">
-                {auth.classes.map((c) => {
-                  const on = classes.has(c.id);
-                  return (
-                    <div key={c.id} className={`flex items-center gap-3 rounded-xl border px-3 py-2 ${on ? "border-ink-300 bg-white" : "border-ink-200 bg-ink-50/50"}`}>
-                      <Checkbox
-                        checked={on}
-                        onChange={(v) =>
-                          setClasses((m) => {
-                            const n = new Map(m);
-                            if (v) n.set(c.id, FUNCOES_CLASSE[0]);
-                            else n.delete(c.id);
-                            return n;
-                          })
-                        }
-                        label={
-                          <span className="inline-flex items-center gap-2 font-medium">
-                            <span className="size-2.5 rounded-full" style={{ background: c.cor }} /> {c.nome}
-                          </span>
-                        }
-                      />
-                      {on && (
-                        <select
-                          className="ml-auto h-9 rounded-lg border border-ink-200 bg-white px-2 text-sm"
-                          value={classes.get(c.id)}
-                          onChange={(e) => setClasses((m) => new Map(m).set(c.id, e.target.value))}
-                          aria-label={`Função na classe ${c.nome}`}
-                        >
-                          {FUNCOES_CLASSE.map((f) => (
-                            <option key={f}>{f}</option>
-                          ))}
-                        </select>
-                      )}
-                    </div>
-                  );
-                })}
+            {ehInstrutor && (
+              <div>
+                <div className="mb-1 text-sm font-medium text-ink-800">Classes que coordena</div>
+                <p className="mb-2 text-xs text-ink-500">Só instrutores coordenam classes.</p>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {auth.classes.map((c) => {
+                    const on = classes.has(c.id);
+                    return (
+                      <div key={c.id} className={`flex items-center gap-3 rounded-xl border px-3 py-2 ${on ? "border-ink-300 bg-white" : "border-ink-200 bg-ink-50/50"}`}>
+                        <Checkbox
+                          checked={on}
+                          onChange={(v) =>
+                            setClasses((m) => {
+                              const n = new Set(m);
+                              if (v) n.add(c.id);
+                              else n.delete(c.id);
+                              return n;
+                            })
+                          }
+                          label={
+                            <span className="inline-flex items-center gap-2 font-medium">
+                              <span className="size-2.5 rounded-full" style={{ background: c.cor }} /> {c.nome}
+                            </span>
+                          }
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
+
+            {ehConselheiro && (
+              <div>
+                <div className="mb-1 text-sm font-medium text-ink-800">Unidades que coordena</div>
+                <p className="mb-2 text-xs text-ink-500">Só conselheiros coordenam unidades.</p>
+                {unidades.length ? (
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {unidades.map((u) => {
+                      const on = unids.has(u.id);
+                      return (
+                        <div key={u.id} className={`flex items-center gap-3 rounded-xl border px-3 py-2 ${on ? "border-ink-300 bg-white" : "border-ink-200 bg-ink-50/50"}`}>
+                          <Checkbox
+                            checked={on}
+                            onChange={(v) =>
+                              setUnids((m) => {
+                                const n = new Set(m);
+                                if (v) n.add(u.id);
+                                else n.delete(u.id);
+                                return n;
+                              })
+                            }
+                            label={
+                              <span className="inline-flex items-center gap-2 font-medium">
+                                <span className="size-2.5 rounded-full" style={{ background: u.cor }} /> {u.nome}
+                              </span>
+                            }
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="rounded-xl bg-ink-50 px-3 py-2.5 text-sm text-ink-500">Nenhuma unidade criada ainda. Crie na página Unidades.</p>
+                )}
+              </div>
+            )}
 
             <Textarea
               label="Mensagem para a pessoa (opcional)"
@@ -305,6 +392,7 @@ function MembroSheet({ membro, onClose, onSaved }: { membro: Profile | null; onC
         onConfirm={async () => {
           if (!membro) return;
           await sb.from("class_staff").delete().eq("profile_id", membro.id);
+          await sb.from("unidade_staff").delete().eq("profile_id", membro.id);
           const { error } = await sb.from("profiles").update({ status: "inativo", is_admin: false }).eq("id", membro.id);
           if (error) toast.error(error.message);
           else toast.success("Acesso removido.");
@@ -345,5 +433,135 @@ function RelacaoClube({ membros }: { membros: Profile[] }) {
         <strong className="text-ink-900">{(desb || []).length}</strong> desbravadores ativos
       </Card>
     </div>
+  );
+}
+
+type NovoForm = { nome: string; email: string; cargo: string; telefone: string; data_nascimento: string; password: string };
+const novoVazio: NovoForm = { nome: "", email: "", cargo: "", telefone: "", data_nascimento: "", password: "" };
+
+function validarNovo(f: NovoForm) {
+  const e: Partial<Record<keyof NovoForm, string>> = {};
+  if (f.nome.trim().split(/\s+/).length < 2) e.nome = "Informe nome e sobrenome.";
+  if (!isValidEmail(f.email)) e.email = "Digite um e-mail válido (sem acentos).";
+  if (!CARGOS.includes(f.cargo)) e.cargo = "Escolha o cargo.";
+  if (f.telefone && !isValidPhone(f.telefone)) e.telefone = "Telefone com DDD, ex.: (11) 98765-4321.";
+  if (f.data_nascimento && !brToIso(f.data_nascimento)) e.data_nascimento = "Data no formato dd/mm/aaaa.";
+  if (!isStrongPassword(f.password)) e.password = "A senha não atende aos requisitos abaixo.";
+  return e;
+}
+
+/** O diretor cria a conta de alguém da diretoria, já liberada, com a senha que ele escolher. */
+function NovoAcessoSheet({ open, onClose, onSaved }: { open: boolean; onClose: () => void; onSaved: () => void }) {
+  const [f, setF] = useState<NovoForm>(novoVazio);
+  const [touched, setTouched] = useState<Partial<Record<keyof NovoForm, boolean>>>({});
+  const [saving, setSaving] = useState(false);
+  useEffect(() => {
+    if (open) {
+      setF(novoVazio);
+      setTouched({});
+    }
+  }, [open]);
+  const errors = validarNovo(f);
+  const show = (k: keyof NovoForm) => (touched[k] ? errors[k] : undefined);
+  const set = (k: keyof NovoForm) => (v: string) => setF((s) => ({ ...s, [k]: v }));
+  const blur = (k: keyof NovoForm) => () => setTouched((t) => ({ ...t, [k]: true }));
+
+  async function criar(outro: boolean) {
+    setTouched({ nome: true, email: true, cargo: true, telefone: true, data_nascimento: true, password: true });
+    if (Object.keys(errors).length) return;
+    setSaving(true);
+    try {
+      const {
+        data: { session },
+      } = await supabaseBrowser().auth.getSession();
+      const r = await fetch("/api/admin/membros", {
+        method: "POST",
+        headers: { "content-type": "application/json", authorization: `Bearer ${session?.access_token || ""}` },
+        body: JSON.stringify(f),
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.error || "Não foi possível criar o acesso.");
+      toast.success(`Acesso de ${f.nome.split(" ")[0]} criado. Já pode entrar com ${f.email}.`);
+      onSaved();
+      if (outro) {
+        // mantém a senha para agilizar vários cadastros seguidos
+        setF((s) => ({ ...novoVazio, password: s.password }));
+        setTouched({});
+      } else onClose();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Sheet
+      open={open}
+      onClose={onClose}
+      title="Criar acesso"
+      description="A conta já nasce liberada. Passe o e-mail e a senha para a pessoa."
+      wide
+      footer={
+        <>
+          <Button variant="secondary" className="mr-auto" onClick={() => criar(true)} loading={saving}>
+            Criar e fazer outro
+          </Button>
+          <Button variant="secondary" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button icon={<UserPlus className="size-4" />} onClick={() => criar(false)} loading={saving}>
+            Criar acesso
+          </Button>
+        </>
+      }
+    >
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <Input label="Nome completo" autoComplete="off" value={f.nome} onChange={(e) => set("nome")(e.target.value)} onBlur={blur("nome")} error={show("nome")} required />
+        </div>
+        <Input
+          label="E-mail"
+          type="email"
+          inputMode="email"
+          autoComplete="off"
+          value={f.email}
+          onChange={(e) => set("email")(e.target.value.trim())}
+          onBlur={blur("email")}
+          error={show("email")}
+          required
+        />
+        <Select label="Cargo" value={f.cargo} onChange={(e) => set("cargo")(e.target.value)} onBlur={blur("cargo")} error={show("cargo")} hint={DESCRICAO_CARGO[f.cargo]} required>
+          <option value="">Escolha…</option>
+          {CARGOS.map((c) => (
+            <option key={c}>{c}</option>
+          ))}
+        </Select>
+        <Input
+          label="Telefone (opcional)"
+          inputMode="tel"
+          placeholder="(11) 98765-4321"
+          value={f.telefone}
+          onChange={(e) => set("telefone")(maskPhone(e.target.value))}
+          onBlur={blur("telefone")}
+          error={show("telefone")}
+        />
+        <Input
+          label="Data de nascimento (opcional)"
+          inputMode="numeric"
+          placeholder="dd/mm/aaaa"
+          value={f.data_nascimento}
+          onChange={(e) => set("data_nascimento")(maskDate(e.target.value))}
+          onBlur={blur("data_nascimento")}
+          error={show("data_nascimento")}
+        />
+        <div className="sm:col-span-2">
+          <PasswordInput label="Senha" value={f.password} onChange={set("password")} onBlur={blur("password")} error={show("password")} autoComplete="new-password" showRules />
+        </div>
+      </div>
+      <p className="mt-4 text-sm text-ink-500">
+        Depois de criar, abra a pessoa em <strong>Membros → Gerenciar</strong> para escolher as classes (instrutor) ou unidades (conselheiro).
+      </p>
+    </Sheet>
   );
 }
