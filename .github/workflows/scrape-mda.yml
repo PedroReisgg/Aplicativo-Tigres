@@ -1,11 +1,9 @@
 name: Atualizar dados do MDA Wiki
 
+# Rodar manualmente (Actions > Atualizar dados do MDA Wiki > Run workflow).
+# Depois, rode `node scripts/build-seed.mjs` e aplique supabase/seed.sql.
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "scripts/scrape-mda.mjs"
-      - ".github/workflows/scrape-mda.yml"
 
 permissions:
   contents: write
