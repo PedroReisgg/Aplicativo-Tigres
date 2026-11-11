@@ -1,0 +1,68 @@
+[
+ {
+  "slug": "adra",
+  "nome": "ADRA",
+  "url": "https://mda.wiki.br/ADRA/",
+  "total": 9
+ },
+ {
+  "slug": "artes-e-habilidades-manuais",
+  "nome": "Artes e Habilidades Manuais",
+  "url": "https://mda.wiki.br/Artes_e_Habilidades_Manuais/",
+  "total": 91
+ },
+ {
+  "slug": "atividades-agricolas",
+  "nome": "Atividades Agrícolas",
+  "url": "https://mda.wiki.br/Atividades_Agrícolas/",
+  "total": 16
+ },
+ {
+  "slug": "atividades-missionarias",
+  "nome": "Atividades Missionárias e Comunitárias",
+  "url": "https://mda.wiki.br/Atividades_Missionárias_e_Comunitárias/",
+  "total": 87
+ },
+ {
+  "slug": "ensinos-biblicos",
+  "nome": "Ensinos Bíblicos",
+  "url": "https://mda.wiki.br/Atividades_Missionárias_e_Comunitárias_-_Ensinos_Biblicos/",
+  "total": 28
+ },
+ {
+  "slug": "atividades-profissionais",
+  "nome": "Atividades Profissionais",
+  "url": "https://mda.wiki.br/Atividades_Profissionais/",
+  "total": 68
+ },
+ {
+  "slug": "atividades-recreativas",
+  "nome": "Atividades Recreativas",
+  "url": "https://mda.wiki.br/Atividades_Recreativas/",
+  "total": 121
+ },
+ {
+  "slug": "ciencia-e-saude",
+  "nome": "Ciência e Saúde",
+  "url": "https://mda.wiki.br/Ciência_e_Saúde/",
+  "total": 43
+ },
+ {
+  "slug": "estudos-da-natureza",
+  "nome": "Estudos da Natureza",
+  "url": "https://mda.wiki.br/Estudos_da_Natureza/",
+  "total": 107
+ },
+ {
+  "slug": "habilidades-domesticas",
+  "nome": "Habilidades Domésticas",
+  "url": "https://mda.wiki.br/Habilidades_Domésticas/",
+  "total": 13
+ },
+ {
+  "slug": "mestrados",
+  "nome": "Mestrados",
+  "url": "https://mda.wiki.br/Mestrados/",
+  "total": 16
+ }
+]
