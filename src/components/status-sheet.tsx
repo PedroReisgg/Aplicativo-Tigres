@@ -85,7 +85,7 @@ export function StatusSheet({
         {desbravadores.length > 6 && <SearchInput value={q} onChange={setQ} placeholder="Buscar desbravador…" />}
         <div className="flex items-center justify-between px-1 text-sm">
           <span className="text-ink-500">
-            {feitos} de {desbravadores.length} concluído(s)
+            {feitos} de {desbravadores.length} {desbravadores.length === 1 ? "concluído" : "concluídos"}
           </span>
           {list.length > 0 && (
             <button className="font-semibold text-tiger-700 hover:underline" onClick={() => list.forEach((d) => set(d.id, all ? null : "feito"))}>

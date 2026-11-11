@@ -100,3 +100,6 @@ export const waLink = (phone?: string | null) => {
   const d = onlyDigits(phone || "");
   return d ? `https://wa.me/55${d}` : null;
 };
+
+/** "1 desbravador", "3 desbravadores" */
+export const plural = (n: number, um: string, varios: string) => `${n} ${n === 1 ? um : varios}`;

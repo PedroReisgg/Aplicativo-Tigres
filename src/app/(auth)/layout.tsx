@@ -3,7 +3,7 @@ import { ClawMarks } from "@/components/ui";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-dvh bg-ink-900 lg:grid lg:grid-cols-[1.05fr_1fr]">
+    <div className="flex min-h-dvh flex-col bg-ink-50 lg:grid lg:grid-cols-[1.05fr_1fr]">
       {/* Lado da marca */}
       <section className="relative overflow-hidden bg-gradient-to-br from-tiger-600 via-tiger-700 to-[#7a2a08] px-6 pb-16 pt-[max(2.5rem,env(safe-area-inset-top))] text-white lg:flex lg:flex-col lg:justify-between lg:px-14 lg:py-14">
         <ClawMarks className="pointer-events-none absolute -right-10 -top-6 h-[340px] w-[340px] rotate-[18deg] text-black/10 lg:h-[560px] lg:w-[560px]" />
@@ -33,7 +33,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       </section>
 
       {/* Formulário */}
-      <section className="relative -mt-8 flex justify-center rounded-t-[28px] bg-ink-50 px-5 pb-[max(2rem,env(safe-area-inset-bottom))] pt-8 lg:mt-0 lg:items-center lg:rounded-none lg:px-10">
+      <section className="relative -mt-8 flex flex-1 justify-center rounded-t-[28px] bg-ink-50 px-5 pb-[max(2rem,env(safe-area-inset-bottom))] pt-8 lg:mt-0 lg:items-center lg:rounded-none lg:px-10">
         <div className="w-full max-w-[420px] animate-fade-up">{children}</div>
       </section>
     </div>

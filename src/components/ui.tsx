@@ -1,6 +1,7 @@
 "use client";
 
 import { forwardRef, useEffect, useId, useRef, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { Loader2, Search, X } from "lucide-react";
 import { initials } from "@/lib/format";
 
@@ -354,7 +355,8 @@ export function Sheet({
   }, [open, onClose]);
 
   if (!open) return null;
-  return (
+  // portal no body: assim o painel cobre a tela toda, mesmo dentro de elementos animados
+  return createPortal(
     <div className="fixed inset-0 z-[60]" role="dialog" aria-modal="true" aria-label={title}>
       <div className="absolute inset-0 bg-ink-900/45 animate-[fade-up_.2s_ease_both]" onClick={onClose} />
       <div
@@ -378,7 +380,8 @@ export function Sheet({
         <div className="flex-1 overflow-y-auto px-5 py-5">{children}</div>
         {footer && <div className="flex flex-wrap justify-end gap-2 border-t border-ink-100 px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">{footer}</div>}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -402,7 +405,7 @@ export function Confirm({
   onClose: () => void;
 }) {
   if (!open) return null;
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[70] grid place-items-center p-4" role="alertdialog" aria-modal="true" aria-label={title}>
       <div className="absolute inset-0 bg-ink-900/45" onClick={onClose} />
       <div className="relative w-full max-w-sm rounded-2xl bg-white p-5 shadow-lift animate-fade-up">
@@ -417,7 +420,8 @@ export function Confirm({
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -432,7 +436,13 @@ export function Tabs<T extends string>({
 }) {
   return (
     <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
-      <div role="tablist" className="inline-flex min-w-full gap-1 rounded-2xl bg-ink-100 p-1 sm:min-w-0">
+      <div
+        role="tablist"
+        className={cn(
+          "gap-1 rounded-2xl bg-ink-100 p-1 sm:inline-flex sm:min-w-0",
+          items.length > 3 ? "grid grid-cols-2" : "inline-flex min-w-full"
+        )}
+      >
         {items.map((it) => (
           <button
             key={it.value}

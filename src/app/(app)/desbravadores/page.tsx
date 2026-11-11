@@ -9,7 +9,7 @@ import { Avatar, Button, Card, EmptyState, PageHeader, SearchInput, Select, Skel
 import { DesbravadorSheet, PhoneLink } from "@/components/domain";
 import { useData } from "@/lib/use-data";
 import { getDesbravadores } from "@/lib/api";
-import { normalize } from "@/lib/format";
+import { normalize, plural } from "@/lib/format";
 
 function Lista() {
   const { classes, isAdmin, staffClassIds, isActive } = useAuth();
@@ -78,7 +78,7 @@ function Lista() {
         />
       ) : (
         <>
-          <p className="mb-2 text-sm text-ink-500">{list.length} desbravador(es)</p>
+          <p className="mb-2 text-sm text-ink-500">{plural(list.length, "desbravador", "desbravadores")}</p>
           {/* Tabela no desktop */}
           <Card className="hidden overflow-hidden md:block">
             <table className="w-full text-sm">

@@ -6,7 +6,7 @@ import { useAuth } from "@/components/auth-provider";
 import { Card, ClawMarks, EmptyState, ProgressBar, Skeleton } from "@/components/ui";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { useData } from "@/lib/use-data";
-import { timeAgo } from "@/lib/format";
+import { plural, timeAgo } from "@/lib/format";
 import type { Notificacao } from "@/lib/types";
 
 function saudacao() {
@@ -126,7 +126,7 @@ export default function PainelPage() {
                       <div className="flex items-center justify-between pl-2">
                         <div>
                           <div className="font-display text-lg font-semibold uppercase tracking-wide">{c.nome}</div>
-                          <div className="text-xs text-ink-500">{isActive ? `${p.n} desbravador(es)` : `A partir de ${c.idade_minima} anos`}</div>
+                          <div className="text-xs text-ink-500">{isActive ? plural(p.n, "desbravador", "desbravadores") : `A partir de ${c.idade_minima} anos`}</div>
                         </div>
                         <ArrowRight className="size-4 text-ink-400 transition-transform group-hover:translate-x-0.5" />
                       </div>

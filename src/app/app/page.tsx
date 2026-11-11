@@ -23,14 +23,14 @@ export default function InstalarPage() {
   }, []);
 
   return (
-    <main className="min-h-dvh paper">
+    <main className="min-h-dvh overflow-x-clip paper">
       <section className="relative overflow-hidden bg-ink-900 px-6 pb-14 pt-[max(2.5rem,env(safe-area-inset-top))] text-center text-white">
         <ClawMarks className="pointer-events-none absolute -right-10 -top-6 h-64 w-64 rotate-12 text-tiger-500/25" />
         <Image src="/brand/logo.png" alt="Tigres do Riacho" width={120} height={120} className="relative mx-auto size-28" priority />
         <h1 className="relative mt-4 font-display text-3xl font-semibold uppercase tracking-wide">Instale o app</h1>
         <p className="relative mx-auto mt-2 max-w-md text-ink-300">O mesmo app no Android, no iPhone e no computador. Tudo fica sincronizado.</p>
       </section>
-      <div className="mx-auto -mt-8 grid max-w-3xl gap-4 px-4 pb-12 sm:grid-cols-2">
+      <div className="relative z-10 mx-auto -mt-8 grid max-w-3xl gap-4 px-4 pb-12 sm:grid-cols-2">
         <Card className={`p-6 ${so === "android" ? "ring-2 ring-tiger-500" : ""}`}>
           <div className="mb-3 flex items-center gap-2 font-display text-xl font-semibold uppercase tracking-wide">
             <Smartphone className="size-5 text-tiger-600" /> Android
@@ -52,7 +52,9 @@ export default function InstalarPage() {
           <ol className="space-y-3 text-sm text-ink-700">
             <li className="flex gap-3">
               <span className="grid size-6 shrink-0 place-items-center rounded-full bg-tiger-100 text-xs font-bold text-tiger-800">1</span>
-              Abra <strong>tigresapp.vercel.app</strong> no <strong>Safari</strong>.
+              <span>
+                Abra <strong>tigresapp.vercel.app</strong> no <strong>Safari</strong>.
+              </span>
             </li>
             <li className="flex gap-3">
               <span className="grid size-6 shrink-0 place-items-center rounded-full bg-tiger-100 text-xs font-bold text-tiger-800">2</span>

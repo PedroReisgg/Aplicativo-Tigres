@@ -257,7 +257,7 @@ export function PickDesbravadores({
       {desbravadores.length > 6 && <SearchInput value={q} onChange={setQ} placeholder="Buscar desbravador…" />}
       <div className="flex items-center justify-between px-1 text-sm">
         <span className="text-ink-500">
-          {selected.size} de {desbravadores.length} selecionado(s)
+          {selected.size} de {desbravadores.length} {desbravadores.length === 1 ? "selecionado" : "selecionados"}
         </span>
         <button className="font-semibold text-tiger-700 hover:underline" onClick={() => list.forEach((d) => onToggle(d.id, !all))}>
           {all ? "Desmarcar todos" : "Marcar todos"}

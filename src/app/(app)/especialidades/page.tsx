@@ -28,7 +28,7 @@ export default function EspecialidadesPage() {
         title="Especialidades"
         description={`${data?.esps.length || "Todas as"} especialidades e mestrados, com requisitos. Escolha uma área ou busque pelo nome.`}
       />
-      <SearchInput value={q} onChange={setQ} placeholder="Buscar especialidade pelo nome ou código…" className="mb-6" />
+      <SearchInput value={q} onChange={setQ} placeholder="Buscar por nome ou código…" className="mb-6" />
 
       {q ? (
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">

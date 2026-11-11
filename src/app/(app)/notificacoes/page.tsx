@@ -9,7 +9,7 @@ import { Button, Card, EmptyState, PageHeader, Select, Sheet, Skeleton, Textarea
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { useData, must } from "@/lib/use-data";
 import { getMembros, notificar } from "@/lib/api";
-import { timeAgo } from "@/lib/format";
+import { plural, timeAgo } from "@/lib/format";
 import type { Notificacao } from "@/lib/types";
 
 const ICON: Record<string, typeof Bell> = { refazer: RotateCcw, acesso: UserCheck, cadastro: UserCheck, relatorio: FileText };
@@ -45,7 +45,7 @@ export default function NotificacoesPage() {
     <div>
       <PageHeader
         title="Notificações"
-        description={naoLidas.length ? `${naoLidas.length} não lida(s)` : "Tudo em dia."}
+        description={naoLidas.length ? plural(naoLidas.length, "não lida", "não lidas") : "Tudo em dia."}
         actions={
           <>
             {naoLidas.length > 0 && (
@@ -129,7 +129,7 @@ function NovaMensagem({ open, onClose }: { open: boolean; onClose: () => void })
     } else ids = [para];
     try {
       await notificar(userId!, ids, { titulo: titulo.trim() || `Mensagem de ${profile?.nome.split(" ")[0]}`, mensagem: msg.trim() });
-      toast.success(`Mensagem enviada para ${ids.length} pessoa(s).`);
+      toast.success(`Mensagem enviada para ${plural(ids.length, "pessoa", "pessoas")}.`);
       setPara("");
       setTitulo("");
       setMsg("");

@@ -85,7 +85,7 @@ export default function DesbravadorPage() {
             <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink-500">
               <span>{d.classe_nome ? `Classe de ${d.classe_nome}` : "Sem classe"}</span>
               {d.idade != null && <span>{d.idade} anos</span>}
-              {d.unidade && <span>Unidade {d.unidade}</span>}
+              {d.unidade && <span>{/^unidade\b/i.test(d.unidade) ? d.unidade : `Unidade ${d.unidade}`}</span>}
               {!d.ativo && <Badge tone="red">Inativo</Badge>}
             </div>
           </div>
