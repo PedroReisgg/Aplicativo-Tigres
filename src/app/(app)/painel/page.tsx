@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Award, BookOpen, Clock, Hourglass, ShieldCheck, UserPlus, Users } from "lucide-react";
+import { ArrowRight, Award, BookOpen, Clock, Flag, Hourglass, ShieldCheck, UserPlus, Users } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
 import { Card, ClawMarks, EmptyState, ProgressBar, Skeleton } from "@/components/ui";
 import { supabaseBrowser } from "@/lib/supabase/client";
@@ -15,7 +15,7 @@ function saudacao() {
 }
 
 export default function PainelPage() {
-  const { profile, isAdmin, isActive, isPending, classes, staffClassIds, userId } = useAuth();
+  const { profile, isAdmin, isActive, isPending, classes, staffClassIds, unidadeIds, userId, veTudo, isLeitor, isConselheiro } = useAuth();
   const sb = supabaseBrowser();
 
   const { data, loading } = useData(async () => {
@@ -37,7 +37,7 @@ export default function PainelPage() {
     };
   }, [isActive, isAdmin, userId]);
 
-  const minhas = classes.filter((c) => (isAdmin ? true : staffClassIds.includes(c.id)));
+  const minhas = classes.filter((c) => (veTudo ? true : staffClassIds.includes(c.id)));
 
   function progressoClasse(cid: number) {
     if (!data) return { n: 0, pct: 0 };
@@ -62,7 +62,13 @@ export default function PainelPage() {
             {isPending
               ? "Seu cadastro está na lista de espera. Enquanto isso, você já pode consultar os cadernos e as especialidades."
               : isAdmin
-              ? "Você tem acesso completo ao clube: classes, desbravadores, diretoria e relatórios."
+              ? "Você tem acesso completo ao clube: classes, unidades, desbravadores, diretoria e relatórios."
+              : isLeitor
+              ? "Você vê todo o clube e baixa todas as planilhas. Só o diretor faz alterações."
+              : isConselheiro
+              ? unidadeIds.length
+                ? "Acompanhe os desbravadores das unidades que você coordena."
+                : "Seu acesso está ativo. Peça ao diretor para colocar você em uma unidade."
               : staffClassIds.length
               ? "Acompanhe sua classe, marque o caderno e registre as especialidades."
               : "Seu acesso está ativo. Peça ao diretor para vincular você a uma classe."}
@@ -78,7 +84,7 @@ export default function PainelPage() {
           <div>
             <h2 className="font-semibold text-amber-900">Aguardando aprovação do diretor</h2>
             <p className="mt-0.5 text-sm text-amber-800">
-              Assim que o diretor escolher sua classe, você recebe uma notificação e passa a marcar o caderno e as especialidades dos desbravadores.
+              Assim que o diretor confirmar seu cargo{profile?.cargo_solicitado ? ` (${profile.cargo_solicitado})` : ""}, você recebe uma notificação e o app libera o que é da sua função.
             </p>
           </div>
         </Card>
@@ -90,7 +96,7 @@ export default function PainelPage() {
           {[
             { label: "Desbravadores", value: data?.desb.length, icon: Users, href: "/desbravadores" },
             { label: "Especialidades concluídas", value: data?.especialidades, icon: Award, href: "/especialidades" },
-            { label: isAdmin ? "Classes" : "Minhas classes", value: minhas.length, icon: BookOpen, href: "/classes" },
+            { label: veTudo ? "Classes" : "Minhas classes", value: minhas.length, icon: BookOpen, href: "/classes" },
             ...(isAdmin ? [{ label: "Na lista de espera", value: data?.pendentes, icon: Clock, href: "/diretoria" }] : []),
           ].map((s) => (
             <Link key={s.label} href={s.href} className="group">
@@ -108,13 +114,18 @@ export default function PainelPage() {
         {/* Classes */}
         <section>
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-display text-xl font-semibold uppercase tracking-wide">{isAdmin || isPending ? "Classes" : "Minhas classes"}</h2>
+            <h2 className="font-display text-xl font-semibold uppercase tracking-wide">{veTudo || isPending ? "Classes" : "Minhas classes"}</h2>
             <Link href="/classes" className="text-sm font-semibold text-tiger-700 hover:underline">
               Ver todas
             </Link>
           </div>
           {(isPending ? classes : minhas).length === 0 ? (
-            <EmptyState icon={<BookOpen className="size-6" />} title="Nenhuma classe vinculada" description="O diretor ainda não vinculou você a uma classe." />
+            <EmptyState
+              icon={<BookOpen className="size-6" />}
+              title={isConselheiro ? "Classes são dos instrutores" : "Nenhuma classe vinculada"}
+              description={isConselheiro ? "Como conselheiro(a), você acompanha os desbravadores pela página Unidades." : "O diretor ainda não vinculou você a uma classe."}
+              action={isConselheiro && <Link href="/unidades" className="font-semibold text-tiger-700 hover:underline">Ver minhas unidades</Link>}
+            />
           ) : (
             <div className="grid gap-3 sm:grid-cols-2">
               {(isPending ? classes : minhas).map((c) => {
@@ -170,12 +181,17 @@ export default function PainelPage() {
           </div>
           {isActive && (
             <div className="grid gap-2">
-              <Link href="/desbravadores?novo=1" className="flex items-center gap-3 rounded-2xl border border-ink-200 bg-white p-4 font-semibold hover:border-tiger-300 hover:bg-tiger-50">
-                <UserPlus className="size-5 text-tiger-600" /> Cadastrar desbravador
+              {(isAdmin || staffClassIds.length > 0 || (isConselheiro && unidadeIds.length > 0)) && (
+                <Link href="/desbravadores?novo=1" className="flex items-center gap-3 rounded-2xl border border-ink-200 bg-white p-4 font-semibold hover:border-tiger-300 hover:bg-tiger-50">
+                  <UserPlus className="size-5 text-tiger-600" /> Cadastrar desbravador
+                </Link>
+              )}
+              <Link href="/unidades" className="flex items-center gap-3 rounded-2xl border border-ink-200 bg-white p-4 font-semibold hover:border-tiger-300 hover:bg-tiger-50">
+                <Flag className="size-5 text-tiger-600" /> {isAdmin ? "Unidades e conselheiros" : "Ver unidades"}
               </Link>
-              {isAdmin && (
+              {veTudo && (
                 <Link href="/diretoria" className="flex items-center gap-3 rounded-2xl border border-ink-200 bg-white p-4 font-semibold hover:border-tiger-300 hover:bg-tiger-50">
-                  <ShieldCheck className="size-5 text-tiger-600" /> Gerenciar diretoria e lista de espera
+                  <ShieldCheck className="size-5 text-tiger-600" /> {isAdmin ? "Gerenciar diretoria e lista de espera" : "Diretoria e planilhas do clube"}
                 </Link>
               )}
             </div>

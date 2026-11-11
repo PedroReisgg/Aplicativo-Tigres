@@ -434,7 +434,24 @@ export function fileName(base: string, ext: "xlsx" | "pdf") {
   return `tigres-${slug(base)}-${new Date().toISOString().slice(0, 10)}.${ext}`;
 }
 
+/** No app Android (Capacitor) o WebView não baixa arquivos: salva e abre o "Compartilhar/Salvar" do celular. */
+function noAppAndroid() {
+  const cap = (globalThis as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor;
+  return !!cap?.isNativePlatform?.();
+}
+
+async function salvarNoApp(blob: Blob, name: string) {
+  const [{ Filesystem, Directory }, { Share }] = await Promise.all([import("@capacitor/filesystem"), import("@capacitor/share")]);
+  const { uri } = await Filesystem.writeFile({ path: name, data: await blobToBase64(blob), directory: Directory.Cache });
+  await Share.share({ title: name, dialogTitle: "Salvar ou enviar arquivo", files: [uri] });
+}
+
 export function downloadBlob(blob: Blob, name: string) {
+  if (noAppAndroid()) {
+    return salvarNoApp(blob, name).catch((e) => {
+      if (!/cancel/i.test(String((e as Error)?.message))) console.error(e);
+    });
+  }
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -443,6 +460,7 @@ export function downloadBlob(blob: Blob, name: string) {
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 4000);
+  return Promise.resolve();
 }
 
 export async function shareBlob(blob: Blob, name: string, title: string) {

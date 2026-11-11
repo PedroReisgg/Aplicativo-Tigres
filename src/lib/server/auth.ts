@@ -132,3 +132,18 @@ export function traduzErro(msg?: string) {
   if (/password/i.test(msg)) return "A senha não atende aos requisitos.";
   return msg;
 }
+
+/** Confere o token da requisição e devolve o perfil ativo (com sessão verificada). */
+export async function perfilDaRequisicao(req: Request) {
+  const token = (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
+  if (!token) return { erro: "Sessão expirada. Entre de novo.", status: 401 } as const;
+  const db = admin();
+  const { data: u } = await db.auth.getUser(token);
+  if (!u?.user) return { erro: "Sessão expirada. Entre de novo.", status: 401 } as const;
+  const { data: perfil } = await db.from("profiles").select("id, nome, email, status, is_admin, cargo").eq("id", u.user.id).single();
+  if (!perfil || perfil.status !== "ativo") return { erro: "Acesso não liberado.", status: 403 } as const;
+  const sid = sessionIdFrom(token);
+  const { data: ok } = await db.from("sessoes_verificadas").select("session_id").eq("session_id", sid).maybeSingle();
+  if (!ok) return { erro: "Sessão não verificada. Entre de novo.", status: 401 } as const;
+  return { perfil: perfil as { id: string; nome: string; email: string; status: string; is_admin: boolean; cargo: string } } as const;
+}

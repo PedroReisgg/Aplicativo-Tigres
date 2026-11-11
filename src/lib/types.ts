@@ -12,6 +12,15 @@ export interface Profile {
   created_at: string;
   idade?: number | null;
   classes?: { class_id: number; funcao: string }[];
+  unidades?: { unidade_id: string; funcao: string }[];
+  cargo_solicitado?: string | null;
+}
+
+export interface Unidade {
+  id: string;
+  nome: string;
+  cor: string;
+  created_at: string;
 }
 
 export interface Classe {
@@ -72,6 +81,7 @@ export interface Desbravador {
   email: string | null;
   endereco: string | null;
   unidade: string | null;
+  unidade_id: string | null;
   class_id: number | null;
   observacoes: string | null;
   ativo: boolean;
@@ -80,6 +90,7 @@ export interface Desbravador {
   classe_nome?: string | null;
   classe_slug?: string | null;
   classe_cor?: string | null;
+  unidade_cor?: string | null;
 }
 
 export interface Progresso {
@@ -111,6 +122,7 @@ export interface Notificacao {
   created_at: string;
 }
 
+/** Cargos que a pessoa pode escolher no cadastro. */
 export const CARGOS = [
   "Diretor",
   "Diretor Associado",
@@ -119,8 +131,23 @@ export const CARGOS = [
   "Capelão",
   "Instrutor(a)",
   "Conselheiro(a)",
-  "Conselheiro(a) Associado(a)",
-  "Apoio",
 ];
 
-export const FUNCOES_CLASSE = ["Instrutor(a)", "Conselheiro(a)", "Auxiliar"];
+/** Cargos com acesso de administrador (podem mudar tudo). */
+export const CARGOS_ADMIN = ["Diretor", "Diretor Associado"];
+/** Cargos que veem todo o clube e baixam planilhas, sem poder mudar. */
+export const CARGOS_LEITURA = ["Secretário(a)", "Tesoureiro(a)", "Capelão"];
+export const CARGO_INSTRUTOR = "Instrutor(a)";
+export const CARGO_CONSELHEIRO = "Conselheiro(a)";
+
+export const DESCRICAO_CARGO: Record<string, string> = {
+  Diretor: "Acesso total: aprova cadastros, cria unidades, importa desbravadores e mexe em tudo.",
+  "Diretor Associado": "Acesso total, igual ao diretor.",
+  "Secretário(a)": "Vê todo o clube e baixa todas as planilhas, sem poder alterar.",
+  "Tesoureiro(a)": "Vê todo o clube e baixa todas as planilhas, sem poder alterar.",
+  Capelão: "Vê todo o clube e baixa todas as planilhas, sem poder alterar.",
+  "Instrutor(a)": "Coordena as classes que o diretor definir: marca o caderno e as especialidades.",
+  "Conselheiro(a)": "Coordena as unidades que o diretor definir: acompanha e atualiza os desbravadores delas.",
+};
+
+export const CORES_UNIDADE = ["#F26B1D", "#D93A2B", "#2F7D4F", "#2563A8", "#7B3FA0", "#C99A12", "#0E8C8C", "#6B4A2E"];

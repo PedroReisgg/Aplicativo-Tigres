@@ -4,17 +4,19 @@ import Link from "next/link";
 import { useState } from "react";
 import { ArrowLeft, MailCheck } from "lucide-react";
 import { toast } from "sonner";
-import { Button, Input } from "@/components/ui";
+import { Button, Input, Select } from "@/components/ui";
 import { applySession, CodeInput, PasswordInput, postJSON } from "@/components/auth-forms";
+import { CARGOS, DESCRICAO_CARGO } from "@/lib/types";
 import { brToIso, isStrongPassword, isValidEmail, isValidPhone, maskDate, maskPhone } from "@/lib/format";
 
-type Form = { nome: string; email: string; telefone: string; data_nascimento: string; password: string; confirm: string };
-const vazio: Form = { nome: "", email: "", telefone: "", data_nascimento: "", password: "", confirm: "" };
+type Form = { nome: string; email: string; cargo: string; telefone: string; data_nascimento: string; password: string; confirm: string };
+const vazio: Form = { nome: "", email: "", cargo: "", telefone: "", data_nascimento: "", password: "", confirm: "" };
 
 function validar(f: Form): Partial<Record<keyof Form, string>> {
   const e: Partial<Record<keyof Form, string>> = {};
   if (f.nome.trim().split(/\s+/).length < 2) e.nome = "Informe nome e sobrenome.";
   if (!isValidEmail(f.email)) e.email = "Digite um e-mail válido.";
+  if (!CARGOS.includes(f.cargo)) e.cargo = "Escolha seu cargo no clube.";
   if (!isValidPhone(f.telefone)) e.telefone = "Telefone com DDD, ex.: (11) 98765-4321.";
   if (!brToIso(f.data_nascimento)) e.data_nascimento = "Data no formato dd/mm/aaaa.";
   if (!isStrongPassword(f.password)) e.password = "A senha não atende aos requisitos abaixo.";
@@ -36,7 +38,7 @@ export default function CadastroPage() {
 
   async function enviar(e: React.FormEvent) {
     e.preventDefault();
-    setTouched({ nome: true, email: true, telefone: true, data_nascimento: true, password: true, confirm: true });
+    setTouched({ nome: true, email: true, cargo: true, telefone: true, data_nascimento: true, password: true, confirm: true });
     if (Object.keys(errors).length) return;
     setErr(null);
     setLoading(true);
@@ -110,7 +112,7 @@ export default function CadastroPage() {
     <form onSubmit={enviar} className="space-y-4" noValidate>
       <div className="mb-1">
         <h1 className="font-display text-3xl font-semibold uppercase tracking-wide">Cadastro da diretoria</h1>
-        <p className="mt-1.5 text-ink-500">Depois do cadastro, o diretor libera seu acesso e define sua classe.</p>
+        <p className="mt-1.5 text-ink-500">Depois do cadastro, o diretor confere e libera seu acesso.</p>
       </div>
       <Input label="Nome completo" autoComplete="name" value={f.nome} onChange={(e) => set("nome")(e.target.value)} onBlur={blur("nome")} error={show("nome")} required />
       <Input
@@ -124,6 +126,22 @@ export default function CadastroPage() {
         error={show("email")}
         required
       />
+      <Select
+        label="Cargo no clube"
+        value={f.cargo}
+        onChange={(e) => {
+          set("cargo")(e.target.value);
+          setTouched((t) => ({ ...t, cargo: true }));
+        }}
+        error={show("cargo")}
+        hint={f.cargo ? DESCRICAO_CARGO[f.cargo] : undefined}
+        required
+      >
+        <option value="">Escolha…</option>
+        {CARGOS.map((c) => (
+          <option key={c}>{c}</option>
+        ))}
+      </Select>
       <div className="grid gap-4 sm:grid-cols-2">
         <Input
           label="Telefone (WhatsApp)"

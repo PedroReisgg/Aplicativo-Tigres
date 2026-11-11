@@ -2,7 +2,7 @@
 
 import { supabaseBrowser } from "./supabase/client";
 import { must } from "./use-data";
-import type { CadernoItem, Categoria, Classe, DesbEsp, Desbravador, Especialidade, Profile, Progresso } from "./types";
+import type { CadernoItem, Categoria, Classe, DesbEsp, Desbravador, Especialidade, Profile, Progresso, Unidade } from "./types";
 
 const sb = () => supabaseBrowser();
 
@@ -45,9 +45,18 @@ export async function getClassEsp(classId: number) {
   ) as { especialidade_codigo: string; obrigatoria: boolean; created_at: string }[];
 }
 
-export async function getDesbravadores(opts: { classId?: number | null; ativos?: boolean } = {}): Promise<Desbravador[]> {
+export async function getUnidades(): Promise<Unidade[]> {
+  return must(await sb().from("unidades").select("*").order("nome")) as Unidade[];
+}
+
+export async function getUnidadeStaff() {
+  return must(await sb().from("unidade_staff").select("unidade_id, profile_id")) as { unidade_id: string; profile_id: string }[];
+}
+
+export async function getDesbravadores(opts: { classId?: number | null; unidadeId?: string | null; ativos?: boolean } = {}): Promise<Desbravador[]> {
   let q = sb().from("desbravadores_view").select("*").order("nome");
   if (opts.classId) q = q.eq("class_id", opts.classId);
+  if (opts.unidadeId) q = q.eq("unidade_id", opts.unidadeId);
   if (opts.ativos !== false) q = q.eq("ativo", true);
   return must(await q) as Desbravador[];
 }

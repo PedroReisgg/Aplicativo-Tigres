@@ -6,7 +6,7 @@ import { useAuth } from "@/components/auth-provider";
 import { Card, PageHeader } from "@/components/ui";
 
 export default function ClassesPage() {
-  const { classes, canManageClass, isActive } = useAuth();
+  const { classes, canManageClass, isActive, veTudo } = useAuth();
   return (
     <div>
       <PageHeader
@@ -29,7 +29,7 @@ export default function ClassesPage() {
                 </div>
                 {isActive && !canManageClass(c.id) ? (
                   <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-ink-100 px-2 py-0.5 text-[11px] font-semibold text-ink-500">
-                    <Lock className="size-3" /> Consulta
+                    <Lock className="size-3" /> {veTudo ? "Só ver" : "Consulta"}
                   </span>
                 ) : (
                   <ArrowRight className="mt-1.5 size-5 text-ink-400 transition-transform group-hover:translate-x-0.5" />

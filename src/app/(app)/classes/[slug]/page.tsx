@@ -26,6 +26,8 @@ export default function ClassePage() {
   const auth = useAuth();
   const classe = auth.classes.find((c) => c.slug === slug);
   const pode = auth.canManageClass(classe?.id);
+  // secretaria, tesouraria e capelania consultam tudo (sem alterar)
+  const ve = pode || auth.veTudo;
   const [aba, setAba] = useState<Aba>((search.get("aba") as Aba) || "caderno");
   const sb = supabaseBrowser();
 
@@ -35,13 +37,13 @@ export default function ClassePage() {
     let desb: Desbravador[] = [];
     let prog: Awaited<ReturnType<typeof getProgresso>> = [];
     let desbEsp: Awaited<ReturnType<typeof getDesbEsp>> = [];
-    if (pode) {
+    if (ve) {
       desb = await getDesbravadores({ classId: classe.id });
       const ids = desb.map((d) => d.id);
       [prog, desbEsp] = await Promise.all([getProgresso(ids), getDesbEsp(ids)]);
     }
     return { itens, classEsp, todas, staff, desb, prog, desbEsp };
-  }, [classe?.id, pode]);
+  }, [classe?.id, ve]);
 
   const espMap = useMemo(() => new Map((data?.todas || []).map((e) => [e.codigo, e])), [data?.todas]);
 
@@ -52,7 +54,7 @@ export default function ClassePage() {
   const abas: { value: Aba; label: string; count?: number }[] = [
     { value: "caderno", label: "Caderno", count: data?.itens.length },
     { value: "especialidades", label: "Especialidades", count: data?.classEsp.length },
-    ...(pode
+    ...(ve
       ? [
           { value: "desbravadores" as Aba, label: "Desbravadores", count: data?.desb.length },
           { value: "relatorio" as Aba, label: "Relatório" },
@@ -84,7 +86,7 @@ export default function ClassePage() {
               ))}
             </div>
           )}
-          {pode && data && data.desb.length > 0 && (
+          {ve && data && data.desb.length > 0 && (
             <div className="mt-5 max-w-md">
               <div className="mb-1 flex justify-between text-sm text-white/85">
                 <span>Progresso médio do caderno</span>
@@ -99,7 +101,7 @@ export default function ClassePage() {
       </section>
 
       {!pode && auth.isActive && (
-        <p className="mb-4 rounded-2xl bg-ink-100 px-4 py-3 text-sm text-ink-600">Você está consultando esta classe. Só a equipe da classe e a diretoria marcam o caderno.</p>
+        <p className="mb-4 rounded-2xl bg-ink-100 px-4 py-3 text-sm text-ink-600">Você está consultando esta classe. Só os instrutores da classe e o diretor marcam o caderno.</p>
       )}
 
       <div className="mb-5">
@@ -117,7 +119,7 @@ export default function ClassePage() {
       ) : aba === "especialidades" ? (
         <EspecialidadesTab classeId={classe.id} classEsp={data.classEsp} todas={data.todas} desb={data.desb} desbEsp={data.desbEsp} pode={pode} onChange={() => reload(true)} />
       ) : aba === "desbravadores" ? (
-        <DesbravadoresTab classeId={classe.id} cor={classe.cor} desb={data.desb} itens={data.itens} prog={data.prog} desbEsp={data.desbEsp} classEsp={data.classEsp} onChange={() => reload(true)} />
+        <DesbravadoresTab pode={pode} classeId={classe.id} cor={classe.cor} desb={data.desb} itens={data.itens} prog={data.prog} desbEsp={data.desbEsp} classEsp={data.classEsp} onChange={() => reload(true)} />
       ) : (
         <div className="space-y-4">
           <ReportPanel
@@ -613,6 +615,7 @@ function AddEspSheet({
 
 // ------------------------------------------------------------------ Desbravadores da classe
 function DesbravadoresTab({
+  pode,
   classeId,
   cor,
   desb,
@@ -622,6 +625,7 @@ function DesbravadoresTab({
   classEsp,
   onChange,
 }: {
+  pode: boolean;
   classeId: number;
   cor: string;
   desb: Desbravador[];
@@ -639,12 +643,14 @@ function DesbravadoresTab({
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row">
         <SearchInput value={q} onChange={setQ} placeholder="Buscar desbravador…" className="flex-1" />
-        <Button icon={<UserPlus className="size-4" />} onClick={() => setNovo(true)}>
-          Adicionar desbravador
-        </Button>
+        {pode && (
+          <Button icon={<UserPlus className="size-4" />} onClick={() => setNovo(true)}>
+            Adicionar desbravador
+          </Button>
+        )}
       </div>
       {!desb.length ? (
-        <EmptyState icon={<Users className="size-6" />} title="Nenhum desbravador nesta classe" description="Cadastre os desbravadores para começar a marcar o caderno." action={<Button onClick={() => setNovo(true)}>Adicionar desbravador</Button>} />
+        <EmptyState icon={<Users className="size-6" />} title="Nenhum desbravador nesta classe" description="Cadastre os desbravadores para começar a marcar o caderno." action={pode && <Button onClick={() => setNovo(true)}>Adicionar desbravador</Button>} />
       ) : (
         <Card className="divide-y divide-ink-100">
           {list.map((d) => {
