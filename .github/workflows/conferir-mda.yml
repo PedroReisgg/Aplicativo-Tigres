@@ -1,0 +1,31 @@
+name: Conferir dados do MDA Wiki
+
+# Rodar manualmente (Actions > Conferir dados do MDA Wiki > Run workflow).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: conferir-mda-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  conferir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-save linkedom@0.18.15 sharp@0.34.3
+      - run: node scripts/conferir-mda.mjs
+      - name: Commit dos dados
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/mda public/esp
+          git commit -m "chore(dados): confere e completa especialidades e cartões do MDA Wiki" || exit 0
+          for i in 1 2 3; do git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && break; sleep 5; done

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, MailCheck } from "lucide-react";
 import { toast } from "sonner";
 import { Button, Input } from "@/components/ui";
@@ -17,8 +17,19 @@ export default function EntrarPage() {
   const [emailErr, setEmailErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // lembra o último e-mail usado neste aparelho
+  useEffect(() => {
+    try {
+      const salvo = localStorage.getItem("tigres:ultimo-email");
+      if (salvo) setEmail(salvo);
+    } catch {}
+  }, []);
+
   async function finish(session: { access_token: string; refresh_token: string }) {
     await applySession(session);
+    try {
+      localStorage.setItem("tigres:ultimo-email", email);
+    } catch {}
     window.location.href = "/painel";
   }
 
@@ -120,6 +131,7 @@ export default function EntrarPage() {
       <Button type="submit" size="lg" className="w-full" loading={loading} disabled={!email || !password}>
         Continuar
       </Button>
+      <p className="-mt-1 text-center text-xs text-ink-400">Você continua conectado neste aparelho até tocar em Sair.</p>
       <p className="text-center text-sm text-ink-500">
         É da diretoria e ainda não tem conta?{" "}
         <Link href="/cadastro" className="font-semibold text-tiger-700 hover:underline">

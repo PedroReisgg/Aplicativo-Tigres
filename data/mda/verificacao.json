@@ -1,0 +1,53 @@
+{
+ "inicio": "2026-11-11T18:03:04.153Z",
+ "requisitosAtualizados": [
+  "AMEB-009 Vida, morte e ressureição de Cristo (0 -> 7 linhas)",
+  "AMEB-009-211 Vida, morte e ressureição de Cristo (0 -> 7 linhas)",
+  "CS-016 Ossos, Músculos e Articulações (0 -> 18 linhas)"
+ ],
+ "linksCorrigidos": [
+  "AMEB-009: https://mda.wiki.br/Especialidade_de_Vida,_morte_e_ressureição_de_Cristo -> https://mda.wiki.br/Especialidade_de_Vida,_Morte_e_Ressurreição_de_Cristo",
+  "AMEB-009-211: https://mda.wiki.br/Especialidade_de_Vida,_morte_e_ressureição_de_Cristo -> https://mda.wiki.br/Especialidade_de_Vida,_Morte_e_Ressurreição_de_Cristo",
+  "CS-016: https://mda.wiki.br/Especialidade_de_Ossos,_Músculos_e_Articulações -> https://mda.wiki.br/Especialidade_de_Ossos_Músculos_e_Articulações"
+ ],
+ "imagensBaixadas": [
+  "EN-031"
+ ],
+ "novas": [],
+ "semRequisitos": [],
+ "semImagem": [],
+ "classes": {
+  "Amigo": {
+   "secoes": 10,
+   "itens": 34,
+   "antes": 34
+  },
+  "Companheiro": {
+   "secoes": 10,
+   "itens": 37,
+   "antes": 37
+  },
+  "Pesquisador": {
+   "secoes": 10,
+   "itens": 34,
+   "antes": 34
+  },
+  "Pioneiro": {
+   "secoes": 10,
+   "itens": 34,
+   "antes": 34
+  },
+  "Excursionista": {
+   "secoes": 10,
+   "itens": 36,
+   "antes": 36
+  },
+  "Guia": {
+   "secoes": 10,
+   "itens": 36,
+   "antes": 36
+  }
+ },
+ "total": 599,
+ "fim": "2026-11-11T18:04:48.960Z"
+}

@@ -1,6 +1,6 @@
 // Service worker simples: cache de arquivos estáticos e página offline.
-const CACHE = "tigres-v1";
-const PRECACHE = ["/offline", "/brand/logo.png", "/icon-192.png"];
+const CACHE = "tigres-v2";
+const PRECACHE = ["/offline", "/brand/logo.webp", "/icon-192.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(PRECACHE)).then(() => self.skipWaiting()));

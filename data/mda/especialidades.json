@@ -2379,15 +2379,15 @@
   "imagem": "/esp/ameb-008.webp"
  },
  {
-  "url": "https://mda.wiki.br/Especialidade_de_Vida,_morte_e_ressureição_de_Cristo",
+  "url": "https://mda.wiki.br/Especialidade_de_Vida,_Morte_e_Ressurreição_de_Cristo",
   "nome": "Vida, morte e ressureição de Cristo",
   "img": "https://mda.wiki.br/site/@imgs_wiki/imagem@ameb009.png?20261107223253",
   "categoria": "atividades-missionarias",
   "tipo": "especialidade",
-  "nivel": null,
-  "ano": null,
-  "origem": null,
-  "requisitos": "",
+  "nivel": 1,
+  "ano": 2025,
+  "origem": "Divisão Sul Americana",
+  "requisitos": "1. Saber como 1 Pedro 2:22-23 descreve a vida perfeita que Cristo viveu.\n2. Reconhecer quem foi o único ser humano que nunca pecou. (Hebreus 4:15)\n3. Conhecer o que Cristo conquistou por meio da sua morte. (Romanos 5:10; Apocalipse 5:9)\n4. Explicar por que Jesus precisou morrer mesmo sem ter cometido nenhum pecado. (1 Timóteo 1:15; Romanos 5:8)\n5. Definir qual é a importância da ressurreição de Jesus para a nossa salvação. (1 Coríntios 15:20-23)\n6. Memorizar e recitar Isaías 53:4-5.\n7. Compartilhar com um amigo qual foi o propósito da vinda, morte e ressurreição de Jesus. (Lucas 19:10; João 3:16-17; Hebreus 7:25; Atos 4:12)",
   "codigo": "AMEB-009",
   "imagem": "/esp/ameb-009.webp"
  },
@@ -2743,15 +2743,15 @@
   "imagem": "/esp/ameb-008-210.webp"
  },
  {
-  "url": "https://mda.wiki.br/Especialidade_de_Vida,_morte_e_ressureição_de_Cristo",
+  "url": "https://mda.wiki.br/Especialidade_de_Vida,_Morte_e_Ressurreição_de_Cristo",
   "nome": "Vida, morte e ressureição de Cristo",
   "img": "https://mda.wiki.br/site/@imgs_wiki/imagem@ameb009.png?20261005181911",
   "categoria": "ensinos-biblicos",
   "tipo": "especialidade",
-  "nivel": null,
-  "ano": null,
-  "origem": null,
-  "requisitos": "",
+  "nivel": 1,
+  "ano": 2025,
+  "origem": "Divisão Sul Americana",
+  "requisitos": "1. Saber como 1 Pedro 2:22-23 descreve a vida perfeita que Cristo viveu.\n2. Reconhecer quem foi o único ser humano que nunca pecou. (Hebreus 4:15)\n3. Conhecer o que Cristo conquistou por meio da sua morte. (Romanos 5:10; Apocalipse 5:9)\n4. Explicar por que Jesus precisou morrer mesmo sem ter cometido nenhum pecado. (1 Timóteo 1:15; Romanos 5:8)\n5. Definir qual é a importância da ressurreição de Jesus para a nossa salvação. (1 Coríntios 15:20-23)\n6. Memorizar e recitar Isaías 53:4-5.\n7. Compartilhar com um amigo qual foi o propósito da vinda, morte e ressurreição de Jesus. (Lucas 19:10; João 3:16-17; Hebreus 7:25; Atos 4:12)",
   "codigo": "AMEB-009-211",
   "imagem": "/esp/ameb-009-211.webp"
  },
@@ -5655,15 +5655,15 @@
   "imagem": "/esp/cs-015.webp"
  },
  {
-  "url": "https://mda.wiki.br/Especialidade_de_Ossos,_Músculos_e_Articulações",
+  "url": "https://mda.wiki.br/Especialidade_de_Ossos_Músculos_e_Articulações",
   "nome": "Ossos, Músculos e Articulações",
   "img": "https://mda.wiki.br/site/@imgs_wiki/imagem@cs016.png?20261102162238",
   "categoria": "ciencia-e-saude",
   "tipo": "especialidade",
-  "nivel": null,
-  "ano": null,
-  "origem": null,
-  "requisitos": "",
+  "nivel": 2,
+  "ano": 1999,
+  "origem": "Associação Geral",
+  "requisitos": "1. Qual a diferença entre endoesqueleto e exoesqueleto? Qual desses tipos de esqueleto os humanos têm?\n2. Citar, pelo menos, três funções do sistema muscoesquelético.\n3. Definir:\n  a) Esqueleto axial\n  b) Esqueleto apendicular\n4. Descrever a classificação dos ossos de acordo com o seu formato, ilustrando-os.\n5. Quantos ossos um ser humano adulto tem?\n6. Desenhar ou colar uma figura de esqueleto humano, identificando, no mínimo, 10 ossos, sem repeti-los.\n7. Definir diáfise, metáfise e epífise, ilustrando-os.\n8. O que é disco epifisário e qual a sua importância?\n9. O que são articulações? Descrever os 3 tipos com as suas subdivisões, ilustrando todas.\n10. Fazer um modelo de uma das 6 articulações sinoviais.\n11. O que é fratura óssea? Como é feita a correção médica?\n12. Ilustrar, com desenho ou gravuras, a coluna vertebral, dividindo-a em suas 5 regiões. Quantas vértebras formam cada região?\n13. O que é osteoporose? Quais os locais mais comuns de fratura? Qual é a idade de risco? Quem é o público mais afetado? Qual o melhor exame para detectá-la? Citar alguns cuidados que ajudam a prevenir a osteoporose.\n14. Quais são as principais funções dos músculos esqueléticos?\n15. Identificar os seguintes músculos: trapézio, deltoide, peitoral maior, bíceps, quadríceps, tríceps, reto abdominal, serratil anterior, glúteo máximo, grande dorsal, gastrocnêmio e sóleo.\n16. Descrever o mecanismo de contração muscular.",
   "codigo": "CS-016",
   "imagem": "/esp/cs-016.webp"
  },
@@ -6418,7 +6418,8 @@
   "ano": 1949,
   "origem": "Associação Geral",
   "requisitos": "1. Ter a especialidade de Mamíferos.\n2. Que mamíferos de sua região são protegidos por lei? Por quê?\n3. Como o processo de nascimento e cuidado dos filhotes difere os monotremos e marsupiais de todas as outras ordens de mamíferos?\n4. Mencionar cinco maneiras diferentes pelas quais os mamíferos protegem a si mesmos e aos seus filhotes e dar um exemplo de cada uma.\n5. Conhecer as seguintes zoonoses: febre maculosa, leishmaniose tegumentar americana, leptospirose, hantavirose, raiva, toxoplasmose e doença de Chagas. Sobre cada uma delas dizer:\n  a) Sinais e sintomas\n  b) Vetor/reservatório/hospedeiro\n  c) Transmissão\n  d) Prevenção\n6. Relacionar 15 espécies de mamíferos silvestres que você já observou e identificou pessoalmente na natureza ou um zoológico. Para cada um, dizer:\n  a) Nome popular\n  b) Nome científico\n  c) Habitat\n  d) Hábito\n  e) Comportamento",
-  "codigo": "EN-031"
+  "codigo": "EN-031",
+  "imagem": "/esp/en-031.webp"
  },
  {
   "url": "https://mda.wiki.br/Especialidade_de_Moluscos_-_avançado",
@@ -7583,7 +7584,7 @@
   "img": "https://mda.wiki.br/site/@imgs_wiki/imagem@me001.png?20261012170245",
   "categoria": "mestrados",
   "tipo": "mestrado",
-  "nivel": null,
+  "nivel": 2,
   "ano": 2012,
   "origem": "Associação Geral",
   "requisitos": "1. Ter 7 especialidades em ADRA (AD).",

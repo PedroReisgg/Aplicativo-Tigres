@@ -24,7 +24,7 @@ const slug = (s: string) =>
 
 async function logoDataUrl(): Promise<string | null> {
   try {
-    const r = await fetch("/brand/logo.png");
+    const r = await fetch("/brand/logo-relatorio.png");
     const b = await r.blob();
     return await new Promise((res) => {
       const fr = new FileReader();
