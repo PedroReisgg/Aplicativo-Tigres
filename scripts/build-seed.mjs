@@ -49,7 +49,7 @@ sql += `\non conflict (slug) do update set nome = excluded.nome, cor = excluded.
 
 const rows = esps.map(
   (e) =>
-    `(${q(e.codigo)}, ${q(e.nome)}, ${q(e.categoria)}, ${q(e.tipo)}, ${n(e.nivel)}, ${n(e.ano)}, ${q(e.origem)}, ${q(e.imagem)}, ${q(e.url)}, ${q(e.requisitos || "")})`
+    `(${q(e.codigo)}, ${q(e.nome)}, ${q(e.categoria)}, ${q(e.tipo)}, ${n(e.nivel)}, ${n(e.ano)}, ${q(e.origem)}, ${q(e.imagem)}, ${q(e.url)}, '${String(e.requisitos || "").replace(/'/g, "''")}')`
 );
 for (let i = 0; i < rows.length; i += 100) {
   sql += `insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, ano, origem, imagem, url_mda, requisitos) values\n`;

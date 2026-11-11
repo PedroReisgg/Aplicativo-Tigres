@@ -3353,7 +3353,7 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
   b) Mateus 4 - Jesus no Deserto fortalecido pelos anjos;
   c) Atos 5 - Apóstolos libertos da prisão pelos anjos.
 9. Fazer um desenho ou ilustração representando o Grande Conflito e explicar seu significado.'),
-('AMEB-009', 'Vida, morte e ressureição de Cristo', 'atividades-missionarias', 'especialidade', null, null, null, '/esp/ameb-009.webp', 'https://mda.wiki.br/Especialidade_de_Vida,_morte_e_ressureição_de_Cristo', null),
+('AMEB-009', 'Vida, morte e ressureição de Cristo', 'atividades-missionarias', 'especialidade', null, null, null, '/esp/ameb-009.webp', 'https://mda.wiki.br/Especialidade_de_Vida,_morte_e_ressureição_de_Cristo', ''),
 ('AMEB-010', 'Experiência da Salvação', 'atividades-missionarias', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-010.webp', 'https://mda.wiki.br/Especialidade_de_Experiência_da_Salvação', '1. Saber o que é necessário fazer para receber a salvação que Deus oferece a todos os seres humanos. (Atos 16:31; Romanos 10:9; Efésios 2:8-9)
 2. Entender por que devemos obedecer a Deus mesmo sabendo que não somos salvos pelas nossas boas ações. (João 14:15, 21, 23)
 3. Conhecer o que Jesus fez para garantir o perdão e a salvação da humanidade. (Lucas 23:46; Isaías 53:5; Apocalipse 5:9)
@@ -3571,7 +3571,7 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
   b) Mateus 4 - Jesus no Deserto fortalecido pelos anjos;
   c) Atos 5 - Apóstolos libertos da prisão pelos anjos.
 9. Fazer um desenho ou ilustração representando o Grande Conflito e explicar seu significado.'),
-('AMEB-009-211', 'Vida, morte e ressureição de Cristo', 'ensinos-biblicos', 'especialidade', null, null, null, '/esp/ameb-009-211.webp', 'https://mda.wiki.br/Especialidade_de_Vida,_morte_e_ressureição_de_Cristo', null),
+('AMEB-009-211', 'Vida, morte e ressureição de Cristo', 'ensinos-biblicos', 'especialidade', null, null, null, '/esp/ameb-009-211.webp', 'https://mda.wiki.br/Especialidade_de_Vida,_morte_e_ressureição_de_Cristo', ''),
 ('AMEB-010-212', 'Experiência da Salvação', 'ensinos-biblicos', 'especialidade', 1, 2025, 'Divisão Sul Americana', '/esp/ameb-010-212.webp', 'https://mda.wiki.br/Especialidade_de_Experiência_da_Salvação', '1. Saber o que é necessário fazer para receber a salvação que Deus oferece a todos os seres humanos. (Atos 16:31; Romanos 10:9; Efésios 2:8-9)
 2. Entender por que devemos obedecer a Deus mesmo sabendo que não somos salvos pelas nossas boas ações. (João 14:15, 21, 23)
 3. Conhecer o que Jesus fez para garantir o perdão e a salvação da humanidade. (Lucas 23:46; Isaías 53:5; Apocalipse 5:9)
@@ -8185,7 +8185,7 @@ insert into public.especialidades (codigo, nome, categoria_slug, tipo, nivel, an
 8. O que são fibras alimentares? Qual a importância delas para o processo digestivo? O que acontece se os alimentos permanecerem por mais tempo dentro do trato gastrointestinal?
 9. Demonstrar a digestão do amido em açúcar, utilizando o teste do iodo.
 10. Onde ocorre a digestão/absorção dos seguintes elementos: carboidratos, proteínas, lipídios, vitaminas, minerais e água?'),
-('CS-016', 'Ossos, Músculos e Articulações', 'ciencia-e-saude', 'especialidade', null, null, null, '/esp/cs-016.webp', 'https://mda.wiki.br/Especialidade_de_Ossos,_Músculos_e_Articulações', null),
+('CS-016', 'Ossos, Músculos e Articulações', 'ciencia-e-saude', 'especialidade', null, null, null, '/esp/cs-016.webp', 'https://mda.wiki.br/Especialidade_de_Ossos,_Músculos_e_Articulações', ''),
 ('CS-017', 'Sistema Nervoso', 'ciencia-e-saude', 'especialidade', 3, 1999, 'Associação Geral', '/esp/cs-017.webp', 'https://mda.wiki.br/Especialidade_de_Sistema_Nervoso', '1. Fazer um diagrama ou modelo do sistema nervoso humano central, incluindo as seguintes partes: cérebro, cerebelo, ponte, medula espinhal. Descrever a função básica de cada um.
 2. O que é um neurônio? Desenhar um neurônio e identificar as suas partes. O que é sinapse?
 3. Quais são as principais diferenças do sistema nervoso somático e sistema nervoso autônomo? Diferenciar Sistema Nervoso Autônomo Simpático e Sistema Nervoso Autônomo Parassimpático, descrevendo as principais atividades relacionadas a cada um deles.
