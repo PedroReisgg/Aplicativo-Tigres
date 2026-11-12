@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { FileSpreadsheet, FileText, Mail, Send, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button, Card, Checkbox, Input, Sheet, Textarea, cn } from "./ui";
@@ -14,6 +14,8 @@ export function ReportPanel({
   pdf,
   link,
   descricao,
+  extra,
+  semEnvio,
 }: {
   titulo: string;
   base: string;
@@ -21,6 +23,10 @@ export function ReportPanel({
   pdf: () => Promise<Blob>;
   link?: string;
   descricao?: string;
+  /** Opções mostradas abaixo do título (filtros do relatório). */
+  extra?: ReactNode;
+  /** Esconde o botão de enviar por e-mail. */
+  semEnvio?: boolean;
 }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
@@ -101,11 +107,14 @@ export function ReportPanel({
           <Button variant="secondary" icon={<Share2 className="size-4" />} loading={busy === "share"} onClick={compartilhar} className="sm:hidden">
             Compartilhar
           </Button>
-          <Button icon={<Send className="size-4" />} onClick={() => setOpen(true)}>
-            Enviar
-          </Button>
+          {!semEnvio && (
+            <Button icon={<Send className="size-4" />} onClick={() => setOpen(true)}>
+              Enviar
+            </Button>
+          )}
         </div>
       </div>
+      {extra && <div className="mt-4 border-t border-ink-100 pt-4">{extra}</div>}
 
       <Sheet
         open={open}

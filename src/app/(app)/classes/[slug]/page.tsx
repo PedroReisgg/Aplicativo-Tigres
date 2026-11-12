@@ -13,10 +13,12 @@ import { salvarEspecialidade, validacaoCaderno } from "@/lib/lancamentos";
 import { ReportPanel } from "@/components/report-panel";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { useData } from "@/lib/use-data";
-import { classePct, getCaderno, getClassEsp, getDesbEsp, getDesbravadores, getEspecialidades, getProgresso, getStaff, notificar, staffIdsDaClasse } from "@/lib/api";
+import { classePct, getCaderno, getCategorias, getClassEsp, getDesbEsp, getDesbravadores, getEspecialidades, getProgresso, getStaff, notificar, staffIdsDaClasse } from "@/lib/api";
+import { getEscolhas, regraEscolha, type Escolha } from "@/lib/escolhas";
+import { EscolhasTurmaSheet } from "@/components/escolha-especialidade";
 import { classReportExcel, classReportPDF } from "@/lib/reports";
 import { normalize } from "@/lib/format";
-import type { CadernoItem, Desbravador, Especialidade } from "@/lib/types";
+import type { CadernoItem, Categoria, DesbEsp, Desbravador, Especialidade } from "@/lib/types";
 
 type Aba = "caderno" | "especialidades" | "desbravadores" | "relatorio";
 
@@ -34,16 +36,23 @@ export default function ClassePage() {
 
   const { data, loading, reload } = useData(async () => {
     if (!classe) return null;
-    const [itens, classEsp, todas, staff] = await Promise.all([getCaderno(classe.id), getClassEsp(classe.id), getEspecialidades(), auth.isActive ? getStaff(classe.id) : Promise.resolve([])]);
+    const [itens, classEsp, todas, staff, categorias] = await Promise.all([
+      getCaderno(classe.id),
+      getClassEsp(classe.id),
+      getEspecialidades(),
+      auth.isActive ? getStaff(classe.id) : Promise.resolve([]),
+      getCategorias().catch(() => [] as Categoria[]),
+    ]);
     let desb: Desbravador[] = [];
     let prog: Awaited<ReturnType<typeof getProgresso>> = [];
     let desbEsp: Awaited<ReturnType<typeof getDesbEsp>> = [];
+    let escolhas: Escolha[] = [];
     if (ve) {
       desb = await getDesbravadores({ classId: classe.id });
       const ids = desb.map((d) => d.id);
-      [prog, desbEsp] = await Promise.all([getProgresso(ids), getDesbEsp(ids)]);
+      [prog, desbEsp, escolhas] = await Promise.all([getProgresso(ids), getDesbEsp(ids), getEscolhas(ids)]);
     }
-    return { itens, classEsp, todas, staff, desb, prog, desbEsp };
+    return { itens, classEsp, todas, staff, desb, prog, desbEsp, escolhas, categorias };
   }, [classe?.id, ve]);
 
   const espMap = useMemo(() => new Map((data?.todas || []).map((e) => [e.codigo, e])), [data?.todas]);
@@ -116,7 +125,20 @@ export default function ClassePage() {
           <Skeleton className="h-24" />
         </div>
       ) : aba === "caderno" ? (
-        <CadernoTab classeId={classe.id} itens={data.itens} desb={data.desb} prog={data.prog} pode={pode} espMap={espMap} onChange={() => reload(true)} />
+        <CadernoTab
+          classeId={classe.id}
+          itens={data.itens}
+          desb={data.desb}
+          prog={data.prog}
+          pode={pode}
+          ve={ve}
+          espMap={espMap}
+          todas={data.todas}
+          categorias={data.categorias}
+          escolhas={data.escolhas}
+          desbEsp={data.desbEsp}
+          onChange={() => reload(true)}
+        />
       ) : aba === "especialidades" ? (
         <EspecialidadesTab classeId={classe.id} classEsp={data.classEsp} todas={data.todas} desb={data.desb} desbEsp={data.desbEsp} pode={pode} onChange={() => reload(true)} />
       ) : aba === "desbravadores" ? (
@@ -182,7 +204,12 @@ function CadernoTab({
   desb,
   prog,
   pode,
+  ve,
   espMap,
+  todas,
+  categorias,
+  escolhas,
+  desbEsp,
   onChange,
 }: {
   classeId: number;
@@ -190,11 +217,18 @@ function CadernoTab({
   desb: Desbravador[];
   prog: { desbravador_id: string; item_id: number; status: Marca; validacao?: string }[];
   pode: boolean;
+  ve: boolean;
   espMap: Map<string, Especialidade>;
+  todas: Especialidade[];
+  categorias: Categoria[];
+  escolhas: Escolha[];
+  desbEsp: DesbEsp[];
   onChange: () => void;
 }) {
-  const { isAdmin, userId } = useAuth();
+  const { isAdmin, userId, canRegistrarEsp } = useAuth();
   const [item, setItem] = useState<CadernoItem | null>(null);
+  const [itemEscolha, setItemEscolha] = useState<CadernoItem | null>(null);
+  const regras = useMemo(() => new Map(itens.map((i) => [i.id, regraEscolha(i, todas, categorias)])), [itens, todas, categorias]);
   const [aberto, setAberto] = useState<Record<string, boolean>>({});
   const [novo, setNovo] = useState(false);
   const [q, setQ] = useState("");
@@ -348,6 +382,21 @@ function CadernoTab({
                         )}
                       </div>
                     </div>
+                    {ve && regras.get(it.id) && desb.length > 0 && (
+                      <button
+                        onClick={() => setItemEscolha(it)}
+                        className="mt-3 flex w-full items-center gap-2.5 rounded-xl border border-dashed border-tiger-300 bg-tiger-50/50 px-3 py-2 text-left text-sm hover:bg-tiger-50"
+                      >
+                        <Award className="size-4 shrink-0 text-tiger-600" />
+                        <span className="min-w-0 flex-1">
+                          <span className="font-semibold text-ink-900">Especialidade de cada um</span>
+                          <span className="block text-xs text-ink-500">
+                            {new Set(escolhas.filter((e) => e.item_id === it.id).map((e) => e.desbravador_id)).size} de {desb.length} já escolheram
+                          </span>
+                        </span>
+                        <span className="shrink-0 text-xs font-semibold text-tiger-700">{pode ? "Escolher" : "Ver"}</span>
+                      </button>
+                    )}
                     {pode && (
                       <div className="mt-3 flex items-center gap-3 border-t border-ink-100 pt-3">
                         <div className="min-w-0 flex-1">
@@ -385,6 +434,20 @@ function CadernoTab({
         pendentes={pendentesItem}
       />
       <NovoItemSheet open={novo} onClose={() => setNovo(false)} classeId={classeId} onSaved={onChange} />
+      <EscolhasTurmaSheet
+        open={!!itemEscolha}
+        onClose={() => setItemEscolha(null)}
+        item={itemEscolha}
+        regra={itemEscolha ? regras.get(itemEscolha.id) || null : null}
+        desb={desb}
+        escolhas={escolhas}
+        espMap={espMap}
+        categorias={categorias}
+        desbEsp={desbEsp}
+        userId={userId}
+        podeEscolher={(d) => canRegistrarEsp(d)}
+        onSaved={onChange}
+      />
     </div>
   );
 }

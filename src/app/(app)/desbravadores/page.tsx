@@ -11,6 +11,7 @@ import { useData } from "@/lib/use-data";
 import { getDesbravadores, getUnidades } from "@/lib/api";
 import { ImportarDesbravadores } from "@/components/importar-desbravadores";
 import { normalize, plural } from "@/lib/format";
+import { responsaveisDe } from "@/lib/types";
 
 function Lista() {
   const { classes, isAdmin, staffClassIds, unidadeIds, isActive, veTudo, isConselheiro } = useAuth();
@@ -37,7 +38,7 @@ function Lista() {
         (d) =>
           (!cls || String(d.class_id) === cls) &&
           (!uni || (uni === "sem" ? !d.unidade_id : d.unidade_id === uni)) &&
-          (!q || normalize(`${d.nome} ${d.nome_mae || ""} ${d.nome_pai || ""} ${d.unidade || ""}`).includes(normalize(q)))
+          (!q || normalize(`${d.nome} ${responsaveisDe(d).map((r) => r.nome || "").join(" ")} ${d.unidade || ""}`).includes(normalize(q)))
       ),
     [data, cls, uni, q]
   );
@@ -52,7 +53,7 @@ function Lista() {
         title="Desbravadores"
         description={
           veTudo
-            ? "Relação completa dos desbravadores do clube, com contato dos pais."
+            ? "Relação completa dos desbravadores do clube, com os responsáveis e seus telefones."
             : isConselheiro
             ? "Desbravadores das unidades que você coordena."
             : "Desbravadores das classes em que você atua."
@@ -73,7 +74,7 @@ function Lista() {
         }
       />
       <div className="mb-5 grid gap-3 sm:grid-cols-[1fr_200px_200px]">
-        <SearchInput value={q} onChange={setQ} placeholder="Buscar por nome, pais ou unidade…" />
+        <SearchInput value={q} onChange={setQ} placeholder="Buscar por nome, responsável ou unidade…" />
         <Select value={uni} onChange={(e) => setUni(e.target.value)} aria-label="Filtrar por unidade">
           <option value="">Todas as unidades</option>
           {unidadesVisiveis.map((u) => (
@@ -130,7 +131,7 @@ function Lista() {
                   <th className="px-4 py-3 font-semibold">Unidade</th>
                   <th className="px-4 py-3 font-semibold">Idade</th>
                   <th className="px-4 py-3 font-semibold">Responsáveis</th>
-                  <th className="px-4 py-3 font-semibold">Contato dos pais</th>
+                  <th className="px-4 py-3 font-semibold">Telefones</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-ink-100">
@@ -162,9 +163,24 @@ function Lista() {
                       )}
                     </td>
                     <td className="px-4 py-3">{d.idade ?? "—"}</td>
-                    <td className="max-w-[220px] truncate px-4 py-3 text-ink-600">{[d.nome_mae, d.nome_pai].filter(Boolean).join(" / ") || "—"}</td>
+                    <td className="max-w-[220px] px-4 py-3 text-ink-600">
+                      {responsaveisDe(d)
+                        .filter((r) => r.nome)
+                        .map((r) => (
+                          <div key={r.titulo} className="truncate">
+                            {r.nome}
+                          </div>
+                        ))}
+                      {!responsaveisDe(d).some((r) => r.nome) && "—"}
+                    </td>
                     <td className="px-4 py-3">
-                      <PhoneLink phone={d.telefone_responsavel} />
+                      {responsaveisDe(d)
+                        .filter((r) => r.telefone)
+                        .map((r) => (
+                          <div key={r.titulo}>
+                            <PhoneLink phone={r.telefone} />
+                          </div>
+                        ))}
                     </td>
                   </tr>
                 ))}

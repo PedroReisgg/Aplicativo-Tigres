@@ -1,6 +1,6 @@
 "use client";
 
-import { funcoesTexto, type CadernoItem, type Classe, type DesbEsp, type Desbravador, type Especialidade, type Profile, type Progresso } from "./types";
+import { funcoesTexto, responsaveisDe, type CadernoItem, type Classe, type DesbEsp, type Desbravador, type Especialidade, type Profile, type Progresso } from "./types";
 import { isoToBr } from "./format";
 
 export interface ClassReportData {
@@ -197,19 +197,21 @@ export async function classReportExcel(d: ClassReportData): Promise<Blob> {
 
   // --- Desbravadores
   const wd = wb.addWorksheet("Desbravadores");
-  cabecalho(wd, "Cadastro dos desbravadores", 10);
-  headerRow(wd.addRow(["#", "Nome", "Nascimento", "Idade", "Unidade", "Mãe", "Pai", "Telefone dos pais", "Telefone", "E-mail"]), DARK);
-  [6, 32, 12, 7, 14, 26, 26, 18, 16, 28].forEach((w, i) => (wd.getColumn(i + 1).width = w));
+  cabecalho(wd, "Cadastro dos desbravadores", 11);
+  headerRow(wd.addRow(["#", "Nome", "Nascimento", "Idade", "Unidade", "Responsável 1", "Telefone 1", "Responsável 2", "Telefone 2", "Telefone", "E-mail"]), DARK);
+  [6, 32, 12, 7, 14, 26, 18, 26, 18, 16, 28].forEach((w, i) => (wd.getColumn(i + 1).width = w));
   d.desbravadores.forEach((x, i) => {
+    const [r1, r2] = responsaveisDe(x);
     const row = wd.addRow([
       i + 1,
       x.nome,
       isoToBr(x.data_nascimento),
       x.idade ?? "",
       x.unidade || "",
-      x.nome_mae || "",
-      x.nome_pai || "",
-      x.telefone_responsavel || "",
+      r1.nome || "",
+      r1.telefone || "",
+      r2.nome || "",
+      r2.telefone || "",
       x.telefone || "",
       x.email || "",
     ]);
@@ -349,115 +351,247 @@ export async function classReportPDF(d: ClassReportData): Promise<Blob> {
 }
 
 // ---------------------------------------------------------------- Relação geral do clube
-export async function clubReportExcel(membros: Profile[], desb: Desbravador[], classes: Classe[]): Promise<Blob> {
+export type IncluirRelacao = "ambos" | "desbravadores" | "diretoria";
+
+const thinBorder = () => {
+  const thin = { style: "thin" as const, color: { argb: "FFE6DCD2" } };
+  return { top: thin, left: thin, bottom: thin, right: thin };
+};
+
+/** Aba com cabeçalho do clube, logo e tabela listrada. */
+function abaSimples(
+  wb: import("exceljs").Workbook,
+  logoId: number | null,
+  nome: string,
+  sub: string,
+  cols: string[],
+  widths: number[],
+  rows: (string | number)[][],
+  cor = "FF1C130E",
+) {
+  const border = thinBorder();
+  const ws = wb.addWorksheet(nome, { views: [{ state: "frozen", ySplit: 5 }] });
+  ws.mergeCells(1, 2, 1, cols.length);
+  ws.mergeCells(2, 2, 2, cols.length);
+  ws.mergeCells(3, 2, 3, cols.length);
+  ws.getCell(1, 2).value = CLUBE.toUpperCase();
+  ws.getCell(1, 2).font = { bold: true, size: 15 };
+  ws.getCell(2, 2).value = sub;
+  ws.getCell(2, 2).font = { bold: true, size: 12, color: { argb: "FFF26B1D" } };
+  ws.getCell(3, 2).value = `Gerado em ${hoje()} · ${rows.length} registro(s)`;
+  ws.getCell(3, 2).font = { size: 10, color: { argb: "FF7A6656" } };
+  ws.getRow(1).height = 26;
+  if (logoId !== null) ws.addImage(logoId, { tl: { col: 0.15, row: 0.1 }, ext: { width: 52, height: 52 } });
+  ws.addRow([]);
+  const h = ws.addRow(cols);
+  h.height = 26;
+  h.eachCell((c) => {
+    c.font = { bold: true, color: { argb: "FFFFFFFF" } };
+    c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: cor } };
+    c.alignment = { vertical: "middle", horizontal: "center", wrapText: true };
+    c.border = border;
+  });
+  widths.forEach((w, i) => (ws.getColumn(i + 1).width = w));
+  rows.forEach((r, i) => {
+    const row = ws.addRow(r);
+    row.eachCell((c) => {
+      c.border = border;
+      c.alignment = { vertical: "top", wrapText: true };
+      if (i % 2) c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFFAF7F3" } };
+    });
+  });
+  ws.autoFilter = { from: { row: 5, column: 1 }, to: { row: 5, column: cols.length } };
+  return ws;
+}
+
+const situacaoMembro = (m: Profile) => (m.status === "ativo" ? "Ativo" : m.status === "pendente" ? "Lista de espera" : "Inativo");
+
+export async function clubReportExcel(membros: Profile[], desb: Desbravador[], classes: Classe[], incluir: IncluirRelacao = "ambos"): Promise<Blob> {
   const ExcelJS = (await import("exceljs")).default;
   const wb = new ExcelJS.Workbook();
+  wb.creator = "Tigres App";
   const logo = await logoDataUrl();
   const logoId = logo ? wb.addImage({ base64: logo, extension: "png" }) : null;
-  const thin = { style: "thin" as const, color: { argb: "FFE6DCD2" } };
-  const border = { top: thin, left: thin, bottom: thin, right: thin };
   const nomeClasse = (id?: number | null) => classes.find((c) => c.id === id)?.nome || "";
 
-  const make = (nome: string, sub: string, cols: string[], widths: number[], rows: (string | number)[][]) => {
-    const ws = wb.addWorksheet(nome, { views: [{ state: "frozen", ySplit: 5 }] });
-    ws.mergeCells(1, 2, 1, cols.length);
-    ws.mergeCells(2, 2, 2, cols.length);
-    ws.mergeCells(3, 2, 3, cols.length);
-    ws.getCell(1, 2).value = CLUBE.toUpperCase();
-    ws.getCell(1, 2).font = { bold: true, size: 15 };
-    ws.getCell(2, 2).value = sub;
-    ws.getCell(2, 2).font = { bold: true, size: 12, color: { argb: "FFF26B1D" } };
-    ws.getCell(3, 2).value = `Gerado em ${hoje()} · ${rows.length} registro(s)`;
-    ws.getCell(3, 2).font = { size: 10, color: { argb: "FF7A6656" } };
-    ws.getRow(1).height = 26;
-    if (logoId !== null) ws.addImage(logoId, { tl: { col: 0.15, row: 0.1 }, ext: { width: 52, height: 52 } });
-    ws.addRow([]);
-    const h = ws.addRow(cols);
-    h.height = 26;
-    h.eachCell((c) => {
-      c.font = { bold: true, color: { argb: "FFFFFFFF" } };
-      c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF1C130E" } };
-      c.alignment = { vertical: "middle", horizontal: "center", wrapText: true };
-      c.border = border;
-    });
-    widths.forEach((w, i) => (ws.getColumn(i + 1).width = w));
-    rows.forEach((r, i) => {
-      const row = ws.addRow(r);
-      row.eachCell((c) => {
-        c.border = border;
-        if (i % 2) c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFFAF7F3" } };
-      });
-    });
-  };
+  if (incluir !== "desbravadores")
+    abaSimples(
+      wb,
+      logoId,
+      "Diretoria",
+      "Relação da diretoria",
+      ["#", "Nome", "Funções", "Classe(s)", "Idade", "Nascimento", "Telefone", "E-mail", "Situação"],
+      [6, 30, 30, 26, 7, 12, 17, 30, 14],
+      membros.map((m, i) => [
+        i + 1,
+        m.nome,
+        m.status === "pendente" ? `Pediu: ${m.cargo_solicitado || "—"}` : funcoesTexto(m).replace(/ · /g, ", "),
+        (m.classes || []).map((c) => `${nomeClasse(c.class_id)} (${c.funcao})`).join(", "),
+        m.idade ?? "",
+        isoToBr(m.data_nascimento),
+        m.telefone || "",
+        m.email,
+        situacaoMembro(m),
+      ]),
+    );
+  if (incluir !== "diretoria")
+    abaSimples(
+      wb,
+      logoId,
+      "Desbravadores",
+      "Relação dos desbravadores",
+      ["#", "Nome", "Classe", "Unidade", "Idade", "Nascimento", "Responsável 1", "Telefone 1", "Responsável 2", "Telefone 2", "Telefone do desbravador", "E-mail"],
+      [6, 30, 15, 14, 7, 12, 26, 17, 26, 17, 17, 28],
+      desb.map((d, i) => {
+        const [r1, r2] = responsaveisDe(d);
+        return [i + 1, d.nome, nomeClasse(d.class_id), d.unidade || "", d.idade ?? "", isoToBr(d.data_nascimento), r1.nome || "", r1.telefone || "", r2.nome || "", r2.telefone || "", d.telefone || "", d.email || ""];
+      }),
+      "FFF26B1D",
+    );
+  const buf = await wb.xlsx.writeBuffer();
+  return new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+}
 
-  make(
-    "Diretoria",
-    "Relação da diretoria",
-    ["#", "Nome", "Funções", "Classe(s)", "Idade", "Nascimento", "Telefone", "E-mail", "Situação"],
-    [6, 30, 30, 26, 7, 12, 17, 30, 12],
-    membros.map((m, i) => [
-      i + 1,
-      m.nome,
-      m.status === "pendente" ? `Pediu: ${m.cargo_solicitado || "—"}` : funcoesTexto(m).replace(/ · /g, ", "),
-      (m.classes || []).map((c) => `${nomeClasse(c.class_id)} (${c.funcao})`).join(", "),
-      m.idade ?? "",
-      isoToBr(m.data_nascimento),
-      m.telefone || "",
-      m.email,
-      m.status === "ativo" ? "Ativo" : m.status === "pendente" ? "Lista de espera" : "Inativo",
-    ]),
+export async function clubReportPDF(membros: Profile[], desb: Desbravador[], classes: Classe[], incluir: IncluirRelacao = "ambos"): Promise<Blob> {
+  const sub = incluir === "ambos" ? "Diretoria e desbravadores" : incluir === "diretoria" ? "Diretoria" : "Desbravadores";
+  const { doc, autoTable, header, footer } = await pdfBase("Relação do clube", sub, "#F26B1D");
+  const nomeClasse = (id?: number | null) => classes.find((c) => c.id === id)?.nome || "";
+  const common = { margin: { top: 84, left: 24, right: 24, bottom: 28 }, didDrawPage: header, styles: { fontSize: 8.5, cellPadding: 4 } };
+  let y = 84;
+  if (incluir !== "desbravadores") {
+    autoTable(doc, {
+      ...common,
+      startY: y,
+      head: [["#", "Diretoria", "Funções", "Classe(s)", "Idade", "Telefone", "E-mail", "Situação"]],
+      body: membros.map((m, i) => [
+        i + 1,
+        m.nome,
+        m.status === "pendente" ? `Pediu: ${m.cargo_solicitado || "—"}` : funcoesTexto(m).replace(/ · /g, ", "),
+        (m.classes || []).map((c) => nomeClasse(c.class_id)).join(", "),
+        m.idade ?? "",
+        m.telefone || "",
+        m.email,
+        situacaoMembro(m),
+      ]),
+      headStyles: { fillColor: [28, 19, 14], textColor: 255 },
+      alternateRowStyles: { fillColor: [250, 247, 243] },
+    });
+    y = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 22;
+  }
+  if (incluir !== "diretoria")
+    autoTable(doc, {
+      ...common,
+      startY: y,
+      head: [["#", "Desbravador", "Classe", "Unidade", "Idade", "Responsável 1", "Telefone 1", "Responsável 2", "Telefone 2"]],
+      body: desb.map((d, i) => {
+        const [r1, r2] = responsaveisDe(d);
+        return [i + 1, d.nome, nomeClasse(d.class_id), d.unidade || "", d.idade ?? "", r1.nome || "", r1.telefone || "", r2.nome || "", r2.telefone || ""];
+      }),
+      headStyles: { fillColor: [242, 107, 29], textColor: 255 },
+      alternateRowStyles: { fillColor: [250, 247, 243] },
+    });
+  footer();
+  return doc.output("blob");
+}
+
+// ---------------------------------------------------------------- Especialidades concluídas (para a compra)
+export interface EspReportLinha {
+  desbravador: Desbravador;
+  esp: Especialidade;
+  area: string;
+  concluida_em: string;
+}
+
+function agruparPorEsp(linhas: EspReportLinha[]) {
+  const m = new Map<string, { esp: Especialidade; area: string; nomes: string[] }>();
+  linhas.forEach((l) => {
+    const g = m.get(l.esp.codigo) || { esp: l.esp, area: l.area, nomes: [] };
+    g.nomes.push(l.desbravador.nome);
+    m.set(l.esp.codigo, g);
+  });
+  return [...m.values()].sort((a, b) => a.area.localeCompare(b.area, "pt-BR") || a.esp.nome.localeCompare(b.esp.nome, "pt-BR"));
+}
+
+function agruparPorDesb(linhas: EspReportLinha[]) {
+  const m = new Map<string, { d: Desbravador; itens: EspReportLinha[] }>();
+  linhas.forEach((l) => {
+    const g = m.get(l.desbravador.id) || { d: l.desbravador, itens: [] };
+    g.itens.push(l);
+    m.set(l.desbravador.id, g);
+  });
+  return [...m.values()].sort((a, b) => a.d.nome.localeCompare(b.d.nome, "pt-BR"));
+}
+
+export async function espReportExcel(linhas: EspReportLinha[], periodo: string): Promise<Blob> {
+  const ExcelJS = (await import("exceljs")).default;
+  const wb = new ExcelJS.Workbook();
+  wb.creator = "Tigres App";
+  const logo = await logoDataUrl();
+  const logoId = logo ? wb.addImage({ base64: logo, extension: "png" }) : null;
+  const porEsp = agruparPorEsp(linhas);
+
+  const resumo = abaSimples(
+    wb,
+    logoId,
+    "Para comprar",
+    `Especialidades para comprar · ${periodo}`,
+    ["#", "Especialidade", "Código", "Área", "Quantidade", "Desbravadores"],
+    [6, 34, 12, 30, 12, 70],
+    porEsp.map((g, i) => [i + 1, g.esp.nome, g.esp.codigo, g.area, g.nomes.length, g.nomes.join(", ")]),
   );
-  make(
-    "Desbravadores",
-    "Relação dos desbravadores",
-    ["#", "Nome", "Classe", "Unidade", "Idade", "Nascimento", "Mãe", "Pai", "Telefone dos pais", "Telefone"],
-    [6, 30, 15, 14, 7, 12, 26, 26, 18, 16],
-    desb.map((d, i) => [
-      i + 1,
-      d.nome,
-      nomeClasse(d.class_id),
-      d.unidade || "",
-      d.idade ?? "",
-      isoToBr(d.data_nascimento),
-      d.nome_mae || "",
-      d.nome_pai || "",
-      d.telefone_responsavel,
-      d.telefone || "",
-    ]),
+  const total = resumo.addRow(["", "Total", "", "", linhas.length, ""]);
+  total.font = { bold: true };
+  total.getCell(5).alignment = { horizontal: "center" };
+  resumo.getColumn(5).alignment = { horizontal: "center", vertical: "top" };
+
+  const ordenadas = agruparPorDesb(linhas).flatMap((g) => g.itens.sort((a, b) => a.esp.nome.localeCompare(b.esp.nome, "pt-BR")));
+  abaSimples(
+    wb,
+    logoId,
+    "Por desbravador",
+    `Especialidades concluídas por desbravador · ${periodo}`,
+    ["#", "Desbravador", "Classe", "Unidade", "Especialidade", "Código", "Área", "Concluída em"],
+    [6, 30, 15, 14, 34, 12, 30, 14],
+    ordenadas.map((l, i) => [i + 1, l.desbravador.nome, l.desbravador.classe_nome || "", l.desbravador.unidade || "", l.esp.nome, l.esp.codigo, l.area, isoToBr(l.concluida_em)]),
+    "FFF26B1D",
   );
   const buf = await wb.xlsx.writeBuffer();
   return new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
 }
 
-export async function clubReportPDF(membros: Profile[], desb: Desbravador[], classes: Classe[]): Promise<Blob> {
-  const { doc, autoTable, header, footer } = await pdfBase("Relação geral do clube", "Diretoria e desbravadores", "#F26B1D");
-  const nomeClasse = (id?: number | null) => classes.find((c) => c.id === id)?.nome || "";
+export async function espReportPDF(linhas: EspReportLinha[], periodo: string): Promise<Blob> {
+  const { doc, autoTable, header, footer } = await pdfBase("Especialidades para comprar", periodo, "#F26B1D");
   const common = { margin: { top: 84, left: 24, right: 24, bottom: 28 }, didDrawPage: header, styles: { fontSize: 8.5, cellPadding: 4 } };
+  const porEsp = agruparPorEsp(linhas);
   autoTable(doc, {
     ...common,
     startY: 84,
-    head: [["#", "Diretoria", "Funções", "Classe(s)", "Idade", "Telefone", "E-mail"]],
-    body: membros
-      .filter((m) => m.status !== "inativo")
-      .map((m, i) => [
-        i + 1,
-        m.nome,
-        m.status === "pendente" ? "Lista de espera" : funcoesTexto(m).replace(/ · /g, ", "),
-        (m.classes || []).map((c) => nomeClasse(c.class_id)).join(", "),
-        m.idade ?? "",
-        m.telefone || "",
-        m.email,
-      ]),
+    head: [["#", "Especialidade", "Código", "Área", "Qtd.", "Desbravadores"]],
+    body: [...porEsp.map((g, i) => [i + 1, g.esp.nome, g.esp.codigo, g.area, g.nomes.length, g.nomes.join(", ")]), ["", "Total", "", "", linhas.length, ""]],
     headStyles: { fillColor: [28, 19, 14], textColor: 255 },
     alternateRowStyles: { fillColor: [250, 247, 243] },
+    columnStyles: { 0: { cellWidth: 26 }, 1: { cellWidth: 150 }, 2: { cellWidth: 56 }, 3: { cellWidth: 130 }, 4: { cellWidth: 34, halign: "center" } },
+    didParseCell: (c) => {
+      if (c.section === "body" && c.row.index === porEsp.length) c.cell.styles.fontStyle = "bold";
+    },
   });
   autoTable(doc, {
     ...common,
     startY: (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 22,
-    head: [["#", "Desbravador", "Classe", "Unidade", "Idade", "Responsáveis", "Telefone dos pais"]],
-    body: desb.map((d, i) => [i + 1, d.nome, nomeClasse(d.class_id), d.unidade || "", d.idade ?? "", [d.nome_mae, d.nome_pai].filter(Boolean).join(" / "), d.telefone_responsavel]),
+    head: [["#", "Desbravador", "Classe", "Qtd.", "Especialidades concluídas"]],
+    body: agruparPorDesb(linhas).map((g, i) => [
+      i + 1,
+      g.d.nome,
+      g.d.classe_nome || "",
+      g.itens.length,
+      g.itens
+        .map((l) => l.esp.nome)
+        .sort((a, b) => a.localeCompare(b, "pt-BR"))
+        .join(", "),
+    ]),
     headStyles: { fillColor: [242, 107, 29], textColor: 255 },
     alternateRowStyles: { fillColor: [250, 247, 243] },
+    columnStyles: { 0: { cellWidth: 26 }, 1: { cellWidth: 150 }, 2: { cellWidth: 80 }, 3: { cellWidth: 34, halign: "center" } },
   });
   footer();
   return doc.output("blob");
