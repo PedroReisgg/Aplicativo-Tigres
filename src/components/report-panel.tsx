@@ -164,3 +164,28 @@ export function ReportPanel({
     </Card>
   );
 }
+
+/** Dois botões ("Excel" e "PDF") que geram e baixam a lista que está na tela. */
+export function BaixarArquivos({ base, excel, pdf, disabled, size }: { base: string; excel: () => Promise<Blob>; pdf: () => Promise<Blob>; disabled?: boolean; size?: "sm" }) {
+  const [busy, setBusy] = useState<"xlsx" | "pdf" | null>(null);
+  async function baixar(tipo: "xlsx" | "pdf") {
+    setBusy(tipo);
+    try {
+      await downloadBlob(tipo === "xlsx" ? await excel() : await pdf(), fileName(base, tipo));
+    } catch (e) {
+      toast.error("Não foi possível gerar o arquivo: " + (e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
+  return (
+    <>
+      <Button size={size} variant="secondary" icon={<FileSpreadsheet className="size-4 text-emerald-600" />} loading={busy === "xlsx"} disabled={disabled} onClick={() => baixar("xlsx")}>
+        Baixar Excel
+      </Button>
+      <Button size={size} variant="secondary" icon={<FileText className="size-4 text-red-600" />} loading={busy === "pdf"} disabled={disabled} onClick={() => baixar("pdf")}>
+        Baixar PDF
+      </Button>
+    </>
+  );
+}

@@ -11,6 +11,14 @@ export interface ClassReportData {
   especialidades: Especialidade[]; // especialidades a listar (da classe + concluídas)
   classEsp: Set<string>; // códigos da classe
   desbEsp: DesbEsp[];
+  /** Ficha individual (caderno item a item + especialidades) de cada desbravador. */
+  fichas?: boolean;
+  /** Especialidade escolhida em cada item do caderno. */
+  escolhas?: { desbravador_id: string; item_id: number; especialidade_codigo: string }[];
+  /** Nome de qualquer especialidade pelo código (para as escolhidas). */
+  nomeEsp?: (codigo: string) => string;
+  /** Nome da área de cada especialidade. */
+  areaEsp?: (codigo: string) => string;
 }
 
 const CLUBE = "Clube de Desbravadores Tigres do Riacho";
@@ -218,6 +226,11 @@ export async function classReportExcel(d: ClassReportData): Promise<Blob> {
     row.eachCell((c) => (c.border = border));
   });
 
+  if (d.fichas) {
+    const usados = new Set(wb.worksheets.map((w) => w.name));
+    d.desbravadores.forEach((desb) => fichaExcel(wb, logoId, d, desb, usados, cor));
+  }
+
   const buf = await wb.xlsx.writeBuffer();
   return new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
 }
@@ -336,10 +349,14 @@ export async function classReportPDF(d: ClassReportData): Promise<Blob> {
     columnStyles: { 0: { cellWidth: 170, fontStyle: "bold" } },
   });
 
-  // 4. Legenda dos itens
+  // 4. Ficha de cada desbravador (uma página nova para cada)
+  if (d.fichas) d.desbravadores.forEach((x) => fichaPDF(doc, autoTable, common, head, d, x));
+
+  // 5. Legenda dos itens
+  if (d.fichas) doc.addPage();
   autoTable(doc, {
     ...common,
-    startY: (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 22,
+    startY: d.fichas ? 84 : (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 22,
     head: [["Código", "Seção", "Requisito do caderno"]],
     body: itens.map((it) => [it.codigo, it.secao, it.texto]),
     headStyles: { fillColor: [28, 19, 14], textColor: 255, fontSize: 8 },
@@ -405,6 +422,306 @@ function abaSimples(
 }
 
 const situacaoMembro = (m: Profile) => (m.status === "ativo" ? "Ativo" : m.status === "pendente" ? "Lista de espera" : "Inativo");
+
+// ---------------------------------------------------------------- Ficha individual (caderno + especialidades)
+const situacaoItem = (p?: Progresso) => (!p ? "Falta" : p.status === "refazer" ? "Refazer" : p.validacao === "pendente" ? "Aguardando validação" : "Feito");
+const situacaoEspDesb = (x?: DesbEsp) => (!x ? "Falta" : x.status === "refazer" ? "Refazer" : x.validacao === "pendente" ? "Aguardando validação" : "Concluída");
+
+/** Linhas da ficha de um desbravador: cada item do caderno e cada especialidade. */
+function dadosFicha(d: ClassReportData, desb: Desbravador) {
+  const nome = (c: string) => d.nomeEsp?.(c) || d.especialidades.find((e) => e.codigo === c)?.nome || c;
+  const itens = d.itens.map((it) => {
+    const p = d.progresso.find((x) => x.desbravador_id === desb.id && x.item_id === it.id);
+    const esc = (d.escolhas || []).filter((e) => e.desbravador_id === desb.id && e.item_id === it.id).map((e) => nome(e.especialidade_codigo));
+    return {
+      codigo: it.avancada ? `AV ${it.codigo.replace("AV.", "")}` : it.codigo,
+      secao: it.secao,
+      texto: it.texto + (esc.length ? `\nEspecialidade escolhida: ${esc.join(", ")}` : ""),
+      situacao: situacaoItem(p),
+      data: p ? isoToBr(p.marcado_em.slice(0, 10)) : "",
+      obs: p?.observacao || "",
+    };
+  });
+  const minhas = d.desbEsp.filter((e) => e.desbravador_id === desb.id);
+  const cods = [...new Set([...minhas.map((e) => e.especialidade_codigo), ...d.classEsp])];
+  const esps = cods
+    .map((c) => {
+      const x = minhas.find((e) => e.especialidade_codigo === c);
+      return {
+        nome: nome(c) + (d.classEsp.has(c) ? " ★" : ""),
+        codigo: c,
+        area: d.areaEsp?.(c) || "",
+        situacao: situacaoEspDesb(x),
+        data: x ? isoToBr(x.concluida_em) : "",
+        obs: x?.observacao || "",
+      };
+    })
+    .sort((a, b) => (a.situacao === "Falta" ? 1 : 0) - (b.situacao === "Falta" ? 1 : 0) || a.nome.localeCompare(b.nome, "pt-BR"));
+  return { itens, esps, r: resumo(d, desb) };
+}
+
+const COR_SITUACAO: Record<string, [string, [number, number, number], [number, number, number]]> = {
+  Feito: ["FF15803D", [21, 128, 61], [220, 252, 231]],
+  Concluída: ["FF15803D", [21, 128, 61], [220, 252, 231]],
+  "Aguardando validação": ["FFB45309", [180, 83, 9], [254, 243, 199]],
+  Refazer: ["FFB91C1C", [185, 28, 28], [254, 226, 226]],
+};
+
+function nomeDeAba(nome: string, usados: Set<string>) {
+  const base = nome.replace(/[\\/?*[\]:]/g, " ").replace(/\s+/g, " ").trim().slice(0, 28) || "Desbravador";
+  let n = base;
+  for (let i = 2; usados.has(n.toLowerCase()) || usados.has(n); i++) n = `${base.slice(0, 26)} ${i}`;
+  usados.add(n);
+  usados.add(n.toLowerCase());
+  return n;
+}
+
+function fichaExcel(wb: import("exceljs").Workbook, logoId: number | null, d: ClassReportData, desb: Desbravador, usados: Set<string>, cor: string) {
+  const border = thinBorder();
+  const { itens, esps, r } = dadosFicha(d, desb);
+  const ws = wb.addWorksheet(nomeDeAba(desb.nome, usados), { pageSetup: { orientation: "portrait", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
+  [9, 30, 70, 20, 13, 30].forEach((w, i) => (ws.getColumn(i + 1).width = w));
+  ws.mergeCells(1, 2, 1, 6);
+  ws.mergeCells(2, 2, 2, 6);
+  ws.mergeCells(3, 2, 3, 6);
+  ws.getRow(1).height = 26;
+  ws.getCell(1, 2).value = desb.nome.toUpperCase();
+  ws.getCell(1, 2).font = { bold: true, size: 15 };
+  ws.getCell(2, 2).value = `Ficha do desbravador · Classe de ${d.classe.nome}${desb.unidade ? ` · Unidade ${desb.unidade}` : ""}${desb.idade != null ? ` · ${desb.idade} anos` : ""}`;
+  ws.getCell(2, 2).font = { bold: true, size: 12, color: { argb: "FFF26B1D" } };
+  ws.getCell(3, 2).value = `${CLUBE} · gerado em ${hoje()}`;
+  ws.getCell(3, 2).font = { size: 10, color: { argb: "FF7A6656" } };
+  if (logoId !== null) ws.addImage(logoId, { tl: { col: 0.15, row: 0.1 }, ext: { width: 52, height: 52 } });
+  ws.addRow([]);
+  const resumoLinhas: [string, string][] = [
+    ["Caderno (regular)", `${r.fb} de ${r.tb} itens · ${r.pct}%`],
+    ["Classe avançada", r.ta ? `${r.fa} de ${r.ta} itens` : "—"],
+    ["Especialidades", `${r.esps.length} concluída(s) · ${r.daClasse} de ${d.classEsp.size} exigidas pela classe`],
+  ];
+  resumoLinhas.forEach(([a, b]) => {
+    const row = ws.addRow(["", a, b]);
+    row.getCell(2).font = { bold: true };
+  });
+  ws.addRow([]);
+
+  const tabela = (titulo: string, cols: string[], linhas: (string | number)[][], fill: string, colSituacao: number) => {
+    const t = ws.addRow(["", titulo]);
+    t.getCell(2).font = { bold: true, size: 12 };
+    const h = ws.addRow(cols);
+    h.height = 22;
+    h.eachCell((c) => {
+      c.font = { bold: true, color: { argb: "FFFFFFFF" } };
+      c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: fill } };
+      c.alignment = { vertical: "middle", horizontal: "center", wrapText: true };
+      c.border = border;
+    });
+    linhas.forEach((l) => {
+      const row = ws.addRow(l);
+      row.eachCell({ includeEmpty: true }, (c, col) => {
+        c.border = border;
+        c.alignment = { vertical: "top", wrapText: true, horizontal: col === 1 || col === colSituacao || col === 5 ? "center" : "left" };
+      });
+      const sit = COR_SITUACAO[String(l[colSituacao - 1])];
+      if (sit) {
+        const c = row.getCell(colSituacao);
+        c.font = { bold: true, color: { argb: sit[0] } };
+        c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF" + sit[2].map((v) => v.toString(16).padStart(2, "0")).join("").toUpperCase() } };
+      }
+    });
+    ws.addRow([]);
+  };
+  tabela("Caderno", ["Código", "Seção", "Requisito", "Situação", "Data", "Observação"], itens.map((i) => [i.codigo, i.secao, i.texto, i.situacao, i.data, i.obs]), cor, 4);
+  tabela(
+    "Especialidades (★ = exigida pela classe)",
+    ["#", "Área", "Especialidade", "Situação", "Concluída em", "Observação"],
+    esps.map((e, k) => [k + 1, e.area, `${e.nome} (${e.codigo})`, e.situacao, e.data, e.obs]),
+    "FFF26B1D",
+    4,
+  );
+}
+
+type AutoTableFn = (doc: import("jspdf").jsPDF, opts: import("jspdf-autotable").UserOptions) => void;
+
+function fichaPDF(
+  doc: import("jspdf").jsPDF,
+  autoTable: AutoTableFn,
+  common: Partial<import("jspdf-autotable").UserOptions>,
+  head: import("jspdf-autotable").Styles | Partial<import("jspdf-autotable").Styles>,
+  d: ClassReportData,
+  desb: Desbravador,
+) {
+  const { itens, esps, r } = dadosFicha(d, desb);
+  doc.addPage();
+  const corSit = (h: { section: string; column: { index: number }; cell: { raw: unknown; styles: Partial<import("jspdf-autotable").Styles> } }, col: number) => {
+    const sit = h.section === "body" && h.column.index === col ? COR_SITUACAO[String(h.cell.raw)] : undefined;
+    if (sit) {
+      h.cell.styles.textColor = sit[1];
+      h.cell.styles.fillColor = sit[2];
+      h.cell.styles.fontStyle = "bold";
+    }
+  };
+  autoTable(doc, {
+    ...common,
+    startY: 84,
+    head: [[{ content: desb.nome.toUpperCase(), colSpan: 2 }]],
+    body: [
+      ["Classe / unidade", `${d.classe.nome}${desb.unidade ? ` · Unidade ${desb.unidade}` : ""}${desb.idade != null ? ` · ${desb.idade} anos` : ""}`],
+      ["Caderno (regular)", `${r.fb} de ${r.tb} itens · ${r.pct}%`],
+      ["Classe avançada", r.ta ? `${r.fa} de ${r.ta} itens` : "—"],
+      ["Especialidades", `${r.esps.length} concluída(s) · ${r.daClasse} de ${d.classEsp.size} exigidas pela classe`],
+    ],
+    headStyles: { fillColor: [28, 19, 14], textColor: 255, fontStyle: "bold", fontSize: 11 },
+    columnStyles: { 0: { cellWidth: 130, fontStyle: "bold" } },
+  });
+  const y = () => (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 16;
+  autoTable(doc, {
+    ...common,
+    startY: y(),
+    head: [["Código", "Requisito do caderno", "Situação", "Data", "Observação"]],
+    body: itens.map((i) => [i.codigo, i.texto, i.situacao, i.data, i.obs]),
+    headStyles: head as Partial<import("jspdf-autotable").Styles>,
+    styles: { fontSize: 7.5, cellPadding: 3 },
+    columnStyles: { 0: { cellWidth: 40 }, 2: { cellWidth: 92, halign: "center" }, 3: { cellWidth: 56, halign: "center" }, 4: { cellWidth: 140 } },
+    didParseCell: (h) => corSit(h, 2),
+  });
+  autoTable(doc, {
+    ...common,
+    startY: y(),
+    head: [["Especialidade (★ = exigida pela classe)", "Área", "Situação", "Concluída em", "Observação"]],
+    body: esps.length ? esps.map((e) => [`${e.nome} (${e.codigo})`, e.area, e.situacao, e.data, e.obs]) : [["Nenhuma especialidade registrada.", "", "", "", ""]],
+    headStyles: { fillColor: [242, 107, 29], textColor: 255, fontStyle: "bold", fontSize: 8.5 },
+    styles: { fontSize: 7.5, cellPadding: 3 },
+    columnStyles: { 1: { cellWidth: 150 }, 2: { cellWidth: 92, halign: "center" }, 3: { cellWidth: 64, halign: "center" }, 4: { cellWidth: 140 } },
+    didParseCell: (h) => corSit(h, 2),
+  });
+}
+
+// ---------------------------------------------------------------- Dados pessoais (lista completa)
+const SEXO: Record<string, string> = { M: "Masculino", F: "Feminino" };
+
+const COLS_DESB = ["#", "Nome", "Sexo", "Nascimento", "Idade", "CPF", "Classe", "Unidade", "Telefone do desbravador", "Endereço", "Responsável 1", "Telefone 1", "Responsável 2", "Telefone 2", "E-mail do responsável", "Observações", "Situação", "Cadastrado em"];
+const LARG_DESB = [6, 30, 11, 12, 7, 15, 14, 14, 17, 36, 26, 17, 26, 17, 28, 36, 10, 13];
+
+function linhasDesb(desb: Desbravador[], classes: Classe[]) {
+  const nomeClasse = (id?: number | null) => classes.find((c) => c.id === id)?.nome || "";
+  return [...desb]
+    .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"))
+    .map((d, i) => {
+      const [r1, r2] = responsaveisDe(d);
+      return [
+        i + 1,
+        d.nome,
+        SEXO[d.sexo || ""] || "",
+        isoToBr(d.data_nascimento),
+        d.idade ?? "",
+        d.cpf || "",
+        d.classe_nome || nomeClasse(d.class_id),
+        d.unidade || "",
+        d.telefone || "",
+        d.endereco || "",
+        r1.nome || "",
+        r1.telefone || "",
+        r2.nome || "",
+        r2.telefone || "",
+        d.email || "",
+        d.observacoes || "",
+        d.ativo ? "Ativo" : "Inativo",
+        isoToBr(d.created_at?.slice(0, 10)),
+      ];
+    });
+}
+
+const COLS_DIR = ["#", "Nome", "Funções", "Classe(s)", "Unidade(s)", "Nascimento", "Idade", "Telefone", "E-mail", "Situação", "Admin", "No app desde"];
+const LARG_DIR = [6, 30, 32, 26, 22, 12, 7, 17, 30, 14, 8, 13];
+
+function linhasDiretoria(membros: Profile[], classes: Classe[], unidades: { id: string; nome: string }[]) {
+  const nomeClasse = (id?: number | null) => classes.find((c) => c.id === id)?.nome || "";
+  const nomeUnidade = (id: string) => unidades.find((u) => u.id === id)?.nome || "";
+  return [...membros]
+    .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"))
+    .map((m, i) => [
+      i + 1,
+      m.nome,
+      m.status === "pendente" ? `Pediu: ${m.cargo_solicitado || "—"}` : funcoesTexto(m).replace(/ · /g, ", "),
+      (m.classes || []).map((c) => `${nomeClasse(c.class_id)} (${c.funcao})`).join(", "),
+      (m.unidades || []).map((u) => `${nomeUnidade(u.unidade_id)} (${u.funcao})`).join(", "),
+      isoToBr(m.data_nascimento),
+      m.idade ?? "",
+      m.telefone || "",
+      m.email,
+      situacaoMembro(m),
+      m.is_admin ? "Sim" : "",
+      isoToBr(m.created_at?.slice(0, 10)),
+    ]);
+}
+
+async function planilha(build: (wb: import("exceljs").Workbook, logoId: number | null) => void) {
+  const ExcelJS = (await import("exceljs")).default;
+  const wb = new ExcelJS.Workbook();
+  wb.creator = "Tigres App";
+  const logo = await logoDataUrl();
+  build(wb, logo ? wb.addImage({ base64: logo, extension: "png" }) : null);
+  const buf = await wb.xlsx.writeBuffer();
+  return new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+}
+
+/** Todos os dados cadastrais dos desbravadores (a lista que está na tela). */
+export function desbravadoresExcel(desb: Desbravador[], classes: Classe[], filtro = "") {
+  return planilha((wb, logoId) => abaSimples(wb, logoId, "Desbravadores", `Dados dos desbravadores${filtro ? ` · ${filtro}` : ""}`, COLS_DESB, LARG_DESB, linhasDesb(desb, classes), "FFF26B1D"));
+}
+
+export async function desbravadoresPDF(desb: Desbravador[], classes: Classe[], filtro = "") {
+  const { doc, autoTable, header, footer } = await pdfBase("Dados dos desbravadores", filtro || `${desb.length} desbravador(es)`, "#F26B1D");
+  const linhas = linhasDesb(desb, classes);
+  // PDF deitado: as colunas mais longas (endereço, observações) vão numa segunda tabela
+  autoTable(doc, {
+    margin: { top: 84, left: 20, right: 20, bottom: 28 },
+    didDrawPage: header,
+    startY: 84,
+    head: [["#", "Nome", "Sexo", "Nasc.", "Idade", "CPF", "Classe", "Unidade", "Telefone", "Responsável 1", "Telefone 1", "Responsável 2", "Telefone 2"]],
+    body: linhas.map((l) => [l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7], l[8], l[10], l[11], l[12], l[13]]),
+    styles: { fontSize: 7.5, cellPadding: 3 },
+    headStyles: { fillColor: [242, 107, 29], textColor: 255, fontSize: 7.5 },
+    alternateRowStyles: { fillColor: [250, 247, 243] },
+    columnStyles: { 0: { cellWidth: 20 }, 1: { cellWidth: 110, fontStyle: "bold" } },
+  });
+  autoTable(doc, {
+    margin: { top: 84, left: 20, right: 20, bottom: 28 },
+    didDrawPage: header,
+    startY: (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 22,
+    head: [["#", "Nome", "Endereço", "E-mail do responsável", "Observações", "Situação"]],
+    body: linhas.map((l) => [l[0], l[1], l[9], l[14], l[15], l[16]]),
+    styles: { fontSize: 7.5, cellPadding: 3 },
+    headStyles: { fillColor: [28, 19, 14], textColor: 255, fontSize: 7.5 },
+    alternateRowStyles: { fillColor: [250, 247, 243] },
+    columnStyles: { 0: { cellWidth: 20 }, 1: { cellWidth: 110, fontStyle: "bold" }, 5: { cellWidth: 50 } },
+  });
+  footer();
+  return doc.output("blob");
+}
+
+/** Todos os dados da diretoria (funções, classes, unidades, contato). */
+export function diretoriaExcel(membros: Profile[], classes: Classe[], unidades: { id: string; nome: string }[]) {
+  return planilha((wb, logoId) => abaSimples(wb, logoId, "Diretoria", "Dados da diretoria", COLS_DIR, LARG_DIR, linhasDiretoria(membros, classes, unidades)));
+}
+
+export async function diretoriaPDF(membros: Profile[], classes: Classe[], unidades: { id: string; nome: string }[]) {
+  const { doc, autoTable, header, footer } = await pdfBase("Dados da diretoria", `${membros.length} membro(s)`, "#F26B1D");
+  autoTable(doc, {
+    margin: { top: 84, left: 20, right: 20, bottom: 28 },
+    didDrawPage: header,
+    startY: 84,
+    head: [COLS_DIR],
+    body: linhasDiretoria(membros, classes, unidades),
+    styles: { fontSize: 7.5, cellPadding: 3 },
+    headStyles: { fillColor: [28, 19, 14], textColor: 255, fontSize: 7.5 },
+    alternateRowStyles: { fillColor: [250, 247, 243] },
+    columnStyles: { 0: { cellWidth: 20 }, 1: { cellWidth: 100, fontStyle: "bold" } },
+  });
+  footer();
+  return doc.output("blob");
+}
+
 
 export async function clubReportExcel(membros: Profile[], desb: Desbravador[], classes: Classe[], incluir: IncluirRelacao = "ambos"): Promise<Blob> {
   const ExcelJS = (await import("exceljs")).default;

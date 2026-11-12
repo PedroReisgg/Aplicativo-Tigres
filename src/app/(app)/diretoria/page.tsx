@@ -7,6 +7,8 @@ import { useAuth } from "@/components/auth-provider";
 import { Avatar, Badge, Button, Card, Checkbox, Confirm, EmptyState, Input, PageHeader, SearchInput, Select, Sheet, Skeleton, Tabs, Textarea } from "@/components/ui";
 import { PhoneLink } from "@/components/domain";
 import { EspecialidadesCompraPanel, RelacaoMembrosPanel } from "@/components/relatorios-clube";
+import { BaixarArquivos } from "@/components/report-panel";
+import { diretoriaExcel, diretoriaPDF } from "@/lib/reports";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { useData } from "@/lib/use-data";
 import { getDesbravadores, getMembros, getUnidades, notificar } from "@/lib/api";
@@ -108,7 +110,14 @@ export default function DiretoriaPage() {
         <Historico />
       ) : (
         <>
-          <SearchInput value={q} onChange={setQ} placeholder="Buscar por nome, e-mail ou função…" className="mb-4" />
+          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center">
+            <SearchInput value={q} onChange={setQ} placeholder="Buscar por nome, e-mail ou função…" className="sm:flex-1" />
+            {aba === "membros" && !!lista.length && (
+              <div className="grid grid-cols-2 gap-2 sm:flex">
+                <BaixarArquivos base="diretoria" excel={() => diretoriaExcel(lista, auth.classes, unidades || [])} pdf={() => diretoriaPDF(lista, auth.classes, unidades || [])} />
+              </div>
+            )}
+          </div>
           {loading ? (
             <div className="space-y-2">
               {Array.from({ length: 4 }).map((_, i) => (
