@@ -10,7 +10,7 @@ import { brToIso, isoToBr, maskDate } from "@/lib/format";
 import { clubReportExcel, clubReportPDF, espReportExcel, espReportPDF, type EspReportLinha, type IncluirRelacao } from "@/lib/reports";
 import type { Classe, DesbEsp, Desbravador, Profile } from "@/lib/types";
 
-function Opcoes<T extends string>({ value, onChange, items, label }: { value: T; onChange: (v: T) => void; items: { value: T; label: string }[]; label: string }) {
+export function Opcoes<T extends string>({ value, onChange, items, label }: { value: T; onChange: (v: T) => void; items: { value: T; label: string }[]; label: string }) {
   return (
     <div role="radiogroup" aria-label={label} className="inline-flex flex-wrap gap-1 rounded-xl bg-ink-100 p-1">
       {items.map((i) => (

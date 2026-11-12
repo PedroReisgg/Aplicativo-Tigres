@@ -10,6 +10,8 @@ import { DesbravadorSheet, PhoneLink } from "@/components/domain";
 import { useData } from "@/lib/use-data";
 import { getDesbravadores, getUnidades } from "@/lib/api";
 import { ImportarDesbravadores } from "@/components/importar-desbravadores";
+import { BaixarArquivos } from "@/components/report-panel";
+import { desbravadoresExcel, desbravadoresPDF } from "@/lib/reports";
 import { normalize, plural } from "@/lib/format";
 import { responsaveisDe } from "@/lib/types";
 
@@ -42,6 +44,15 @@ function Lista() {
       ),
     [data, cls, uni, q]
   );
+
+  const filtroTexto = [
+    cls && `Classe ${classes.find((c) => String(c.id) === cls)?.nome || ""}`,
+    uni && (uni === "sem" ? "Sem unidade" : `Unidade ${(unidades || []).find((u) => u.id === uni)?.nome || ""}`),
+    q && `busca "${q}"`,
+    inativos && "com inativos",
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   if (!isActive)
     return <EmptyState icon={<Users className="size-6" />} title="Acesso pendente" description="Quando o diretor liberar seu acesso, você verá os desbravadores da sua classe." />;
@@ -120,7 +131,12 @@ function Lista() {
         />
       ) : (
         <>
-          <p className="mb-2 text-sm text-ink-500">{plural(list.length, "desbravador", "desbravadores")}</p>
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <p className="text-sm text-ink-500">{plural(list.length, "desbravador", "desbravadores")}</p>
+            <div className="flex gap-2">
+              <BaixarArquivos size="sm" base={`desbravadores${filtroTexto ? "-" + filtroTexto : ""}`} excel={() => desbravadoresExcel(list, classes, filtroTexto)} pdf={() => desbravadoresPDF(list, classes, filtroTexto)} />
+            </div>
+          </div>
           {/* Tabela no desktop */}
           <Card className="hidden overflow-hidden md:block">
             <table className="w-full text-sm">

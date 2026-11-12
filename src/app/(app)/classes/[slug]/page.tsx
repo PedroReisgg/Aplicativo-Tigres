@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { ArrowLeft, Award, BookOpen, ChevronDown, Plus, Search, Trash2, UserPlus, Users } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/components/auth-provider";
-import { Avatar, Badge, Button, Card, Confirm, EmptyState, Input, ProgressBar, SearchInput, Sheet, Skeleton, Spinner, Tabs, Textarea, cn } from "@/components/ui";
+import { Avatar, Badge, Button, Card, Checkbox, Confirm, EmptyState, Input, ProgressBar, SearchInput, Sheet, Skeleton, Spinner, Tabs, Textarea, cn } from "@/components/ui";
 import { DesbravadorSheet, EspIcon, NivelBadge } from "@/components/domain";
 import { StatusSheet, type Marca } from "@/components/status-sheet";
 import { salvarEspecialidade, validacaoCaderno } from "@/lib/lancamentos";
@@ -16,9 +16,10 @@ import { useData } from "@/lib/use-data";
 import { classePct, getCaderno, getCategorias, getClassEsp, getDesbEsp, getDesbravadores, getEspecialidades, getProgresso, getStaff, notificar, staffIdsDaClasse } from "@/lib/api";
 import { getEscolhas, regraEscolha, type Escolha } from "@/lib/escolhas";
 import { EscolhasTurmaSheet } from "@/components/escolha-especialidade";
-import { classReportExcel, classReportPDF } from "@/lib/reports";
+import { classReportExcel, classReportPDF, type ClassReportData } from "@/lib/reports";
+import { Opcoes } from "@/components/relatorios-clube";
 import { normalize } from "@/lib/format";
-import type { CadernoItem, Categoria, DesbEsp, Desbravador, Especialidade } from "@/lib/types";
+import type { CadernoItem, Categoria, Classe, DesbEsp, Desbravador, Especialidade, Progresso } from "@/lib/types";
 
 type Aba = "caderno" | "especialidades" | "desbravadores" | "relatorio";
 
@@ -155,37 +156,96 @@ export default function ClassePage() {
         />
       ) : (
         <div className="space-y-4">
-          <ReportPanel
-            titulo={`Relatório da classe de ${classe.nome}`}
-            base={`classe-${classe.nome}`}
-            link={`/classes/${classe.slug}?aba=relatorio`}
-            excel={() =>
-              classReportExcel({
-                classe,
-                itens: data.itens,
-                desbravadores: data.desb,
-                progresso: data.prog,
-                especialidades: reportEsps(data.classEsp, data.desbEsp, espMap),
-                classEsp: new Set(data.classEsp.map((c) => c.especialidade_codigo)),
-                desbEsp: data.desbEsp,
-              })
-            }
-            pdf={() =>
-              classReportPDF({
-                classe,
-                itens: data.itens,
-                desbravadores: data.desb,
-                progresso: data.prog,
-                especialidades: reportEsps(data.classEsp, data.desbEsp, espMap),
-                classEsp: new Set(data.classEsp.map((c) => c.especialidade_codigo)),
-                desbEsp: data.desbEsp,
-              })
-            }
-          />
+          <RelatorioClasse classe={classe} data={data} espMap={espMap} />
           <MatrizPreview itens={data.itens} desb={data.desb} prog={data.prog} />
         </div>
       )}
     </div>
+  );
+}
+
+/** Relatório da classe: todos os desbravadores ou só os escolhidos, com a ficha de cada um. */
+function RelatorioClasse({
+  classe,
+  data,
+  espMap,
+}: {
+  classe: Classe;
+  data: { itens: CadernoItem[]; desb: Desbravador[]; prog: Progresso[]; classEsp: { especialidade_codigo: string }[]; desbEsp: DesbEsp[]; escolhas: Escolha[]; categorias: Categoria[] };
+  espMap: Map<string, Especialidade>;
+}) {
+  const [quem, setQuem] = useState<"todos" | "escolher">("todos");
+  const [sel, setSel] = useState<string[]>([]);
+  const [fichas, setFichas] = useState(true);
+  const ordenados = useMemo(() => [...data.desb].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR")), [data.desb]);
+  const escolhidos = quem === "todos" ? ordenados : ordenados.filter((d) => sel.includes(d.id));
+  const area = useMemo(() => new Map(data.categorias.map((c) => [c.slug, c.nome])), [data.categorias]);
+
+  const dados = (): ClassReportData => {
+    if (!escolhidos.length) throw new Error("Escolha pelo menos um desbravador.");
+    return {
+      classe,
+      itens: data.itens,
+      desbravadores: escolhidos,
+      progresso: data.prog,
+      especialidades: reportEsps(data.classEsp, data.desbEsp, espMap),
+      classEsp: new Set(data.classEsp.map((c) => c.especialidade_codigo)),
+      desbEsp: data.desbEsp,
+      fichas,
+      escolhas: data.escolhas,
+      nomeEsp: (c) => espMap.get(c)?.nome || c,
+      areaEsp: (c) => area.get(espMap.get(c)?.categoria_slug || "") || "",
+    };
+  };
+  const base = escolhidos.length === 1 && quem === "escolher" ? `classe-${classe.nome}-${escolhidos[0].nome}` : `classe-${classe.nome}`;
+
+  return (
+    <ReportPanel
+      titulo={`Relatório da classe de ${classe.nome}`}
+      base={base}
+      link={`/classes/${classe.slug}?aba=relatorio`}
+      descricao="Caderno e especialidades de cada desbravador, com a ficha individual item a item. Pronto para imprimir ou enviar."
+      extra={
+        <div className="space-y-3">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <span className="text-sm font-medium text-ink-700">Quem entra no relatório:</span>
+            <Opcoes
+              label="Quem entra no relatório"
+              value={quem}
+              onChange={setQuem}
+              items={[
+                { value: "todos", label: `Todos (${data.desb.length})` },
+                { value: "escolher", label: "Escolher desbravadores" },
+              ]}
+            />
+          </div>
+          {quem === "escolher" && (
+            <div className="rounded-2xl border border-ink-200 p-3">
+              <div className="mb-2 flex items-center justify-between gap-2 text-sm">
+                <span className="text-ink-600">
+                  <strong className="text-ink-900">{sel.length}</strong> de {data.desb.length} escolhido(s)
+                </span>
+                <button className="font-semibold text-tiger-700 hover:underline" onClick={() => setSel(sel.length === data.desb.length ? [] : data.desb.map((d) => d.id))}>
+                  {sel.length === data.desb.length ? "Limpar" : "Marcar todos"}
+                </button>
+              </div>
+              {ordenados.length ? (
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {ordenados.map((d) => (
+                    <Checkbox key={d.id} checked={sel.includes(d.id)} onChange={(v) => setSel((s) => (v ? [...s, d.id] : s.filter((x) => x !== d.id)))} label={d.nome} />
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-ink-500">Nenhum desbravador nesta classe.</p>
+              )}
+            </div>
+          )}
+          <Checkbox checked={fichas} onChange={setFichas} label="Incluir a ficha de cada um (todos os itens do caderno e especialidades, com situação e data)" />
+        </div>
+      }
+      excel={async () => classReportExcel(dados())}
+      pdf={async () => classReportPDF(dados())}
+    />
   );
 }
 
