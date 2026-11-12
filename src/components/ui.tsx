@@ -450,7 +450,7 @@ export function Tabs<T extends string>({
             aria-selected={value === it.value}
             onClick={() => onChange(it.value)}
             className={cn(
-              "flex h-10 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-4 text-sm font-semibold transition-colors sm:flex-none",
+              "flex h-10 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-3 text-sm font-semibold transition-colors sm:flex-none sm:px-4",
               value === it.value ? "bg-white text-ink-900 shadow-card" : "text-ink-500 hover:text-ink-800"
             )}
           >

@@ -2,12 +2,15 @@
 
 import { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-import { Award, Check, ChevronDown, Clock, RotateCcw } from "lucide-react";
+import { Award, BookOpen, Check, ChevronDown, Clock, Download, HandCoins, Library, RotateCcw } from "lucide-react";
 import { Card, ClawMarks, ProgressBar, Skeleton, cn } from "@/components/ui";
 import { EspIcon } from "@/components/domain";
 import { useData } from "@/lib/use-data";
 import { carregarAcompanhamento, type AcompanhamentoDados } from "@/lib/acompanhamento";
 import { isoToBr } from "@/lib/format";
+import { tamanhoTexto } from "@/lib/anexos";
+import { reais } from "@/lib/pix";
+import { PixBox } from "@/components/pix-box";
 
 type Item = AcompanhamentoDados["itens"][number];
 
@@ -45,14 +48,14 @@ export default function AcompanharPage() {
             </p>
           </Card>
         ) : (
-          <Conteudo d={data} />
+          <Conteudo d={data} token={token} />
         )}
       </div>
     </main>
   );
 }
 
-function Conteudo({ d }: { d: AcompanhamentoDados }) {
+function Conteudo({ d, token }: { d: AcompanhamentoDados; token: string }) {
   const [abertas, setAbertas] = useState<Record<string, boolean>>({});
   const regular = d.itens.filter((i) => !i.avancada);
   const avancada = d.itens.filter((i) => i.avancada);
@@ -190,6 +193,7 @@ function Conteudo({ d }: { d: AcompanhamentoDados }) {
           })}
         </div>
       </section>
+      <DoClube token={token} />
       <p className="text-center text-xs text-ink-400">Dúvidas? Fale com o conselheiro ou com a diretoria do clube.</p>
     </div>
   );
@@ -202,5 +206,105 @@ function Resumo({ titulo, valor, pct, cor }: { titulo: string; valor: string; pc
       <div className="mt-1 font-display text-3xl font-semibold">{valor}</div>
       <ProgressBar value={pct} color={cor || undefined} />
     </div>
+  );
+}
+
+type LivroFamilia = { id: string; titulo: string; autor: string | null; descricao: string | null; categoria: string | null; capa: string | null; pdf: string; pdf_tamanho: number | null };
+type VaquinhaFamilia = {
+  id: string;
+  titulo: string;
+  descricao: string | null;
+  meta: number;
+  arrecadado: number;
+  contribuicoes: number;
+  prazo: string | null;
+  pix_chave: string | null;
+  pix_nome: string | null;
+  pix_cidade: string | null;
+};
+
+/** Biblioteca online e vaquinhas abertas (vêm do servidor com links temporários). */
+function DoClube({ token }: { token: string }) {
+  const { data } = useData(async () => {
+    const r = await fetch(`/api/familia/${token}`, { cache: "no-store" });
+    if (!r.ok) return null;
+    return (await r.json()) as { livros: LivroFamilia[]; vaquinhas: VaquinhaFamilia[] };
+  }, [token]);
+  const [todos, setTodos] = useState(false);
+  if (!data || (!data.livros.length && !data.vaquinhas.length)) return null;
+  const livros = todos ? data.livros : data.livros.slice(0, 8);
+  return (
+    <>
+      {data.vaquinhas.length > 0 && (
+        <section>
+          <h2 className="mb-3 flex items-center gap-2 font-display text-xl font-semibold uppercase tracking-wide">
+            <HandCoins className="size-5 text-tiger-600" /> Vaquinhas do clube
+          </h2>
+          <div className="space-y-3">
+            {data.vaquinhas.map((v) => {
+              const pct = v.meta > 0 ? (v.arrecadado / v.meta) * 100 : 0;
+              return (
+                <Card key={v.id} className="p-4 sm:p-5">
+                  <h3 className="font-display text-xl font-semibold uppercase leading-tight tracking-wide">{v.titulo}</h3>
+                  {v.descricao && <p className="mt-1 text-sm text-ink-600">{v.descricao}</p>}
+                  <div className="mt-3 flex items-end justify-between gap-3">
+                    <div>
+                      <div className="font-display text-2xl font-semibold">{reais(v.arrecadado)}</div>
+                      <div className="text-xs text-ink-500">
+                        de {reais(v.meta)}
+                        {v.prazo ? ` · até ${isoToBr(v.prazo)}` : ""}
+                      </div>
+                    </div>
+                    <div className={cn("font-display text-2xl font-semibold", pct >= 100 ? "text-emerald-600" : "text-tiger-600")}>{Math.floor(pct)}%</div>
+                  </div>
+                  <div className="mt-2">
+                    <ProgressBar value={pct} color={pct >= 100 ? "#059669" : undefined} />
+                  </div>
+                  {v.pix_chave && <PixBox className="mt-3" chave={v.pix_chave} nome={v.pix_nome} cidade={v.pix_cidade} descricao={v.titulo} />}
+                </Card>
+              );
+            })}
+          </div>
+        </section>
+      )}
+      {data.livros.length > 0 && (
+        <section>
+          <h2 className="mb-1 flex items-center gap-2 font-display text-xl font-semibold uppercase tracking-wide">
+            <Library className="size-5 text-tiger-600" /> Biblioteca do clube
+          </h2>
+          <p className="mb-3 text-sm text-ink-500">Livros em PDF para ler no celular ou imprimir.</p>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-4">
+            {livros.map((l) => (
+              <div key={l.id} className="flex min-w-0 flex-col">
+                <div className="aspect-[2/3] overflow-hidden rounded-lg bg-ink-100 shadow-[0_1px_2px_rgba(0,0,0,.12),0_6px_16px_-6px_rgba(0,0,0,.35)]">
+                  {l.capa ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={l.capa} alt={`Capa de ${l.titulo}`} className="size-full object-cover" loading="lazy" />
+                  ) : (
+                    <div className="flex size-full flex-col justify-between bg-gradient-to-br from-tiger-700 to-[#1f140d] p-3 text-white">
+                      <BookOpen className="size-5 opacity-70" aria-hidden />
+                      <div className="line-clamp-4 font-display text-base font-semibold uppercase leading-tight">{l.titulo}</div>
+                    </div>
+                  )}
+                </div>
+                <h3 className="mt-2 line-clamp-2 text-sm font-semibold leading-snug">{l.titulo}</h3>
+                {l.autor && <p className="truncate text-xs text-ink-500">{l.autor}</p>}
+                <div className="mt-auto pt-2.5">
+                  <a href={l.pdf} className="flex h-9 items-center justify-center gap-1.5 rounded-xl bg-tiger-500 px-3 text-sm font-semibold text-white hover:bg-tiger-600">
+                    <Download className="size-4" /> Baixar PDF
+                  </a>
+                  {l.pdf_tamanho ? <div className="mt-1 text-center text-[11px] text-ink-400">{tamanhoTexto(l.pdf_tamanho)}</div> : null}
+                </div>
+              </div>
+            ))}
+          </div>
+          {data.livros.length > livros.length && (
+            <button className="mt-4 w-full rounded-xl border border-ink-200 bg-white py-2.5 text-sm font-semibold text-ink-700" onClick={() => setTodos(true)}>
+              Ver todos os livros ({data.livros.length})
+            </button>
+          )}
+        </section>
+      )}
+    </>
   );
 }

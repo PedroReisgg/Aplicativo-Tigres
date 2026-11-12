@@ -141,7 +141,7 @@ export default function ClassePage() {
           onChange={() => reload(true)}
         />
       ) : aba === "especialidades" ? (
-        <EspecialidadesTab classeId={classe.id} classEsp={data.classEsp} todas={data.todas} desb={data.desb} desbEsp={data.desbEsp} pode={pode} onChange={() => reload(true)} />
+        <EspecialidadesTab classeId={classe.id} classEsp={data.classEsp} todas={data.todas} desb={data.desb} desbEsp={data.desbEsp} pode={pode} podeAtribuir={pode || auth.isCapelao} onChange={() => reload(true)} />
       ) : aba === "desbravadores" ? (
         <DesbravadoresTab
           pode={pode}
@@ -570,9 +570,12 @@ function EspecialidadesTab({
   desb,
   desbEsp,
   pode,
+  podeAtribuir,
   onChange,
 }: {
   classeId: number;
+  /** instrutor/diretor, ou capelão (que entrega para qualquer desbravador) */
+  podeAtribuir: boolean;
   classEsp: { especialidade_codigo: string; obrigatoria: boolean }[];
   todas: Especialidade[];
   desb: Desbravador[];
@@ -642,19 +645,19 @@ function EspecialidadesTab({
                 </Link>
                 <div className="mt-1 flex flex-wrap items-center gap-2">
                   {obrigatoria ? <Badge tone="tiger">Do caderno</Badge> : <Badge>Adicionada</Badge>}
-                  {pode && (
+                  {podeAtribuir && (
                     <span className="text-xs text-ink-500">
                       {n}/{desb.length} concluíram
                     </span>
                   )}
                 </div>
               </div>
-              {pode && (
+              {podeAtribuir && (
                 <div className="flex shrink-0 flex-col items-end gap-1">
                   <Button size="sm" variant={n ? "secondary" : "primary"} onClick={() => setEsp(e!)} disabled={!desb.length}>
                     Atribuir
                   </Button>
-                  {!obrigatoria && (
+                  {pode && !obrigatoria && (
                     <button onClick={() => setRemover(e!)} className="rounded-lg p-1.5 text-ink-400 hover:bg-red-50 hover:text-red-600" aria-label={`Remover ${e!.nome} da classe`}>
                       <Trash2 className="size-4" />
                     </button>

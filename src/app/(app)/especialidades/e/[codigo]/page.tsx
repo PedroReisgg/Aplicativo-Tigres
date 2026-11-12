@@ -58,10 +58,12 @@ export default function EspecialidadePage() {
   const auth = useAuth();
   const sb = supabaseBrowser();
   const gerenciaveis = auth.classes.filter((c) => auth.canManageClass(c.id));
-  const podeLancar = gerenciaveis.length > 0 || auth.unidadeIds.length > 0;
-  // turma = uma classe (instrutor/diretor) ou uma unidade (conselheiro)
-  const [grupo, setGrupo] = useState<string>(gerenciaveis[0] ? `c:${gerenciaveis[0].id}` : auth.unidadeIds[0] ? `u:${auth.unidadeIds[0]}` : "");
-  const classeSel = grupo.startsWith("c:") ? Number(grupo.slice(2)) : "";
+  // o capelão (e o diretor) entregam para qualquer desbravador do clube
+  const clubeTodo = auth.isCapelao || auth.isAdmin;
+  const podeLancar = gerenciaveis.length > 0 || auth.unidadeIds.length > 0 || auth.isCapelao;
+  // turma = uma classe (instrutor/diretor), uma unidade (conselheiro) ou o clube todo (capelão/diretor)
+  const [grupo, setGrupo] = useState<string>(gerenciaveis[0] ? `c:${gerenciaveis[0].id}` : auth.unidadeIds[0] ? `u:${auth.unidadeIds[0]}` : auth.isCapelao ? "t:clube" : "");
+  const classeSel = grupo.startsWith("c:") && auth.canManageClass(Number(grupo.slice(2))) ? Number(grupo.slice(2)) : "";
   const [aberto, setAberto] = useState(false);
 
   const { data, loading, reload } = useData(async () => {
@@ -80,10 +82,24 @@ export default function EspecialidadePage() {
     return { esp, cat: cats.find((c) => c.slug === esp?.categoria_slug), vinc: (vinc.data || []) as { class_id: number; obrigatoria: boolean }[], desb, feitos, unidades };
   }, [codigo, auth.isActive]);
 
-  const desbDaClasse = useMemo(() => (data?.desb || []).filter((d) => (grupo.startsWith("c:") ? d.class_id === Number(grupo.slice(2)) : d.unidade_id === grupo.slice(2))), [data, grupo]);
+  const desbDaClasse = useMemo(
+    () =>
+      (data?.desb || []).filter((d) =>
+        grupo === "t:clube" ? auth.canRegistrarEsp(d) : grupo.startsWith("c:") ? d.class_id === Number(grupo.slice(2)) : d.unidade_id === grupo.slice(2)
+      ),
+    [data, grupo, auth]
+  );
+  const nomeUnidade = (id: string) => (data?.unidades || []).find((u) => u.id === id)?.nome || "";
   const grupos = [
     ...gerenciaveis.map((c) => ({ v: `c:${c.id}`, nome: `Classe ${c.nome}` })),
-    ...auth.unidadeIds.map((id) => ({ v: `u:${id}`, nome: `Unidade ${(data?.unidades || []).find((u) => u.id === id)?.nome || ""}` })),
+    ...auth.unidadeIds.map((id) => ({ v: `u:${id}`, nome: `Unidade ${nomeUnidade(id)}` })),
+    ...(clubeTodo
+      ? [
+          { v: "t:clube", nome: "Todo o clube" },
+          ...auth.classes.filter((c) => !gerenciaveis.includes(c)).map((c) => ({ v: `c:${c.id}`, nome: `Classe ${c.nome}` })),
+          ...(data?.unidades || []).filter((u) => !auth.unidadeIds.includes(u.id)).map((u) => ({ v: `u:${u.id}`, nome: `Unidade ${u.nome}` })),
+        ]
+      : []),
   ];
   const pendentes = useMemo(() => new Set((data?.feitos || []).filter((f) => f.validacao === "pendente").map((f) => f.desbravador_id)), [data]);
   const initial = useMemo(() => {
@@ -184,6 +200,7 @@ export default function EspecialidadePage() {
                 Marcar quem concluiu
               </Button>
               {!desbDaClasse.length && <p className="text-xs text-ink-500">Ainda não há desbravadores cadastrados aqui.</p>}
+              {auth.isCapelao && !auth.isAdmin && <p className="text-xs text-ink-500">Como capelão, você pode entregar para qualquer desbravador: escolha a turma ou o clube todo e marque quem concluiu.</p>}
               {!auth.isAdmin && <p className="text-xs text-ink-500">Você anexa o comprovante e o diretor valida.</p>}
               {!classeSel ? null : naClasse(Number(classeSel)) ? (
                 <p className="flex items-center gap-1.5 text-sm text-emerald-700">

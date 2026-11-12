@@ -215,3 +215,88 @@ export function responsaveisDe(d: Pick<Desbravador, "nome_mae" | "nome_pai" | "r
     { titulo: "Responsável 2", nome: r2, telefone: d.responsavel2_telefone || null },
   ];
 }
+
+export interface Livro {
+  id: string;
+  titulo: string;
+  autor: string | null;
+  descricao: string | null;
+  categoria: string | null;
+  capa_path: string | null;
+  pdf_path: string | null;
+  pdf_nome: string | null;
+  pdf_tamanho: number | null;
+  /** Quantos exemplares físicos o clube tem para emprestar. */
+  exemplares: number;
+  criado_por: string | null;
+  created_at: string;
+  atualizado_por: string | null;
+  updated_at: string;
+}
+
+export interface Emprestimo {
+  id: string;
+  livro_id: string;
+  desbravador_id: string;
+  emprestado_em: string;
+  devolver_ate: string | null;
+  devolvido_em: string | null;
+  observacao: string | null;
+  emprestado_por: string | null;
+  devolvido_por: string | null;
+  created_at: string;
+}
+
+export interface LivroHistorico {
+  id: number;
+  livro_id: string | null;
+  livro_titulo: string | null;
+  acao: string;
+  detalhe: string | null;
+  autor_id: string | null;
+  autor_nome: string | null;
+  created_at: string;
+}
+
+export type EstadoItem = "bom" | "regular" | "ruim" | "manutencao";
+
+export interface ItemInventario {
+  id: string;
+  nome: string;
+  categoria: string;
+  quantidade: number;
+  estado: EstadoItem;
+  unidade_id: string | null;
+  local: string | null;
+  observacao: string | null;
+  criado_por: string | null;
+  created_at: string;
+  atualizado_por: string | null;
+  updated_at: string;
+}
+
+export interface Vaquinha {
+  id: string;
+  titulo: string;
+  descricao: string | null;
+  meta: number;
+  pix_chave: string | null;
+  pix_nome: string | null;
+  pix_cidade: string | null;
+  prazo: string | null;
+  encerrada: boolean;
+  criado_por: string | null;
+  created_at: string;
+  atualizado_por: string | null;
+  updated_at: string;
+}
+
+export interface VaquinhaEntrada {
+  id: string;
+  vaquinha_id: string;
+  valor: number;
+  nome: string | null;
+  data: string;
+  registrado_por: string | null;
+  created_at: string;
+}

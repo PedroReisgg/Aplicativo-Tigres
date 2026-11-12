@@ -965,3 +965,25 @@ export async function blobToBase64(blob: Blob) {
   for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
   return btoa(s);
 }
+
+/** Planilha simples (uma aba) para listas como o inventário. */
+export function tabelaExcel(aba: string, titulo: string, cols: string[], larguras: number[], linhas: (string | number)[][]) {
+  return planilha((wb, logoId) => abaSimples(wb, logoId, aba, titulo, cols, larguras, linhas, "FFF26B1D"));
+}
+
+export async function tabelaPDF(titulo: string, subtitulo: string, cols: string[], linhas: (string | number)[][]) {
+  const { doc, autoTable, header, footer } = await pdfBase(titulo, subtitulo, "#F26B1D");
+  autoTable(doc, {
+    margin: { top: 84, left: 20, right: 20, bottom: 28 },
+    didDrawPage: header,
+    startY: 84,
+    head: [cols],
+    body: linhas,
+    styles: { fontSize: 8.5, cellPadding: 4 },
+    headStyles: { fillColor: [242, 107, 29], textColor: 255, fontSize: 8.5 },
+    alternateRowStyles: { fillColor: [250, 247, 243] },
+    columnStyles: { 0: { cellWidth: 24 }, 1: { fontStyle: "bold" } },
+  });
+  footer();
+  return doc.output("blob");
+}

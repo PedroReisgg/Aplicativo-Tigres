@@ -19,13 +19,17 @@ interface AuthCtx {
   veTudo: boolean;
   isInstrutor: boolean;
   isConselheiro: boolean;
+  /** Capelão: entrega especialidades para qualquer desbravador. */
+  isCapelao: boolean;
+  /** Diretor ou tesouraria: registra o que entrou nas vaquinhas. */
+  podeFinanceiro: boolean;
   /** Todas as funções da pessoa. */
   funcoes: string[];
   isActive: boolean;
   isPending: boolean;
   loading: boolean;
   canManageClass: (classId: number | null | undefined) => boolean;
-  /** Pode lançar especialidades deste desbravador (instrutor da classe ou conselheiro da unidade). */
+  /** Pode lançar especialidades deste desbravador (instrutor da classe, conselheiro da unidade ou capelão). */
   canRegistrarEsp: (d: Pick<Desbravador, "class_id" | "unidade_id"> | null | undefined) => boolean;
   refresh: () => Promise<void>;
   signOut: () => Promise<void>;
@@ -101,12 +105,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       veTudo: isAdmin || isLeitor,
       isInstrutor: isActive && funcoes.includes(CARGO_INSTRUTOR),
       isConselheiro: isActive && funcoes.includes(CARGO_CONSELHEIRO),
+      isCapelao: isActive && funcoes.includes("Capelão"),
+      podeFinanceiro: isAdmin || (isActive && funcoes.includes("Tesoureiro(a)")),
       funcoes,
       isActive,
       isPending: profile?.status === "pendente",
       loading,
       canManageClass,
-      canRegistrarEsp: (d) => !!d && (canManageClass(d.class_id) || (isActive && !!d.unidade_id && unidadeIds.includes(d.unidade_id))),
+      canRegistrarEsp: (d) =>
+        !!d && (canManageClass(d.class_id) || (isActive && !!d.unidade_id && unidadeIds.includes(d.unidade_id)) || (isActive && funcoes.includes("Capelão"))),
       refresh: load,
       signOut: async () => {
         await sb.auth.signOut();

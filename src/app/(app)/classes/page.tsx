@@ -28,7 +28,7 @@ export default function ClassesPage() {
                   <p className="text-sm text-ink-500">Avançada: {c.classe_avancada}</p>
                 </div>
                 {isActive && !canManageClass(c.id) ? (
-                  <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-ink-100 px-2 py-0.5 text-[11px] font-semibold text-ink-500">
+                  <span className="mt-1 inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-ink-100 px-2 py-0.5 text-[11px] font-semibold text-ink-500">
                     <Lock className="size-3" /> {veTudo ? "Só ver" : "Consulta"}
                   </span>
                 ) : (
