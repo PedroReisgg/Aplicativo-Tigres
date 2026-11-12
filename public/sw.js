@@ -1,5 +1,5 @@
 // Service worker simples: cache de arquivos estáticos e página offline.
-const CACHE = "tigres-v2";
+const CACHE = "tigres-v3";
 const PRECACHE = ["/offline", "/brand/logo.webp", "/icon-192.png"];
 
 self.addEventListener("install", (e) => {
@@ -23,10 +23,13 @@ self.addEventListener("fetch", (e) => {
     e.respondWith(
       caches.match(req).then(
         (hit) =>
-          hit ||
+          (hit && hit.ok && hit) ||
           fetch(req).then((res) => {
-            const copy = res.clone();
-            caches.open(CACHE).then((c) => c.put(req, copy));
+            // só guarda respostas boas: um 404 guardado travaria a página para sempre
+            if (res.ok && res.type === "basic") {
+              const copy = res.clone();
+              caches.open(CACHE).then((c) => c.put(req, copy));
+            }
             return res;
           })
       )
