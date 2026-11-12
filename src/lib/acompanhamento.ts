@@ -30,7 +30,7 @@ export async function trocarLink(desbravadorId: string, userId: string | null): 
 export function mensagemWhatsApp(nomeDesbravador: string, nomeResponsavel: string | null, url: string) {
   const primeiro = nomeDesbravador.split(" ")[0];
   const ola = nomeResponsavel ? `Olá, ${nomeResponsavel.split(" ")[0]}!` : "Olá!";
-  return `${ola} Este é o link para acompanhar o progresso de ${primeiro} no Clube Tigres do Riacho (caderno e especialidades): ${url}`;
+  return `${ola} Este é o link para acompanhar o progresso de ${primeiro} no Clube Tigres do Riacho (caderno e especialidades). Pelo mesmo link dá para baixar os livros da biblioteca do clube e ver as vaquinhas: ${url}`;
 }
 
 export interface AcompanhamentoDados {
