@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Card, EmptyState, PageHeader, SearchInput, Skeleton, cn } from "@/components/ui";
 import { EspIcon, NivelBadge } from "@/components/domain";
 import { useData } from "@/lib/use-data";
@@ -19,11 +19,8 @@ export default function CategoriaPage() {
   const [q, setQ] = useState("");
   const [nivel, setNivel] = useState<number | null>(null);
   const list = useMemo(
-    () =>
-      (data?.esps || [])
-        .filter((e) => (!q || normalize(e.nome).includes(normalize(q))) && (!nivel || e.nivel === nivel))
-        .sort((a, b) => a.nome.localeCompare(b.nome)),
-    [data, q, nivel]
+    () => (data?.esps || []).filter((e) => (!q || normalize(e.nome).includes(normalize(q))) && (!nivel || e.nivel === nivel)).sort((a, b) => a.nome.localeCompare(b.nome)),
+    [data, q, nivel],
   );
 
   return (
@@ -31,18 +28,7 @@ export default function CategoriaPage() {
       <Link href="/especialidades" className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-500 hover:text-ink-800">
         <ArrowLeft className="size-4" /> Especialidades
       </Link>
-      <PageHeader
-        eyebrow="Área"
-        title={data?.cat?.nome || "…"}
-        description={data ? `${data.esps.length} ${categoria === "mestrados" ? "mestrados" : "especialidades"}` : undefined}
-        actions={
-          data?.cat?.url_mda && (
-            <a href={data.cat.url_mda} target="_blank" rel="noreferrer" className="inline-flex h-11 items-center gap-2 rounded-xl border border-ink-200 bg-white px-4 text-sm font-semibold hover:bg-ink-50">
-              Ver no MDA Wiki <ExternalLink className="size-4" />
-            </a>
-          )
-        }
-      />
+      <PageHeader eyebrow="Área" title={data?.cat?.nome || "…"} description={data ? `${data.esps.length} ${categoria === "mestrados" ? "mestrados" : "especialidades"}` : undefined} />
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center">
         <SearchInput value={q} onChange={setQ} placeholder="Filtrar nesta área…" className="flex-1" />
         {categoria !== "mestrados" && (
@@ -61,7 +47,11 @@ export default function CategoriaPage() {
         )}
       </div>
       {loading ? (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">{Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-44" />)}</div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Skeleton key={i} className="h-44" />
+          ))}
+        </div>
       ) : !list.length ? (
         <EmptyState title="Nenhuma especialidade" description="Mude o filtro ou a busca." />
       ) : (

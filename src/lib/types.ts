@@ -7,6 +7,8 @@ export interface Profile {
   telefone: string | null;
   data_nascimento: string | null;
   cargo: string;
+  /** Todas as funções da pessoa (o cargo é a principal). */
+  funcoes?: string[] | null;
   is_admin: boolean;
   status: Status;
   created_at: string;
@@ -100,7 +102,12 @@ export interface Progresso {
   observacao: string | null;
   marcado_por: string | null;
   marcado_em: string;
+  validacao?: Validacao;
+  validado_por?: string | null;
+  validado_em?: string | null;
 }
+
+export type Validacao = "pendente" | "aprovada";
 
 export interface DesbEsp {
   desbravador_id: string;
@@ -108,6 +115,38 @@ export interface DesbEsp {
   status: "concluida" | "refazer";
   concluida_em: string;
   observacao: string | null;
+  registrado_por?: string | null;
+  created_at?: string;
+  updated_at?: string;
+  validacao?: Validacao;
+  validado_por?: string | null;
+  validado_em?: string | null;
+}
+
+export interface Anexo {
+  id: string;
+  desbravador_id: string;
+  especialidade_codigo: string;
+  caminho: string;
+  nome_arquivo: string;
+  tipo: string | null;
+  tamanho: number | null;
+  enviado_por: string | null;
+  created_at: string;
+}
+
+export interface RegistroAtividade {
+  id: number;
+  created_at: string;
+  autor_id: string | null;
+  autor_nome: string | null;
+  acao: "registrou" | "aprovou" | "devolveu" | "removeu" | "anexou" | "marcou" | "desmarcou";
+  tipo: "especialidade" | "caderno";
+  desbravador_id: string | null;
+  desbravador_nome: string | null;
+  alvo: string | null;
+  alvo_nome: string | null;
+  detalhe: string | null;
 }
 
 export interface Notificacao {
@@ -123,21 +162,30 @@ export interface Notificacao {
 }
 
 /** Cargos que a pessoa pode escolher no cadastro. */
-export const CARGOS = [
-  "Diretor",
-  "Diretor Associado",
-  "Secretário(a)",
-  "Tesoureiro(a)",
-  "Capelão",
-  "Instrutor(a)",
-  "Conselheiro(a)",
-];
+export const CARGOS = ["Diretor", "Diretor Associado", "Secretário(a)", "Tesoureiro(a)", "Capelão", "Instrutor(a)", "Conselheiro(a)"];
 
 /** Cargos com acesso de administrador (podem mudar tudo). */
 export const CARGOS_ADMIN = ["Diretor", "Diretor Associado"];
 /** Cargos que veem todo o clube e baixam planilhas, sem poder mudar. */
 export const CARGOS_LEITURA = ["Secretário(a)", "Tesoureiro(a)", "Capelão"];
 export const CARGO_INSTRUTOR = "Instrutor(a)";
+
+/** Funções da pessoa, na ordem de importância (aceita perfis antigos só com "cargo"). */
+export function funcoesDe(p: Pick<Profile, "cargo" | "funcoes"> | null | undefined): string[] {
+  if (!p) return [];
+  const f = p.funcoes?.length ? p.funcoes : CARGOS.includes(p.cargo) ? [p.cargo] : [];
+  return CARGOS.filter((c) => f.includes(c));
+}
+/** Texto curto com todas as funções, ex.: "Diretor · Instrutor(a)". */
+export function funcoesTexto(p: Pick<Profile, "cargo" | "funcoes"> | null | undefined): string {
+  const f = funcoesDe(p);
+  return f.length ? f.join(" · ") : p?.cargo || "";
+}
+/** Separa as funções que a pessoa escolheu no cadastro (texto "A, B"). */
+export function funcoesSolicitadas(texto: string | null | undefined): string[] {
+  const partes = (texto || "").split(",").map((s) => s.trim());
+  return CARGOS.filter((c) => partes.includes(c));
+}
 export const CARGO_CONSELHEIRO = "Conselheiro(a)";
 
 export const DESCRICAO_CARGO: Record<string, string> = {
@@ -146,8 +194,8 @@ export const DESCRICAO_CARGO: Record<string, string> = {
   "Secretário(a)": "Vê todo o clube e baixa todas as planilhas, sem poder alterar.",
   "Tesoureiro(a)": "Vê todo o clube e baixa todas as planilhas, sem poder alterar.",
   Capelão: "Vê todo o clube e baixa todas as planilhas, sem poder alterar.",
-  "Instrutor(a)": "Coordena as classes que o diretor definir: marca o caderno e as especialidades.",
-  "Conselheiro(a)": "Coordena as unidades que o diretor definir: acompanha e atualiza os desbravadores delas.",
+  "Instrutor(a)": "Coordena as classes que o diretor definir: marca o caderno e lança as especialidades com comprovante.",
+  "Conselheiro(a)": "Coordena as unidades que o diretor definir: acompanha os desbravadores e lança especialidades com comprovante.",
 };
 
 export const CORES_UNIDADE = ["#F26B1D", "#D93A2B", "#2F7D4F", "#2563A8", "#7B3FA0", "#C99A12", "#0E8C8C", "#6B4A2E"];

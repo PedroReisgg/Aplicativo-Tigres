@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase/client";
-import { CARGOS_LEITURA, CARGO_CONSELHEIRO, CARGO_INSTRUTOR, type Classe, type Profile } from "@/lib/types";
+import { CARGOS_LEITURA, CARGO_CONSELHEIRO, CARGO_INSTRUTOR, funcoesDe, type Classe, type Desbravador, type Profile } from "@/lib/types";
 
 interface AuthCtx {
   userId: string | null;
@@ -19,10 +19,14 @@ interface AuthCtx {
   veTudo: boolean;
   isInstrutor: boolean;
   isConselheiro: boolean;
+  /** Todas as funções da pessoa. */
+  funcoes: string[];
   isActive: boolean;
   isPending: boolean;
   loading: boolean;
   canManageClass: (classId: number | null | undefined) => boolean;
+  /** Pode lançar especialidades deste desbravador (instrutor da classe ou conselheiro da unidade). */
+  canRegistrarEsp: (d: Pick<Desbravador, "class_id" | "unidade_id"> | null | undefined) => boolean;
   refresh: () => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -49,10 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     setUserId(user.id);
-    const [{ data: p }, { data: cls }] = await Promise.all([
-      sb.from("membros_view").select("*").eq("id", user.id).maybeSingle(),
-      sb.from("classes").select("*").order("id"),
-    ]);
+    const [{ data: p }, { data: cls }] = await Promise.all([sb.from("membros_view").select("*").eq("id", user.id).maybeSingle(), sb.from("classes").select("*").order("id")]);
     setProfile((p as Profile) || null);
     setClasses((cls as Classe[]) || []);
     setLoading(false);
@@ -85,8 +86,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const staffClassIds = (profile?.classes || []).map((c) => c.class_id);
     const isActive = profile?.status === "ativo";
     const isAdmin = !!profile?.is_admin && isActive;
-    const isLeitor = isActive && !isAdmin && CARGOS_LEITURA.includes(profile?.cargo || "");
+    const funcoes = funcoesDe(profile);
+    const isLeitor = isActive && !isAdmin && funcoes.some((f) => CARGOS_LEITURA.includes(f));
     const unidadeIds = (profile?.unidades || []).map((u) => u.unidade_id);
+    const canManageClass = (cid: number | null | undefined) => !!cid && isActive && (isAdmin || staffClassIds.includes(cid));
     return {
       userId,
       profile,
@@ -96,12 +99,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAdmin,
       isLeitor,
       veTudo: isAdmin || isLeitor,
-      isInstrutor: isActive && profile?.cargo === CARGO_INSTRUTOR,
-      isConselheiro: isActive && profile?.cargo === CARGO_CONSELHEIRO,
+      isInstrutor: isActive && funcoes.includes(CARGO_INSTRUTOR),
+      isConselheiro: isActive && funcoes.includes(CARGO_CONSELHEIRO),
+      funcoes,
       isActive,
       isPending: profile?.status === "pendente",
       loading,
-      canManageClass: (cid) => !!cid && isActive && (isAdmin || staffClassIds.includes(cid)),
+      canManageClass,
+      canRegistrarEsp: (d) => !!d && (canManageClass(d.class_id) || (isActive && !!d.unidade_id && unidadeIds.includes(d.unidade_id))),
       refresh: load,
       signOut: async () => {
         await sb.auth.signOut();

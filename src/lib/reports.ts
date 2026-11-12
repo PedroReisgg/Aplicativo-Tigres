@@ -1,6 +1,6 @@
 "use client";
 
-import type { CadernoItem, Classe, DesbEsp, Desbravador, Especialidade, Profile, Progresso } from "./types";
+import { funcoesTexto, type CadernoItem, type Classe, type DesbEsp, type Desbravador, type Especialidade, type Profile, type Progresso } from "./types";
 import { isoToBr } from "./format";
 
 export interface ClassReportData {
@@ -201,7 +201,18 @@ export async function classReportExcel(d: ClassReportData): Promise<Blob> {
   headerRow(wd.addRow(["#", "Nome", "Nascimento", "Idade", "Unidade", "Mãe", "Pai", "Telefone dos pais", "Telefone", "E-mail"]), DARK);
   [6, 32, 12, 7, 14, 26, 26, 18, 16, 28].forEach((w, i) => (wd.getColumn(i + 1).width = w));
   d.desbravadores.forEach((x, i) => {
-    const row = wd.addRow([i + 1, x.nome, isoToBr(x.data_nascimento), x.idade ?? "", x.unidade || "", x.nome_mae || "", x.nome_pai || "", x.telefone_responsavel || "", x.telefone || "", x.email || ""]);
+    const row = wd.addRow([
+      i + 1,
+      x.nome,
+      isoToBr(x.data_nascimento),
+      x.idade ?? "",
+      x.unidade || "",
+      x.nome_mae || "",
+      x.nome_pai || "",
+      x.telefone_responsavel || "",
+      x.telefone || "",
+      x.email || "",
+    ]);
     row.eachCell((c) => (c.border = border));
   });
 
@@ -251,7 +262,11 @@ export async function classReportPDF(d: ClassReportData): Promise<Blob> {
   const { doc, autoTable, header, footer } = await pdfBase(`Classe de ${d.classe.nome}`, "Relatório da classe", d.classe.cor);
   const [r, g, b] = [1, 3, 5].map((i) => parseInt(d.classe.cor.slice(i, i + 2), 16));
   const head = { fillColor: [r, g, b] as [number, number, number], textColor: 255, fontStyle: "bold" as const, fontSize: 8.5 };
-  const common = { margin: { top: 84, left: 24, right: 24, bottom: 28 }, didDrawPage: header, styles: { fontSize: 8.5, cellPadding: 4, lineColor: [230, 220, 210] as [number, number, number], lineWidth: 0.5 } };
+  const common = {
+    margin: { top: 84, left: 24, right: 24, bottom: 28 },
+    didDrawPage: header,
+    styles: { fontSize: 8.5, cellPadding: 4, lineColor: [230, 220, 210] as [number, number, number], lineWidth: 0.5 },
+  };
 
   // 1. Resumo
   autoTable(doc, {
@@ -378,26 +393,37 @@ export async function clubReportExcel(membros: Profile[], desb: Desbravador[], c
   make(
     "Diretoria",
     "Relação da diretoria",
-    ["#", "Nome", "Cargo", "Classe(s)", "Idade", "Nascimento", "Telefone", "E-mail", "Situação"],
-    [6, 30, 22, 26, 7, 12, 17, 30, 12],
+    ["#", "Nome", "Funções", "Classe(s)", "Idade", "Nascimento", "Telefone", "E-mail", "Situação"],
+    [6, 30, 30, 26, 7, 12, 17, 30, 12],
     membros.map((m, i) => [
       i + 1,
       m.nome,
-      m.cargo,
+      m.status === "pendente" ? `Pediu: ${m.cargo_solicitado || "—"}` : funcoesTexto(m).replace(/ · /g, ", "),
       (m.classes || []).map((c) => `${nomeClasse(c.class_id)} (${c.funcao})`).join(", "),
       m.idade ?? "",
       isoToBr(m.data_nascimento),
       m.telefone || "",
       m.email,
       m.status === "ativo" ? "Ativo" : m.status === "pendente" ? "Lista de espera" : "Inativo",
-    ])
+    ]),
   );
   make(
     "Desbravadores",
     "Relação dos desbravadores",
     ["#", "Nome", "Classe", "Unidade", "Idade", "Nascimento", "Mãe", "Pai", "Telefone dos pais", "Telefone"],
     [6, 30, 15, 14, 7, 12, 26, 26, 18, 16],
-    desb.map((d, i) => [i + 1, d.nome, nomeClasse(d.class_id), d.unidade || "", d.idade ?? "", isoToBr(d.data_nascimento), d.nome_mae || "", d.nome_pai || "", d.telefone_responsavel, d.telefone || ""])
+    desb.map((d, i) => [
+      i + 1,
+      d.nome,
+      nomeClasse(d.class_id),
+      d.unidade || "",
+      d.idade ?? "",
+      isoToBr(d.data_nascimento),
+      d.nome_mae || "",
+      d.nome_pai || "",
+      d.telefone_responsavel,
+      d.telefone || "",
+    ]),
   );
   const buf = await wb.xlsx.writeBuffer();
   return new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
@@ -410,10 +436,18 @@ export async function clubReportPDF(membros: Profile[], desb: Desbravador[], cla
   autoTable(doc, {
     ...common,
     startY: 84,
-    head: [["#", "Diretoria", "Cargo", "Classe(s)", "Idade", "Telefone", "E-mail"]],
+    head: [["#", "Diretoria", "Funções", "Classe(s)", "Idade", "Telefone", "E-mail"]],
     body: membros
       .filter((m) => m.status !== "inativo")
-      .map((m, i) => [i + 1, m.nome, m.status === "pendente" ? "Lista de espera" : m.cargo, (m.classes || []).map((c) => nomeClasse(c.class_id)).join(", "), m.idade ?? "", m.telefone || "", m.email]),
+      .map((m, i) => [
+        i + 1,
+        m.nome,
+        m.status === "pendente" ? "Lista de espera" : funcoesTexto(m).replace(/ · /g, ", "),
+        (m.classes || []).map((c) => nomeClasse(c.class_id)).join(", "),
+        m.idade ?? "",
+        m.telefone || "",
+        m.email,
+      ]),
     headStyles: { fillColor: [28, 19, 14], textColor: 255 },
     alternateRowStyles: { fillColor: [250, 247, 243] },
   });
