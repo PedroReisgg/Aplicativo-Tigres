@@ -76,9 +76,14 @@ export interface Desbravador {
   data_nascimento: string | null;
   sexo: "M" | "F" | null;
   cpf: string | null;
+  /** Campos antigos (antes de "responsável 1 e 2"); só leitura. */
   nome_pai: string | null;
   nome_mae: string | null;
+  responsavel1_nome?: string | null;
+  /** Telefone do responsável 1. */
   telefone_responsavel: string;
+  responsavel2_nome?: string | null;
+  responsavel2_telefone?: string | null;
   telefone: string | null;
   email: string | null;
   endereco: string | null;
@@ -199,3 +204,14 @@ export const DESCRICAO_CARGO: Record<string, string> = {
 };
 
 export const CORES_UNIDADE = ["#F26B1D", "#D93A2B", "#2F7D4F", "#2563A8", "#7B3FA0", "#C99A12", "#0E8C8C", "#6B4A2E"];
+
+/** Responsável 1 e 2 do desbravador (com os campos antigos de mãe/pai como reserva). */
+export function responsaveisDe(d: Pick<Desbravador, "nome_mae" | "nome_pai" | "responsavel1_nome" | "responsavel2_nome" | "telefone_responsavel" | "responsavel2_telefone">) {
+  const novo = d.responsavel1_nome != null || d.responsavel2_nome != null;
+  const r1 = novo ? d.responsavel1_nome || null : d.nome_mae || d.nome_pai || null;
+  const r2 = novo ? d.responsavel2_nome || null : d.nome_mae ? d.nome_pai || null : null;
+  return [
+    { titulo: "Responsável 1", nome: r1, telefone: d.telefone_responsavel || null },
+    { titulo: "Responsável 2", nome: r2, telefone: d.responsavel2_telefone || null },
+  ];
+}

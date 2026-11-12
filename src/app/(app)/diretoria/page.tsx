@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/components/auth-provider";
 import { Avatar, Badge, Button, Card, Checkbox, Confirm, EmptyState, Input, PageHeader, SearchInput, Select, Sheet, Skeleton, Tabs, Textarea } from "@/components/ui";
 import { PhoneLink } from "@/components/domain";
-import { ReportPanel } from "@/components/report-panel";
+import { EspecialidadesCompraPanel, RelacaoMembrosPanel } from "@/components/relatorios-clube";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { useData } from "@/lib/use-data";
 import { getDesbravadores, getMembros, getUnidades, notificar } from "@/lib/api";
@@ -14,7 +14,6 @@ import { FuncoesPicker } from "@/components/funcoes-picker";
 import { Validacoes } from "@/components/validacoes";
 import { Historico } from "@/components/historico";
 import { PasswordInput } from "@/components/auth-forms";
-import { clubReportExcel, clubReportPDF } from "@/lib/reports";
 import { brToIso, isoToBr, isStrongPassword, isValidEmail, isValidPhone, maskDate, maskPhone, normalize, timeAgo } from "@/lib/format";
 import { CARGOS_ADMIN, CARGO_CONSELHEIRO, CARGO_INSTRUTOR, funcoesDe, funcoesSolicitadas, type Profile, type Unidade } from "@/lib/types";
 
@@ -505,26 +504,8 @@ function RelacaoClube({ membros }: { membros: Profile[] }) {
   const porClasse = useMemo(() => classes.map((c) => ({ c, n: (desb || []).filter((d) => d.class_id === c.id).length })), [classes, desb]);
   return (
     <div className="space-y-4">
-      <ReportPanel
-        titulo="Relação geral do clube"
-        base="relacao-clube"
-        descricao="Toda a diretoria (cargo, idade, contato) e todos os desbravadores (classe, pais, telefone)."
-        link="/diretoria"
-        excel={async () =>
-          clubReportExcel(
-            membros.filter((m) => m.status !== "inativo"),
-            desb || (await getDesbravadores()),
-            classes,
-          )
-        }
-        pdf={async () =>
-          clubReportPDF(
-            membros.filter((m) => m.status !== "inativo"),
-            desb || (await getDesbravadores()),
-            classes,
-          )
-        }
-      />
+      <RelacaoMembrosPanel membros={membros} classes={classes} desb={desb} />
+      <EspecialidadesCompraPanel />
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {porClasse.map(({ c, n }) => (
           <Card key={c.id} className="p-4">

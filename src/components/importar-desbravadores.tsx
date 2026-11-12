@@ -16,9 +16,10 @@ type Campo =
   | "nome"
   | "data_nascimento"
   | "sexo"
-  | "nome_mae"
-  | "nome_pai"
+  | "responsavel1_nome"
   | "telefone_responsavel"
+  | "responsavel2_nome"
+  | "responsavel2_telefone"
   | "telefone"
   | "email"
   | "endereco"
@@ -30,17 +31,43 @@ const COLUNAS: { campo: Campo; titulo: string; largura: number; exemplo: string;
   { campo: "nome", titulo: "Nome completo *", largura: 34, exemplo: "Ana Beatriz Souza", nomes: ["nome", "nome completo", "nome do desbravador", "desbravador", "aluno"] },
   { campo: "data_nascimento", titulo: "Data de nascimento *", largura: 20, exemplo: "15/03/2014", nomes: ["data de nascimento", "nascimento", "data nascimento", "data nasc", "dt nascimento", "dn", "aniversario"] },
   { campo: "sexo", titulo: "Sexo (M/F)", largura: 11, exemplo: "F", nomes: ["sexo", "genero"] },
-  { campo: "nome_mae", titulo: "Nome da mãe", largura: 28, exemplo: "Carla Souza", nomes: ["nome da mae", "mae"] },
-  { campo: "nome_pai", titulo: "Nome do pai", largura: 28, exemplo: "Marcos Souza", nomes: ["nome do pai", "pai"] },
+  {
+    campo: "responsavel1_nome",
+    titulo: "Responsável 1 *",
+    largura: 28,
+    exemplo: "Carla Souza",
+    nomes: ["responsavel 1", "nome do responsavel 1", "responsavel", "nome do responsavel", "nome da mae", "mae"],
+  },
   {
     campo: "telefone_responsavel",
-    titulo: "Telefone dos pais *",
-    largura: 20,
+    titulo: "Telefone do responsável 1 *",
+    largura: 22,
     exemplo: "(11) 98765-4321",
-    nomes: ["telefone dos pais", "contato dos pais", "telefone do responsavel", "telefone responsavel", "contato do responsavel", "whatsapp dos pais", "contato", "telefone pais", "celular dos pais"],
+    nomes: [
+      "telefone do responsavel 1",
+      "telefone responsavel 1",
+      "telefone dos pais",
+      "contato dos pais",
+      "telefone do responsavel",
+      "telefone responsavel",
+      "contato do responsavel",
+      "whatsapp dos pais",
+      "contato",
+      "telefone pais",
+      "celular dos pais",
+      "telefone da mae",
+    ],
+  },
+  { campo: "responsavel2_nome", titulo: "Responsável 2", largura: 28, exemplo: "Marcos Souza", nomes: ["responsavel 2", "nome do responsavel 2", "nome do pai", "pai"] },
+  {
+    campo: "responsavel2_telefone",
+    titulo: "Telefone do responsável 2",
+    largura: 22,
+    exemplo: "(11) 91234-5678",
+    nomes: ["telefone do responsavel 2", "telefone responsavel 2", "contato do responsavel 2", "telefone do pai"],
   },
   { campo: "telefone", titulo: "Telefone do desbravador", largura: 20, exemplo: "", nomes: ["telefone do desbravador", "celular do desbravador", "telefone", "celular"] },
-  { campo: "email", titulo: "E-mail dos pais", largura: 26, exemplo: "carla@email.com", nomes: ["e-mail dos pais", "email dos pais", "e-mail", "email"] },
+  { campo: "email", titulo: "E-mail do responsável", largura: 26, exemplo: "carla@email.com", nomes: ["e-mail do responsavel", "email do responsavel", "e-mail dos pais", "email dos pais", "e-mail", "email"] },
   { campo: "endereco", titulo: "Endereço", largura: 34, exemplo: "", nomes: ["endereco", "endereço"] },
   { campo: "classe", titulo: "Classe", largura: 16, exemplo: "Companheiro", nomes: ["classe", "classe atual"] },
   { campo: "unidade", titulo: "Unidade", largura: 18, exemplo: "Leões", nomes: ["unidade"] },
@@ -88,7 +115,7 @@ async function gerarModelo(classes: Classe[], unidades: Unidade[]) {
     "COMO PREENCHER A PLANILHA DE DESBRAVADORES",
     "",
     "1. Uma linha por desbravador, a partir da linha 2 da aba Desbravadores. Apague a linha de exemplo (em cinza).",
-    "2. Colunas com * são obrigatórias: nome completo, data de nascimento e telefone dos pais.",
+    "2. Colunas com * são obrigatórias: nome completo, data de nascimento, responsável 1 e o telefone dele.",
     "3. Data de nascimento no formato dd/mm/aaaa. A idade é calculada sozinha pelo app.",
     "4. Classe: escolha na lista (Amigo, Companheiro, Pesquisador, Pioneiro, Excursionista, Guia).",
     "   Se deixar em branco, o app escolhe a classe pela idade.",
@@ -111,9 +138,10 @@ type Linha = {
   nome: string;
   data_nascimento: string | null;
   sexo: "M" | "F" | null;
-  nome_mae: string | null;
-  nome_pai: string | null;
+  responsavel1_nome: string | null;
   telefone_responsavel: string;
+  responsavel2_nome: string | null;
+  responsavel2_telefone: string | null;
   telefone: string | null;
   email: string | null;
   endereco: string | null;
@@ -182,6 +210,9 @@ function classePorIdade(anos: number | null, classes: Classe[]): Classe | null {
   return ok.length ? ok[ok.length - 1] : null;
 }
 
+// "Telefone do responsável 2" também começa como "telefone do responsável": confere o 2 antes
+const ORDEM_BUSCA = [...COLUNAS].sort((a, b) => Number(b.campo.startsWith("responsavel2")) - Number(a.campo.startsWith("responsavel2")));
+
 /** "Data Nasc." -> "data nasc"; "Nome completo *" -> "nome completo" */
 const limpo = (s: string) => normalize(s).replace(/[^a-z0-9]+/g, " ").trim();
 
@@ -212,7 +243,7 @@ async function lerPlanilha(file: File, classes: Classe[], existentes: Desbravado
     row.eachCell((cell, col) => {
       const t = limpo(textoDe(cell.value));
       if (!t) return;
-      for (const c of COLUNAS) {
+      for (const c of ORDEM_BUSCA) {
         if (tentativa.has(c.campo)) continue;
         if (c.nomes.some((nome) => t === limpo(nome) || (limpo(nome).includes(" ") && t.startsWith(limpo(nome) + " "))) || limpo(c.titulo) === t) {
           tentativa.set(c.campo, col);
@@ -239,7 +270,7 @@ async function lerPlanilha(file: File, classes: Classe[], existentes: Desbravado
     const resto = COLUNAS.some((c) => c.campo !== "nome" && textoDe(val(c.campo)));
     if (!nome && !resto) continue;
     // ignora a linha de exemplo do modelo
-    if (nome === COLUNAS[0].exemplo && telefoneDe(val("telefone_responsavel")) === COLUNAS[5].exemplo) continue;
+    if (nome === COLUNAS[0].exemplo && telefoneDe(val("telefone_responsavel")) === COLUNAS.find((c) => c.campo === "telefone_responsavel")!.exemplo) continue;
 
     const erros: string[] = [];
     const avisos: string[] = [];
@@ -251,8 +282,12 @@ async function lerPlanilha(file: File, classes: Classe[], existentes: Desbravado
     const anos = idade(nasc);
 
     const tel = telefoneDe(val("telefone_responsavel"));
-    if (!tel) avisos.push("Sem telefone dos pais");
-    else if (!isValidPhone(tel)) avisos.push("Telefone dos pais incompleto");
+    if (!tel) avisos.push("Sem telefone do responsável 1");
+    else if (!isValidPhone(tel)) avisos.push("Telefone do responsável 1 incompleto");
+    const tel2 = telefoneDe(val("responsavel2_telefone"));
+    if (tel2 && !isValidPhone(tel2)) avisos.push("Telefone do responsável 2 incompleto");
+    const resp1 = textoDe(val("responsavel1_nome"));
+    if (!resp1) avisos.push("Sem responsável 1");
     const telD = telefoneDe(val("telefone"));
 
     const sexoTxt = normalize(textoDe(val("sexo")));
@@ -281,9 +316,10 @@ async function lerPlanilha(file: File, classes: Classe[], existentes: Desbravado
       nome,
       data_nascimento: nasc,
       sexo,
-      nome_mae: textoDe(val("nome_mae")) || null,
-      nome_pai: textoDe(val("nome_pai")) || null,
+      responsavel1_nome: resp1 || null,
       telefone_responsavel: tel,
+      responsavel2_nome: textoDe(val("responsavel2_nome")) || null,
+      responsavel2_telefone: tel2 || null,
       telefone: telD || null,
       email,
       endereco: textoDe(val("endereco")) || null,
@@ -375,9 +411,10 @@ export function ImportarDesbravadores({ open, onClose, onDone }: { open: boolean
         nome: l.nome,
         data_nascimento: l.data_nascimento,
         sexo: l.sexo,
-        nome_mae: l.nome_mae,
-        nome_pai: l.nome_pai,
+        responsavel1_nome: l.responsavel1_nome,
         telefone_responsavel: l.telefone_responsavel,
+        responsavel2_nome: l.responsavel2_nome,
+        responsavel2_telefone: l.responsavel2_telefone,
         telefone: l.telefone,
         email: l.email,
         endereco: l.endereco,
@@ -440,7 +477,7 @@ export function ImportarDesbravadores({ open, onClose, onDone }: { open: boolean
           </span>
           <div className="min-w-0 flex-1 text-sm">
             <div className="font-semibold text-ink-900">1. Baixe o modelo e preencha</div>
-            <div className="text-ink-500">Nome, nascimento (a idade é calculada sozinha), contato dos pais, classe e unidade.</div>
+            <div className="text-ink-500">Nome, nascimento (a idade é calculada sozinha), responsáveis e telefones, classe e unidade.</div>
           </div>
           <Button variant="secondary" icon={<Download className="size-4" />} onClick={baixarModelo} loading={baixando}>
             Baixar modelo

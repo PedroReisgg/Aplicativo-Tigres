@@ -8,14 +8,17 @@ import { toast } from "sonner";
 import { useAuth } from "@/components/auth-provider";
 import { Avatar, Badge, Button, Card, Confirm, EmptyState, ProgressBar, SearchInput, Sheet, Skeleton, Textarea } from "@/components/ui";
 import { AnexosLista, AnexosPicker } from "@/components/anexos";
+import { AcompanhamentoCard } from "@/components/acompanhamento-card";
+import { EscolhaChips, EscolherEspSheet } from "@/components/escolha-especialidade";
+import { getEscolhas, regraEscolha } from "@/lib/escolhas";
 import { DesbravadorSheet, EspIcon, PhoneLink } from "@/components/domain";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { useData } from "@/lib/use-data";
-import { adminIds, getCaderno, getClassEsp, getDesbEsp, getDesbravador, getEspecialidades, getMembros, getProgresso, notificar, staffIdsDaClasse } from "@/lib/api";
+import { adminIds, getCaderno, getCategorias, getClassEsp, getDesbEsp, getDesbravador, getEspecialidades, getMembros, getProgresso, notificar, staffIdsDaClasse } from "@/lib/api";
 import { enviarArquivos, getAnexos, vincularAnexos } from "@/lib/anexos";
 import { validacaoCaderno } from "@/lib/lancamentos";
 import { isoToBr, normalize, timeAgo } from "@/lib/format";
-import type { Anexo, DesbEsp, Desbravador, Especialidade, RegistroAtividade } from "@/lib/types";
+import { responsaveisDe, type Anexo, type DesbEsp, type Desbravador, type Especialidade, type RegistroAtividade } from "@/lib/types";
 
 export default function DesbravadorPage() {
   const { id } = useParams<{ id: string }>();
@@ -30,7 +33,7 @@ export default function DesbravadorPage() {
   const { data, loading, reload } = useData(async () => {
     const d = await getDesbravador(id);
     if (!d) return null;
-    const [itens, prog, esps, todas, classEsp, anexos, membros] = await Promise.all([
+    const [itens, prog, esps, todas, classEsp, anexos, membros, categorias, escolhas] = await Promise.all([
       d.class_id ? getCaderno(d.class_id) : Promise.resolve([]),
       getProgresso([d.id]),
       getDesbEsp([d.id]),
@@ -38,11 +41,15 @@ export default function DesbravadorPage() {
       d.class_id ? getClassEsp(d.class_id) : Promise.resolve([]),
       getAnexos({ desbIds: [d.id] }),
       getMembros().catch(() => []),
+      getCategorias().catch(() => []),
+      getEscolhas([d.id]),
     ]);
-    return { d, itens, prog, esps, todas, classEsp, anexos, nomes: new Map(membros.map((m) => [m.id, m.nome])) };
+    return { d, itens, prog, esps, todas, classEsp, anexos, categorias, escolhas, nomes: new Map(membros.map((m) => [m.id, m.nome])) };
   }, [id]);
 
   const espMap = useMemo(() => new Map((data?.todas || []).map((e) => [e.codigo, e])), [data?.todas]);
+  const regras = useMemo(() => new Map((data?.itens || []).map((i) => [i.id, regraEscolha(i, data?.todas || [], data?.categorias || [])])), [data?.itens, data?.todas, data?.categorias]);
+  const [escolher, setEscolher] = useState<number | null>(null);
 
   if (loading)
     return (
@@ -65,6 +72,8 @@ export default function DesbravadorPage() {
   const pctBase = base.length ? (base.filter((i) => feito(i.id)?.status === "feito").length / base.length) * 100 : 0;
   const obrig = classEsp.map((c) => c.especialidade_codigo);
   const concluidas = esps.filter((e) => e.status === "concluida");
+  const escolhidas = (itemId: number) => data.escolhas.filter((e) => e.item_id === itemId).map((e) => e.especialidade_codigo);
+  const itemEscolher = escolher != null ? itens.find((i) => i.id === escolher) || null : null;
 
   async function toggleItem(itemId: number) {
     const atual = feito(itemId);
@@ -122,14 +131,17 @@ export default function DesbravadorPage() {
           )}
         </div>
         <div className="mt-6 grid gap-4 border-t border-ink-100 pt-5 text-sm sm:grid-cols-2 lg:grid-cols-3">
-          <Info label="Mãe" value={d.nome_mae} />
-          <Info label="Pai" value={d.nome_pai} />
-          <div>
-            <div className="text-xs font-semibold uppercase tracking-wide text-ink-400">Telefone dos pais</div>
-            <div className="mt-1">
-              <PhoneLink phone={d.telefone_responsavel} />
+          {responsaveisDe(d).map((r) => (
+            <div key={r.titulo} className="min-w-0">
+              <div className="text-xs font-semibold uppercase tracking-wide text-ink-400">{r.titulo}</div>
+              <div className="mt-1 break-words text-ink-800">{r.nome || "—"}</div>
+              {r.telefone && (
+                <div className="mt-0.5">
+                  <PhoneLink phone={r.telefone} />
+                </div>
+              )}
             </div>
-          </div>
+          ))}
           <Info label="Nascimento" value={isoToBr(d.data_nascimento)} />
           <div>
             <div className="text-xs font-semibold uppercase tracking-wide text-ink-400">Telefone do desbravador</div>
@@ -148,6 +160,8 @@ export default function DesbravadorPage() {
           )}
         </div>
       </Card>
+
+      {podeEsp && d.ativo && <AcompanhamentoCard d={d} userId={auth.userId} />}
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Caderno */}
@@ -179,6 +193,20 @@ export default function DesbravadorPage() {
                         <span className="ml-1.5 inline-flex items-center gap-1 rounded-full bg-amber-50 px-1.5 py-px text-[11px] font-semibold text-amber-700">
                           <Clock className="size-3" /> aguardando o diretor
                         </span>
+                      )}
+                      {regras.get(it.id) && (
+                        <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                          {escolhidas(it.id).length > 0 ? (
+                            <EscolhaChips codigos={escolhidas(it.id)} espMap={espMap} desbEsp={esps} desbravadorId={d.id} />
+                          ) : (
+                            <span className="text-xs text-ink-400">Especialidade ainda não escolhida</span>
+                          )}
+                          {podeEsp && (
+                            <button onClick={() => setEscolher(it.id)} className="text-xs font-semibold text-tiger-700 hover:text-tiger-800">
+                              {escolhidas(it.id).length ? "Trocar" : "Escolher"}
+                            </button>
+                          )}
+                        </div>
                       )}
                     </div>
                   </li>
@@ -269,6 +297,18 @@ export default function DesbravadorPage() {
       </div>
 
       <DesbravadorSheet open={editar} onClose={() => setEditar(false)} desbravador={d} onSaved={() => reload(true)} />
+      <EscolherEspSheet
+        open={!!itemEscolher}
+        onClose={() => setEscolher(null)}
+        item={itemEscolher}
+        regra={itemEscolher ? regras.get(itemEscolher.id) || null : null}
+        desbravador={d}
+        atuais={itemEscolher ? escolhidas(itemEscolher.id) : []}
+        categorias={data.categorias}
+        desbEsp={esps}
+        userId={auth.userId}
+        onSaved={() => reload(true)}
+      />
       <RegistrarEspSheet
         open={addEsp}
         onClose={() => setAddEsp(false)}

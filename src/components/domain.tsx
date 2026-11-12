@@ -68,9 +68,10 @@ type DForm = {
   data_nascimento: string;
   sexo: string;
   cpf: string;
-  nome_pai: string;
-  nome_mae: string;
+  responsavel1_nome: string;
   telefone_responsavel: string;
+  responsavel2_nome: string;
+  responsavel2_telefone: string;
   telefone: string;
   email: string;
   endereco: string;
@@ -85,9 +86,10 @@ function toForm(d?: Partial<Desbravador> | null, classId?: number | null): DForm
     data_nascimento: isoToBr(d?.data_nascimento),
     sexo: d?.sexo || "",
     cpf: d?.cpf || "",
-    nome_pai: d?.nome_pai || "",
-    nome_mae: d?.nome_mae || "",
+    responsavel1_nome: d?.responsavel1_nome || d?.nome_mae || d?.nome_pai || "",
     telefone_responsavel: d?.telefone_responsavel || "",
+    responsavel2_nome: d?.responsavel2_nome || (!d?.responsavel1_nome && d?.nome_mae ? d?.nome_pai || "" : ""),
+    responsavel2_telefone: d?.responsavel2_telefone || "",
     telefone: d?.telefone || "",
     email: d?.email || "",
     endereco: d?.endereco || "",
@@ -101,8 +103,10 @@ function validar(f: DForm) {
   const e: Partial<Record<keyof DForm, string>> = {};
   if (f.nome.trim().length < 3) e.nome = "Informe o nome do desbravador.";
   if (!brToIso(f.data_nascimento)) e.data_nascimento = "Data no formato dd/mm/aaaa.";
-  if (!f.nome_pai.trim() && !f.nome_mae.trim()) e.nome_mae = "Informe o nome da mãe ou do pai.";
+  if (f.responsavel1_nome.trim().length < 3) e.responsavel1_nome = "Informe o nome do responsável 1.";
   if (!isValidPhone(f.telefone_responsavel)) e.telefone_responsavel = "Telefone com DDD, ex.: (11) 98765-4321.";
+  if (f.responsavel2_telefone && !isValidPhone(f.responsavel2_telefone)) e.responsavel2_telefone = "Telefone com DDD, ex.: (11) 98765-4321.";
+  if (f.responsavel2_telefone && !f.responsavel2_nome.trim()) e.responsavel2_nome = "Informe o nome do responsável 2.";
   if (f.telefone && !isValidPhone(f.telefone)) e.telefone = "Telefone inválido.";
   if (f.cpf && !isValidCPF(f.cpf)) e.cpf = "CPF inválido.";
   if (f.email && !isValidEmail(f.email)) e.email = "E-mail inválido.";
@@ -167,9 +171,10 @@ export function DesbravadorSheet({
       data_nascimento: brToIso(f.data_nascimento),
       sexo: f.sexo || null,
       cpf: f.cpf || null,
-      nome_pai: f.nome_pai.trim() || null,
-      nome_mae: f.nome_mae.trim() || null,
+      responsavel1_nome: f.responsavel1_nome.trim(),
       telefone_responsavel: f.telefone_responsavel,
+      responsavel2_nome: f.responsavel2_nome.trim() || null,
+      responsavel2_telefone: f.responsavel2_telefone || null,
       telefone: f.telefone || null,
       email: f.email.trim() || null,
       endereco: f.endereco.trim() || null,
@@ -240,11 +245,14 @@ export function DesbravadorSheet({
         <Input label="CPF" inputMode="numeric" placeholder="000.000.000-00" {...set("cpf", maskCPF)} />
         <Input label="Telefone do desbravador" inputMode="tel" placeholder="(11) 98765-4321" {...set("telefone", maskPhone)} />
 
-        <div className="mt-2 border-t border-ink-100 pt-4 text-xs font-semibold uppercase tracking-[.12em] text-tiger-700 sm:col-span-2">Pais e responsáveis</div>
-        <Input label="Nome da mãe" {...set("nome_mae")} />
-        <Input label="Nome do pai" {...set("nome_pai")} />
-        <Input label="Telefone dos pais/responsável" required inputMode="tel" placeholder="(11) 98765-4321" {...set("telefone_responsavel", maskPhone)} />
-        <Input label="E-mail dos pais" type="email" inputMode="email" {...set("email")} />
+        <div className="mt-2 border-t border-ink-100 pt-4 text-xs font-semibold uppercase tracking-[.12em] text-tiger-700 sm:col-span-2">Responsáveis</div>
+        <Input label="Responsável 1" required autoComplete="off" {...set("responsavel1_nome")} />
+        <Input label="Telefone do responsável 1" required inputMode="tel" placeholder="(11) 98765-4321" {...set("telefone_responsavel", maskPhone)} />
+        <Input label="Responsável 2" autoComplete="off" {...set("responsavel2_nome")} />
+        <Input label="Telefone do responsável 2" inputMode="tel" placeholder="(11) 98765-4321" {...set("responsavel2_telefone", maskPhone)} />
+        <div className="sm:col-span-2">
+          <Input label="E-mail do responsável" type="email" inputMode="email" {...set("email")} />
+        </div>
         <div className="sm:col-span-2">
           <Input label="Endereço" {...set("endereco")} />
         </div>
