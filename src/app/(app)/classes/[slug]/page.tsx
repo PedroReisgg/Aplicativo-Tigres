@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
-import { ArrowLeft, Award, BookOpen, ChevronDown, ExternalLink, Plus, Search, Trash2, UserPlus, Users } from "lucide-react";
+import { ArrowLeft, Award, BookOpen, ChevronDown, Plus, Search, Trash2, UserPlus, Users } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/components/auth-provider";
 import { Avatar, Badge, Button, Card, Confirm, EmptyState, Input, ProgressBar, SearchInput, Sheet, Skeleton, Spinner, Tabs, Textarea, cn } from "@/components/ui";
 import { DesbravadorSheet, EspIcon, NivelBadge } from "@/components/domain";
 import { StatusSheet, type Marca } from "@/components/status-sheet";
+import { salvarEspecialidade, validacaoCaderno } from "@/lib/lancamentos";
 import { ReportPanel } from "@/components/report-panel";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { useData } from "@/lib/use-data";
@@ -119,7 +120,17 @@ export default function ClassePage() {
       ) : aba === "especialidades" ? (
         <EspecialidadesTab classeId={classe.id} classEsp={data.classEsp} todas={data.todas} desb={data.desb} desbEsp={data.desbEsp} pode={pode} onChange={() => reload(true)} />
       ) : aba === "desbravadores" ? (
-        <DesbravadoresTab pode={pode} classeId={classe.id} cor={classe.cor} desb={data.desb} itens={data.itens} prog={data.prog} desbEsp={data.desbEsp} classEsp={data.classEsp} onChange={() => reload(true)} />
+        <DesbravadoresTab
+          pode={pode}
+          classeId={classe.id}
+          cor={classe.cor}
+          desb={data.desb}
+          itens={data.itens}
+          prog={data.prog}
+          desbEsp={data.desbEsp}
+          classEsp={data.classEsp}
+          onChange={() => reload(true)}
+        />
       ) : (
         <div className="space-y-4">
           <ReportPanel
@@ -158,7 +169,10 @@ export default function ClassePage() {
 
 function reportEsps(classEsp: { especialidade_codigo: string }[], desbEsp: { especialidade_codigo: string }[], espMap: Map<string, Especialidade>) {
   const cods = [...new Set([...classEsp.map((c) => c.especialidade_codigo), ...desbEsp.map((d) => d.especialidade_codigo)])];
-  return cods.map((c) => espMap.get(c)).filter(Boolean).sort((a, b) => a!.nome.localeCompare(b!.nome)) as Especialidade[];
+  return cods
+    .map((c) => espMap.get(c))
+    .filter(Boolean)
+    .sort((a, b) => a!.nome.localeCompare(b!.nome)) as Especialidade[];
 }
 
 // ------------------------------------------------------------------ Caderno
@@ -174,7 +188,7 @@ function CadernoTab({
   classeId: number;
   itens: CadernoItem[];
   desb: Desbravador[];
-  prog: { desbravador_id: string; item_id: number; status: Marca }[];
+  prog: { desbravador_id: string; item_id: number; status: Marca; validacao?: string }[];
   pode: boolean;
   espMap: Map<string, Especialidade>;
   onChange: () => void;
@@ -188,9 +202,7 @@ function CadernoTab({
 
   const secoes = useMemo(() => {
     const m = new Map<string, CadernoItem[]>();
-    itens
-      .filter((i) => !q || normalize(i.texto + " " + i.detalhes.map((d) => d.t).join(" ")).includes(normalize(q)))
-      .forEach((i) => m.set(i.secao, [...(m.get(i.secao) || []), i]));
+    itens.filter((i) => !q || normalize(i.texto + " " + i.detalhes.map((d) => d.t).join(" ")).includes(normalize(q))).forEach((i) => m.set(i.secao, [...(m.get(i.secao) || []), i]));
     return [...m.entries()];
   }, [itens, q]);
 
@@ -200,9 +212,12 @@ function CadernoTab({
     return m;
   }, [item, prog]);
 
+  const pendentesItem = useMemo(() => new Set(item ? prog.filter((p) => p.item_id === item.id && p.validacao === "pendente").map((p) => p.desbravador_id) : []), [item, prog]);
+
   async function salvar(estado: Map<string, Marca | null>, mensagem: string) {
     if (!item) return;
-    const ups: { desbravador_id: string; item_id: number; status: Marca; observacao: string | null; marcado_por: string | null; marcado_em: string }[] = [];
+    const feitos: object[] = [];
+    const refazer: object[] = [];
     const dels: string[] = [];
     const devolvidos: string[] = [];
     estado.forEach((v, id) => {
@@ -210,17 +225,34 @@ function CadernoTab({
       if (v === antes && !(v === "refazer" && mensagem)) return;
       if (!v) dels.push(id);
       else {
-        ups.push({ desbravador_id: id, item_id: item.id, status: v, observacao: v === "refazer" ? mensagem || null : null, marcado_por: userId, marcado_em: new Date().toISOString() });
+        const row = {
+          desbravador_id: id,
+          item_id: item.id,
+          status: v,
+          observacao: v === "refazer" ? mensagem || null : null,
+          marcado_por: userId,
+          marcado_em: new Date().toISOString(),
+          ...validacaoCaderno(isAdmin, v, userId),
+        };
+        (v === "feito" ? feitos : refazer).push(row);
         if (v === "refazer" && antes !== "refazer") devolvidos.push(id);
       }
     });
-    if (ups.length) {
+    for (const ups of [feitos, refazer]) {
+      if (!ups.length) continue;
       const { error } = await sb.from("caderno_progresso").upsert(ups);
-      if (error) return void toast.error(error.message);
+      if (error) {
+        toast.error(error.message);
+        throw error;
+      }
     }
     if (dels.length) {
-      const { error } = await sb.from("caderno_progresso").delete().eq("item_id", item.id).in("desbravador_id", dels);
-      if (error) return void toast.error(error.message);
+      const { error, count } = await sb.from("caderno_progresso").delete({ count: "exact" }).eq("item_id", item.id).in("desbravador_id", dels);
+      if (error) {
+        toast.error(error.message);
+        throw error;
+      }
+      if (!isAdmin && count !== null && count < dels.length) toast.info("Itens já aprovados pelo diretor só podem ser desmarcados por ele.");
     }
     if (devolvidos.length || (isAdmin && mensagem)) {
       const nomes = desb.filter((d) => devolvidos.includes(d.id)).map((d) => d.nome.split(" ")[0]);
@@ -235,7 +267,7 @@ function CadernoTab({
         /* notificação é opcional */
       }
     }
-    toast.success("Caderno atualizado.");
+    toast.success(!isAdmin && feitos.length ? "Caderno atualizado. O diretor vai validar os itens marcados." : "Caderno atualizado.");
     onChange();
   }
 
@@ -274,7 +306,11 @@ function CadernoTab({
                             {it.especialidades.map((c) => {
                               const e = espMap.get(c);
                               return (
-                                <Link key={c} href={`/especialidades/e/${c}`} className="inline-flex items-center gap-1.5 rounded-full border border-ink-200 bg-white py-0.5 pl-0.5 pr-2.5 text-xs font-medium text-ink-700 hover:border-tiger-300 hover:bg-tiger-50">
+                                <Link
+                                  key={c}
+                                  href={`/especialidades/e/${c}`}
+                                  className="inline-flex items-center gap-1.5 rounded-full border border-ink-200 bg-white py-0.5 pl-0.5 pr-2.5 text-xs font-medium text-ink-700 hover:border-tiger-300 hover:bg-tiger-50"
+                                >
                                   {e && <EspIcon esp={e} size={20} />}
                                   {e?.nome || c}
                                 </Link>
@@ -284,7 +320,11 @@ function CadernoTab({
                         )}
                         {it.detalhes.length > 0 && (
                           <>
-                            <button onClick={() => setAberto((a) => ({ ...a, [it.id]: !open }))} className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-tiger-700" aria-expanded={!!open}>
+                            <button
+                              onClick={() => setAberto((a) => ({ ...a, [it.id]: !open }))}
+                              className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-tiger-700"
+                              aria-expanded={!!open}
+                            >
                               <ChevronDown className={cn("size-4 transition-transform", open && "rotate-180")} />
                               {open ? "Ocultar detalhes" : `Ver detalhes (${it.detalhes.length})`}
                             </button>
@@ -342,6 +382,7 @@ function CadernoTab({
         initial={initial}
         isAdmin={isAdmin}
         onSave={salvar}
+        pendentes={pendentesItem}
       />
       <NovoItemSheet open={novo} onClose={() => setNovo(false)} classeId={classeId} onSaved={onChange} />
     </div>
@@ -412,7 +453,7 @@ function EspecialidadesTab({
   classEsp: { especialidade_codigo: string; obrigatoria: boolean }[];
   todas: Especialidade[];
   desb: Desbravador[];
-  desbEsp: { desbravador_id: string; especialidade_codigo: string; status: "concluida" | "refazer" }[];
+  desbEsp: { desbravador_id: string; especialidade_codigo: string; status: "concluida" | "refazer"; validacao?: string }[];
   pode: boolean;
   onChange: () => void;
 }) {
@@ -433,41 +474,18 @@ function EspecialidadesTab({
     return m;
   }, [esp, desbEsp]);
 
-  async function salvar(estado: Map<string, Marca | null>, mensagem: string) {
+  const pendentesEsp = useMemo(() => new Set(esp ? desbEsp.filter((d) => d.especialidade_codigo === esp.codigo && d.validacao === "pendente").map((d) => d.desbravador_id) : []), [esp, desbEsp]);
+
+  async function salvar(estado: Map<string, Marca | null>, mensagem: string, files: File[]) {
     if (!esp) return;
-    const ups: object[] = [];
-    const dels: string[] = [];
-    const devolvidos: string[] = [];
-    estado.forEach((v, id) => {
-      const antes = initial.get(id) || null;
-      if (v === antes) return;
-      if (!v) dels.push(id);
-      else {
-        ups.push({ desbravador_id: id, especialidade_codigo: esp.codigo, status: v === "feito" ? "concluida" : "refazer", observacao: v === "refazer" ? mensagem || null : null, registrado_por: userId });
-        if (v === "refazer") devolvidos.push(id);
-      }
-    });
-    if (ups.length) {
-      const { error } = await sb.from("desbravador_especialidades").upsert(ups);
-      if (error) return void toast.error(error.message);
+    try {
+      const r = await salvarEspecialidade({ codigo: esp.codigo, nome: esp.nome, estado, initial, mensagem, files, userId: userId!, isAdmin, desbravadores: desb });
+      toast.success(r.pendentes ? "Enviado para a validação do diretor." : "Especialidade registrada.");
+      onChange();
+    } catch (e) {
+      toast.error((e as Error).message);
+      throw e;
     }
-    if (dels.length) {
-      const { error } = await sb.from("desbravador_especialidades").delete().eq("especialidade_codigo", esp.codigo).in("desbravador_id", dels);
-      if (error) return void toast.error(error.message);
-    }
-    if (devolvidos.length || (isAdmin && mensagem)) {
-      const nomes = desb.filter((d) => devolvidos.includes(d.id)).map((d) => d.nome.split(" ")[0]);
-      try {
-        await notificar(userId!, await staffIdsDaClasse(classeId), {
-          tipo: "refazer",
-          titulo: `Especialidade ${esp.nome}: ${devolvidos.length ? "refazer" : "mensagem"}`,
-          mensagem: `${nomes.length ? nomes.join(", ") + ": " : ""}${mensagem}`,
-          link: `/especialidades/e/${esp.codigo}`,
-        });
-      } catch {}
-    }
-    toast.success("Especialidade registrada.");
-    onChange();
   }
 
   async function adicionar(e: Especialidade) {
@@ -542,6 +560,8 @@ function EspecialidadesTab({
         initial={initial}
         isAdmin={isAdmin}
         onSave={salvar}
+        comAnexos
+        pendentes={pendentesEsp}
       />
       <AddEspSheet open={add} onClose={() => setAdd(false)} todas={todas} jaTem={new Set(classEsp.map((c) => c.especialidade_codigo))} onAdd={adicionar} />
       <Confirm
@@ -567,26 +587,14 @@ function EspecialidadesTab({
   );
 }
 
-function AddEspSheet({
-  open,
-  onClose,
-  todas,
-  jaTem,
-  onAdd,
-}: {
-  open: boolean;
-  onClose: () => void;
-  todas: Especialidade[];
-  jaTem: Set<string>;
-  onAdd: (e: Especialidade) => void;
-}) {
+function AddEspSheet({ open, onClose, todas, jaTem, onAdd }: { open: boolean; onClose: () => void; todas: Especialidade[]; jaTem: Set<string>; onAdd: (e: Especialidade) => void }) {
   const [q, setQ] = useState("");
   const res = useMemo(() => {
     const n = normalize(q);
     return (n ? todas.filter((e) => normalize(e.nome).includes(n) || e.codigo.toLowerCase().includes(n)) : todas).slice(0, 60);
   }, [q, todas]);
   return (
-    <Sheet open={open} onClose={onClose} title="Adicionar especialidade" description="Busque entre todas as especialidades do MDA Wiki.">
+    <Sheet open={open} onClose={onClose} title="Adicionar especialidade" description="Busque entre todas as especialidades.">
       <div className="space-y-3">
         <SearchInput value={q} onChange={setQ} placeholder="Ex.: Mamíferos, Nós e amarras…" />
         <ul className="divide-y divide-ink-100">
@@ -650,7 +658,12 @@ function DesbravadoresTab({
         )}
       </div>
       {!desb.length ? (
-        <EmptyState icon={<Users className="size-6" />} title="Nenhum desbravador nesta classe" description="Cadastre os desbravadores para começar a marcar o caderno." action={pode && <Button onClick={() => setNovo(true)}>Adicionar desbravador</Button>} />
+        <EmptyState
+          icon={<Users className="size-6" />}
+          title="Nenhum desbravador nesta classe"
+          description="Cadastre os desbravadores para começar a marcar o caderno."
+          action={pode && <Button onClick={() => setNovo(true)}>Adicionar desbravador</Button>}
+        />
       ) : (
         <Card className="divide-y divide-ink-100">
           {list.map((d) => {
@@ -731,12 +744,15 @@ function MatrizPreview({ itens, desb, prog }: { itens: CadernoItem[]; desb: Desb
         </table>
       </div>
       <div className="flex gap-4 border-t border-ink-100 px-4 py-2.5 text-xs text-ink-500">
-        <span className="inline-flex items-center gap-1.5"><span className="size-3 rounded bg-emerald-500" /> Feito</span>
-        <span className="inline-flex items-center gap-1.5"><span className="size-3 rounded bg-red-500" /> Refazer</span>
-        <span className="inline-flex items-center gap-1.5"><span className="size-3 rounded bg-ink-100" /> Pendente</span>
-        <a href="https://mda.wiki.br" target="_blank" rel="noreferrer" className="ml-auto inline-flex items-center gap-1 hover:text-ink-800">
-          Fonte: MDA Wiki <ExternalLink className="size-3" />
-        </a>
+        <span className="inline-flex items-center gap-1.5">
+          <span className="size-3 rounded bg-emerald-500" /> Feito
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <span className="size-3 rounded bg-red-500" /> Refazer
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <span className="size-3 rounded bg-ink-100" /> Pendente
+        </span>
       </div>
     </Card>
   );

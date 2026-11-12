@@ -24,7 +24,7 @@ export default function EspecialidadesPage() {
   return (
     <div>
       <PageHeader
-        eyebrow="MDA Wiki"
+        eyebrow="Biblioteca do clube"
         title="Especialidades"
         description={`${data?.esps.length || "Todas as"} especialidades e mestrados, com requisitos. Escolha uma área ou busque pelo nome.`}
       />
@@ -57,7 +57,9 @@ export default function EspecialidadesPage() {
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <h2 className="font-display text-xl font-semibold uppercase leading-tight tracking-wide">{c.nome}</h2>
-                      <p className="mt-0.5 text-sm text-ink-500">{amostra.length} {c.slug === "mestrados" ? "mestrados" : "especialidades"}</p>
+                      <p className="mt-0.5 text-sm text-ink-500">
+                        {amostra.length} {c.slug === "mestrados" ? "mestrados" : "especialidades"}
+                      </p>
                     </div>
                     <ArrowRight className="mt-1 size-5 shrink-0 text-ink-300 transition-transform group-hover:translate-x-0.5 group-hover:text-tiger-600" />
                   </div>

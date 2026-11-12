@@ -7,14 +7,15 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Award, Bell, BookOpen, Flag, Home, LogOut, Menu, ShieldCheck, UserRound, Users, X, Download } from "lucide-react";
 import { useAuth } from "./auth-provider";
 import { Avatar, cn } from "./ui";
+import { funcoesTexto } from "@/lib/types";
 import { supabaseBrowser } from "@/lib/supabase/client";
 
 type Item = { href: string; label: string; icon: typeof Home; show?: (a: ReturnType<typeof useAuth>) => boolean };
 
 const NAV: Item[] = [
   { href: "/painel", label: "Painel", icon: Home },
-  { href: "/classes", label: "Classes", icon: BookOpen },
-  { href: "/especialidades", label: "Especialidades", icon: Award },
+  { href: "/classes", label: "Classes", icon: BookOpen, show: (a) => a.isActive },
+  { href: "/especialidades", label: "Especialidades", icon: Award, show: (a) => a.isActive },
   { href: "/desbravadores", label: "Desbravadores", icon: Users, show: (a) => a.isActive },
   { href: "/unidades", label: "Unidades", icon: Flag, show: (a) => a.isActive },
   { href: "/diretoria", label: "Diretoria", icon: ShieldCheck, show: (a) => a.veTudo },
@@ -79,7 +80,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               aria-current={active(i.href) ? "page" : undefined}
               className={cn(
                 "group flex h-11 items-center gap-3 rounded-xl px-3 text-[15px] font-medium transition-colors",
-                active(i.href) ? "bg-tiger-500 text-white" : "text-ink-300 hover:bg-white/5 hover:text-white"
+                active(i.href) ? "bg-tiger-500 text-white" : "text-ink-300 hover:bg-white/5 hover:text-white",
               )}
             >
               <i.icon className="size-5" aria-hidden />
@@ -91,7 +92,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             aria-current={active("/notificacoes") ? "page" : undefined}
             className={cn(
               "flex h-11 items-center gap-3 rounded-xl px-3 text-[15px] font-medium transition-colors",
-              active("/notificacoes") ? "bg-tiger-500 text-white" : "text-ink-300 hover:bg-white/5 hover:text-white"
+              active("/notificacoes") ? "bg-tiger-500 text-white" : "text-ink-300 hover:bg-white/5 hover:text-white",
             )}
           >
             <Bell className="size-5" aria-hidden />
@@ -104,13 +105,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Avatar nome={auth.profile?.nome} color="#F26B1D" size={38} />
             <div className="min-w-0 flex-1">
               <div className="truncate text-sm font-semibold text-white">{auth.profile?.nome || "…"}</div>
-              <div className="truncate text-xs text-ink-400">{auth.profile?.cargo}</div>
+              <div className="truncate text-xs text-ink-400">{funcoesTexto(auth.profile)}</div>
             </div>
           </Link>
-          <button
-            onClick={auth.signOut}
-            className="mt-1 flex h-10 w-full items-center gap-3 rounded-xl px-3 text-sm text-ink-400 hover:bg-white/5 hover:text-white"
-          >
+          <button onClick={auth.signOut} className="mt-1 flex h-10 w-full items-center gap-3 rounded-xl px-3 text-sm text-ink-400 hover:bg-white/5 hover:text-white">
             <LogOut className="size-4" /> Sair
           </button>
         </div>
@@ -127,9 +125,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Link href="/notificacoes" className="relative rounded-xl p-2.5 hover:bg-white/10" aria-label={`Notificações${unread ? `, ${unread} não lidas` : ""}`}>
               <Bell className="size-[22px]" />
               {unread > 0 && (
-                <span className="absolute right-1 top-1 grid min-w-[18px] place-items-center rounded-full bg-tiger-500 px-1 text-[11px] font-bold leading-[18px]">
-                  {unread > 9 ? "9+" : unread}
-                </span>
+                <span className="absolute right-1 top-1 grid min-w-[18px] place-items-center rounded-full bg-tiger-500 px-1 text-[11px] font-bold leading-[18px]">{unread > 9 ? "9+" : unread}</span>
               )}
             </Link>
             <button onClick={() => setMenu(true)} className="rounded-xl p-2.5 hover:bg-white/10" aria-label="Abrir menu">
@@ -148,7 +144,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Avatar nome={auth.profile?.nome} color="#F26B1D" size={44} />
               <div className="min-w-0 flex-1">
                 <div className="truncate font-semibold">{auth.profile?.nome}</div>
-                <div className="truncate text-sm text-ink-500">{auth.profile?.cargo}</div>
+                <div className="truncate text-sm text-ink-500">{funcoesTexto(auth.profile)}</div>
               </div>
               <button onClick={() => setMenu(false)} className="rounded-xl p-2 text-ink-500 hover:bg-ink-100" aria-label="Fechar menu">
                 <X className="size-5" />
@@ -175,10 +171,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <main className="mx-auto w-full max-w-6xl px-4 pb-28 pt-5 sm:px-6 sm:pt-8 lg:px-10 lg:pb-12">{children}</main>
 
       {/* Barra inferior celular */}
-      <nav
-        className="fixed inset-x-0 bottom-0 z-30 border-t border-ink-200 bg-white/95 pb-safe backdrop-blur lg:hidden"
-        aria-label="Navegação inferior"
-      >
+      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-ink-200 bg-white/95 pb-safe backdrop-blur lg:hidden" aria-label="Navegação inferior">
         <div className="mx-auto grid max-w-lg" style={{ gridTemplateColumns: `repeat(${Math.min(items.length, 4)}, minmax(0,1fr))` }}>
           {items.slice(0, 4).map((i) => (
             <Link

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Award, BookOpen, Clock, Flag, Hourglass, ShieldCheck, UserPlus, Users } from "lucide-react";
+import { ArrowRight, Award, BookOpen, CheckCheck, Clock, Flag, Hourglass, ShieldCheck, UserPlus, Users } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
 import { Card, ClawMarks, EmptyState, ProgressBar, Skeleton } from "@/components/ui";
 import { supabaseBrowser } from "@/lib/supabase/client";
@@ -19,13 +19,19 @@ export default function PainelPage() {
   const sb = supabaseBrowser();
 
   const { data, loading } = useData(async () => {
-    const [desb, pend, itens, prog, notif, esps] = await Promise.all([
+    const contar = async (t: string, status: string) => {
+      const r = await sb.from(t).select("desbravador_id", { count: "exact", head: true }).eq("validacao", "pendente").eq("status", status);
+      return r.error ? 0 : r.count || 0;
+    };
+    const [desb, pend, itens, prog, notif, esps, vEsp, vCad] = await Promise.all([
       isActive ? sb.from("desbravadores").select("id, class_id").eq("ativo", true) : Promise.resolve({ data: [] }),
       isAdmin ? sb.from("profiles").select("id", { count: "exact", head: true }).eq("status", "pendente") : Promise.resolve({ count: 0 }),
       sb.from("caderno_itens").select("id, class_id").eq("avancada", false),
       isActive ? sb.from("caderno_progresso").select("desbravador_id, item_id").eq("status", "feito") : Promise.resolve({ data: [] }),
       sb.from("notificacoes").select("*").eq("destinatario_id", userId!).order("created_at", { ascending: false }).limit(5),
       isActive ? sb.from("desbravador_especialidades").select("desbravador_id", { count: "exact", head: true }).eq("status", "concluida") : Promise.resolve({ count: 0 }),
+      isAdmin ? contar("desbravador_especialidades", "concluida") : Promise.resolve(0),
+      isAdmin ? contar("caderno_progresso", "feito") : Promise.resolve(0),
     ]);
     return {
       desb: (desb.data || []) as { id: string; class_id: number }[],
@@ -34,6 +40,7 @@ export default function PainelPage() {
       prog: (prog.data || []) as { desbravador_id: string; item_id: number }[],
       notif: (notif.data || []) as Notificacao[],
       especialidades: (esps as { count: number | null }).count || 0,
+      validar: vEsp + vCad,
     };
   }, [isActive, isAdmin, userId]);
 
@@ -60,18 +67,18 @@ export default function PainelPage() {
           <h1 className="mt-1 font-display text-3xl font-semibold uppercase tracking-wide sm:text-4xl">{profile?.nome.split(" ")[0]}</h1>
           <p className="mt-2 max-w-xl text-ink-300">
             {isPending
-              ? "Seu cadastro está na lista de espera. Enquanto isso, você já pode consultar os cadernos e as especialidades."
+              ? "Seu cadastro está na lista de espera. Só quem o diretor aprova entra no app do clube."
               : isAdmin
-              ? "Você tem acesso completo ao clube: classes, unidades, desbravadores, diretoria e relatórios."
-              : isLeitor
-              ? "Você vê todo o clube e baixa todas as planilhas. Só o diretor faz alterações."
-              : isConselheiro
-              ? unidadeIds.length
-                ? "Acompanhe os desbravadores das unidades que você coordena."
-                : "Seu acesso está ativo. Peça ao diretor para colocar você em uma unidade."
-              : staffClassIds.length
-              ? "Acompanhe sua classe, marque o caderno e registre as especialidades."
-              : "Seu acesso está ativo. Peça ao diretor para vincular você a uma classe."}
+                ? "Você tem acesso completo ao clube: classes, unidades, desbravadores, diretoria e relatórios."
+                : isLeitor
+                  ? "Você vê todo o clube e baixa todas as planilhas. Só o diretor faz alterações."
+                  : isConselheiro
+                    ? unidadeIds.length
+                      ? "Acompanhe os desbravadores das unidades que você coordena."
+                      : "Seu acesso está ativo. Peça ao diretor para colocar você em uma unidade."
+                    : staffClassIds.length
+                      ? "Acompanhe sua classe, marque o caderno e registre as especialidades."
+                      : "Seu acesso está ativo. Peça ao diretor para vincular você a uma classe."}
           </p>
         </div>
       </section>
@@ -84,7 +91,8 @@ export default function PainelPage() {
           <div>
             <h2 className="font-semibold text-amber-900">Aguardando aprovação do diretor</h2>
             <p className="mt-0.5 text-sm text-amber-800">
-              Assim que o diretor confirmar seu cargo{profile?.cargo_solicitado ? ` (${profile.cargo_solicitado})` : ""}, você recebe uma notificação e o app libera o que é da sua função.
+              Assim que o diretor conferir e aprovar
+              {profile?.cargo_solicitado ? ` (você pediu: ${profile.cargo_solicitado})` : ""}, você recebe uma notificação e o app libera o que é das suas funções.
             </p>
           </div>
         </Card>
@@ -92,17 +100,47 @@ export default function PainelPage() {
 
       {/* Números */}
       {isActive && (
-        <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <section className={isAdmin ? "grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5" : "grid grid-cols-2 gap-3 sm:grid-cols-3"}>
           {[
-            { label: "Desbravadores", value: data?.desb.length, icon: Users, href: "/desbravadores" },
-            { label: "Especialidades concluídas", value: data?.especialidades, icon: Award, href: "/especialidades" },
-            { label: veTudo ? "Classes" : "Minhas classes", value: minhas.length, icon: BookOpen, href: "/classes" },
-            ...(isAdmin ? [{ label: "Na lista de espera", value: data?.pendentes, icon: Clock, href: "/diretoria" }] : []),
+            {
+              label: "Desbravadores",
+              value: data?.desb.length,
+              icon: Users,
+              href: "/desbravadores",
+            },
+            {
+              label: "Especialidades concluídas",
+              value: data?.especialidades,
+              icon: Award,
+              href: "/especialidades",
+            },
+            {
+              label: veTudo ? "Classes" : "Minhas classes",
+              value: minhas.length,
+              icon: BookOpen,
+              href: "/classes",
+            },
+            ...(isAdmin
+              ? [
+                  {
+                    label: "Na lista de espera",
+                    value: data?.pendentes,
+                    icon: Clock,
+                    href: "/diretoria?aba=espera",
+                  },
+                  {
+                    label: "Para você validar",
+                    value: data?.validar,
+                    icon: CheckCheck,
+                    href: "/diretoria?aba=validacoes",
+                  },
+                ]
+              : []),
           ].map((s) => (
             <Link key={s.label} href={s.href} className="group">
               <Card className="h-full p-4 transition-shadow group-hover:shadow-lift sm:p-5">
                 <s.icon className="size-5 text-tiger-600" />
-                <div className="mt-3 font-display text-3xl font-semibold text-ink-900">{loading ? <Skeleton className="h-8 w-12" /> : s.value ?? 0}</div>
+                <div className="mt-3 font-display text-3xl font-semibold text-ink-900">{loading ? <Skeleton className="h-8 w-12" /> : (s.value ?? 0)}</div>
                 <div className="mt-0.5 text-sm text-ink-500">{s.label}</div>
               </Card>
             </Link>
@@ -110,50 +148,58 @@ export default function PainelPage() {
         </section>
       )}
 
-      <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
+      <div className={isActive ? "grid gap-8 lg:grid-cols-[1.4fr_1fr]" : "grid gap-8"}>
         {/* Classes */}
-        <section>
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-display text-xl font-semibold uppercase tracking-wide">{veTudo || isPending ? "Classes" : "Minhas classes"}</h2>
-            <Link href="/classes" className="text-sm font-semibold text-tiger-700 hover:underline">
-              Ver todas
-            </Link>
-          </div>
-          {(isPending ? classes : minhas).length === 0 ? (
-            <EmptyState
-              icon={<BookOpen className="size-6" />}
-              title={isConselheiro ? "Classes são dos instrutores" : "Nenhuma classe vinculada"}
-              description={isConselheiro ? "Como conselheiro(a), você acompanha os desbravadores pela página Unidades." : "O diretor ainda não vinculou você a uma classe."}
-              action={isConselheiro && <Link href="/unidades" className="font-semibold text-tiger-700 hover:underline">Ver minhas unidades</Link>}
-            />
-          ) : (
-            <div className="grid gap-3 sm:grid-cols-2">
-              {(isPending ? classes : minhas).map((c) => {
-                const p = progressoClasse(c.id);
-                return (
-                  <Link key={c.id} href={`/classes/${c.slug}`} className="group">
-                    <Card className="relative overflow-hidden p-4 transition-shadow group-hover:shadow-lift">
-                      <span className="absolute inset-y-0 left-0 w-1.5" style={{ background: c.cor }} />
-                      <div className="flex items-center justify-between pl-2">
-                        <div>
-                          <div className="font-display text-lg font-semibold uppercase tracking-wide">{c.nome}</div>
-                          <div className="text-xs text-ink-500">{isActive ? plural(p.n, "desbravador", "desbravadores") : `A partir de ${c.idade_minima} anos`}</div>
-                        </div>
-                        <ArrowRight className="size-4 text-ink-400 transition-transform group-hover:translate-x-0.5" />
-                      </div>
-                      {isActive && (
-                        <div className="mt-3 pl-2">
-                          <ProgressBar value={p.pct} color={c.cor} />
-                          <div className="mt-1 text-xs text-ink-500">{Math.round(p.pct)}% do caderno concluído</div>
-                        </div>
-                      )}
-                    </Card>
-                  </Link>
-                );
-              })}
+        {isActive && (
+          <section>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="font-display text-xl font-semibold uppercase tracking-wide">{veTudo || isPending ? "Classes" : "Minhas classes"}</h2>
+              <Link href="/classes" className="text-sm font-semibold text-tiger-700 hover:underline">
+                Ver todas
+              </Link>
             </div>
-          )}
-        </section>
+            {(isPending ? classes : minhas).length === 0 ? (
+              <EmptyState
+                icon={<BookOpen className="size-6" />}
+                title={isConselheiro ? "Classes são dos instrutores" : "Nenhuma classe vinculada"}
+                description={isConselheiro ? "Como conselheiro(a), você acompanha os desbravadores pela página Unidades." : "O diretor ainda não vinculou você a uma classe."}
+                action={
+                  isConselheiro && (
+                    <Link href="/unidades" className="font-semibold text-tiger-700 hover:underline">
+                      Ver minhas unidades
+                    </Link>
+                  )
+                }
+              />
+            ) : (
+              <div className="grid gap-3 sm:grid-cols-2">
+                {(isPending ? classes : minhas).map((c) => {
+                  const p = progressoClasse(c.id);
+                  return (
+                    <Link key={c.id} href={`/classes/${c.slug}`} className="group">
+                      <Card className="relative overflow-hidden p-4 transition-shadow group-hover:shadow-lift">
+                        <span className="absolute inset-y-0 left-0 w-1.5" style={{ background: c.cor }} />
+                        <div className="flex items-center justify-between pl-2">
+                          <div>
+                            <div className="font-display text-lg font-semibold uppercase tracking-wide">{c.nome}</div>
+                            <div className="text-xs text-ink-500">{isActive ? plural(p.n, "desbravador", "desbravadores") : `A partir de ${c.idade_minima} anos`}</div>
+                          </div>
+                          <ArrowRight className="size-4 text-ink-400 transition-transform group-hover:translate-x-0.5" />
+                        </div>
+                        {isActive && (
+                          <div className="mt-3 pl-2">
+                            <ProgressBar value={p.pct} color={c.cor} />
+                            <div className="mt-1 text-xs text-ink-500">{Math.round(p.pct)}% do caderno concluído</div>
+                          </div>
+                        )}
+                      </Card>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+        )}
 
         {/* Notificações e atalhos */}
         <section className="space-y-6">
@@ -165,7 +211,12 @@ export default function PainelPage() {
               </Link>
             </div>
             <Card className="divide-y divide-ink-100">
-              {loading && <div className="space-y-2 p-4"><Skeleton className="h-4 w-2/3" /><Skeleton className="h-4 w-1/2" /></div>}
+              {loading && (
+                <div className="space-y-2 p-4">
+                  <Skeleton className="h-4 w-2/3" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+              )}
               {!loading && !data?.notif.length && <p className="p-5 text-sm text-ink-500">Nenhuma notificação por enquanto.</p>}
               {data?.notif.map((n) => (
                 <Link key={n.id} href={n.link || "/notificacoes"} className="flex gap-3 p-4 hover:bg-ink-50">

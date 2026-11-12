@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/components/auth-provider";
 import { Avatar, Badge, Button, Card, Input, PageHeader } from "@/components/ui";
+import { funcoesDe } from "@/lib/types";
 import { PasswordInput } from "@/components/auth-forms";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { brToIso, isoToBr, isStrongPassword, isValidPhone, maskDate, maskPhone } from "@/lib/format";
@@ -52,7 +53,15 @@ export default function PerfilPage() {
           <div className="truncate text-lg font-semibold">{profile?.nome}</div>
           <div className="truncate text-sm text-ink-500">{profile?.email}</div>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
-            <Badge tone={profile?.status === "ativo" ? "green" : "amber"}>{profile?.status === "ativo" ? profile.cargo : "Lista de espera"}</Badge>
+            {profile?.status === "ativo" ? (
+              funcoesDe(profile).map((f) => (
+                <Badge key={f} tone="green">
+                  {f}
+                </Badge>
+              ))
+            ) : (
+              <Badge tone="amber">{profile?.status === "inativo" ? "Acesso desativado" : "Lista de espera"}</Badge>
+            )}
             {profile?.is_admin && <Badge tone="tiger">Administrador</Badge>}
             {(profile?.classes || []).map((c) => (
               <Badge key={c.class_id}>{classes.find((x) => x.id === c.class_id)?.nome}</Badge>
@@ -66,7 +75,14 @@ export default function PerfilPage() {
         <Input label="Nome completo" value={nome} onChange={(e) => setNome(e.target.value)} />
         <div className="grid gap-4 sm:grid-cols-2">
           <Input label="Telefone" inputMode="tel" value={tel} onChange={(e) => setTel(maskPhone(e.target.value))} />
-          <Input label="Data de nascimento" inputMode="numeric" placeholder="dd/mm/aaaa" value={nasc} onChange={(e) => setNasc(maskDate(e.target.value))} hint={profile?.idade != null ? `${profile.idade} anos` : undefined} />
+          <Input
+            label="Data de nascimento"
+            inputMode="numeric"
+            placeholder="dd/mm/aaaa"
+            value={nasc}
+            onChange={(e) => setNasc(maskDate(e.target.value))}
+            hint={profile?.idade != null ? `${profile.idade} anos` : undefined}
+          />
         </div>
         <div className="flex justify-end">
           <Button onClick={salvar} loading={saving === "dados"}>

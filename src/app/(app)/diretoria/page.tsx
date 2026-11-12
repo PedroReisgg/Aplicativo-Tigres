@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Check, Clock, Eye, MessageSquare, ShieldCheck, UserCheck, UserPlus, Users } from "lucide-react";
+import { Check, Clock, Eye, MessageSquare, ShieldCheck, UserCheck, UserPlus, UserX, Users } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/components/auth-provider";
 import { Avatar, Badge, Button, Card, Checkbox, Confirm, EmptyState, Input, PageHeader, SearchInput, Select, Sheet, Skeleton, Tabs, Textarea } from "@/components/ui";
@@ -10,12 +10,16 @@ import { ReportPanel } from "@/components/report-panel";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { useData } from "@/lib/use-data";
 import { getDesbravadores, getMembros, getUnidades, notificar } from "@/lib/api";
+import { FuncoesPicker } from "@/components/funcoes-picker";
+import { Validacoes } from "@/components/validacoes";
+import { Historico } from "@/components/historico";
 import { PasswordInput } from "@/components/auth-forms";
 import { clubReportExcel, clubReportPDF } from "@/lib/reports";
 import { brToIso, isoToBr, isStrongPassword, isValidEmail, isValidPhone, maskDate, maskPhone, normalize, timeAgo } from "@/lib/format";
-import { CARGOS, CARGOS_ADMIN, CARGO_CONSELHEIRO, CARGO_INSTRUTOR, DESCRICAO_CARGO, type Profile, type Unidade } from "@/lib/types";
+import { CARGOS_ADMIN, CARGO_CONSELHEIRO, CARGO_INSTRUTOR, funcoesDe, funcoesSolicitadas, type Profile, type Unidade } from "@/lib/types";
 
-type Aba = "espera" | "membros" | "relacao";
+type Aba = "espera" | "validacoes" | "membros" | "historico" | "relacao";
+const ABAS: Aba[] = ["espera", "validacoes", "membros", "historico", "relacao"];
 
 export default function DiretoriaPage() {
   const auth = useAuth();
@@ -25,18 +29,38 @@ export default function DiretoriaPage() {
   const [q, setQ] = useState("");
   const { data, loading, reload } = useData(getMembros, []);
   const { data: unidades } = useData(() => (auth.veTudo ? getUnidades() : Promise.resolve([])), [auth.veTudo]);
+  const { data: nValidar, reload: recontar } = useData(async () => {
+    if (!auth.isAdmin) return 0;
+    const sb = supabaseBrowser();
+    const [a, b] = await Promise.all([
+      sb.from("desbravador_especialidades").select("desbravador_id", { count: "exact", head: true }).eq("validacao", "pendente").eq("status", "concluida"),
+      sb.from("caderno_progresso").select("desbravador_id", { count: "exact", head: true }).eq("validacao", "pendente").eq("status", "feito"),
+    ]);
+    return (a.count || 0) + (b.count || 0);
+  }, [auth.isAdmin]);
 
   const pendentes = (data || []).filter((m) => m.status === "pendente");
   const membros = (data || []).filter((m) => m.status !== "pendente");
   useEffect(() => {
-    if (!loading && data && (!pendentes.length || !auth.isAdmin)) setAba("membros");
+    if (loading || !data) return;
+    // abre direto na aba pedida no link (ex.: /diretoria?aba=validacoes)
+    const pedida = new URLSearchParams(window.location.search).get("aba") as Aba | null;
+    const soAdmin: Aba[] = ["espera", "validacoes", "historico"];
+    if (pedida && ABAS.includes(pedida) && (auth.isAdmin || !soAdmin.includes(pedida))) setAba(pedida);
+    else if (!pendentes.length || !auth.isAdmin) setAba("membros");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
 
   if (!auth.veTudo)
-    return <EmptyState icon={<ShieldCheck className="size-6" />} title="Área da diretoria" description="Somente o diretor, os diretores associados, a secretaria, a tesouraria e a capelania acessam esta página." />;
+    return (
+      <EmptyState
+        icon={<ShieldCheck className="size-6" />}
+        title="Área da diretoria"
+        description="Somente o diretor, os diretores associados, a secretaria, a tesouraria e a capelania acessam esta página."
+      />
+    );
 
-  const lista = (aba === "espera" ? pendentes : membros).filter((m) => normalize(`${m.nome} ${m.email} ${m.cargo}`).includes(normalize(q)));
+  const lista = (aba === "espera" ? pendentes : membros).filter((m) => normalize(`${m.nome} ${m.email} ${funcoesDe(m).join(" ")} ${m.cargo_solicitado || ""}`).includes(normalize(q)));
   const nomeClasse = (id: number) => auth.classes.find((c) => c.id === id);
   const nomeUnidade = (id: string) => (unidades || []).find((u) => u.id === id);
 
@@ -45,7 +69,7 @@ export default function DiretoriaPage() {
       <PageHeader
         eyebrow="Administração"
         title="Diretoria"
-        description={auth.isAdmin ? "Aprove cadastros, crie acessos e defina cargos, classes e unidades." : "Toda a diretoria do clube e as planilhas para baixar."}
+        description={auth.isAdmin ? "Aprove cadastros, valide o que a equipe lançou e defina funções, classes e unidades." : "Toda a diretoria do clube e as planilhas para baixar."}
         actions={
           auth.isAdmin && (
             <Button icon={<UserPlus className="size-4" />} onClick={() => setNovo(true)}>
@@ -64,8 +88,14 @@ export default function DiretoriaPage() {
           value={aba}
           onChange={setAba}
           items={[
-            ...(auth.isAdmin ? [{ value: "espera" as Aba, label: "Lista de espera", count: pendentes.length }] : []),
+            ...(auth.isAdmin
+              ? [
+                  { value: "espera" as Aba, label: "Lista de espera", count: pendentes.length },
+                  { value: "validacoes" as Aba, label: "Validar", count: nValidar ?? undefined },
+                ]
+              : []),
             { value: "membros", label: "Membros", count: membros.length },
+            ...(auth.isAdmin ? [{ value: "historico" as Aba, label: "Registro" }] : []),
             { value: "relacao", label: "Relação do clube" },
           ]}
         />
@@ -73,16 +103,24 @@ export default function DiretoriaPage() {
 
       {aba === "relacao" ? (
         <RelacaoClube membros={data || []} />
+      ) : aba === "validacoes" ? (
+        <Validacoes membros={data || []} onChange={() => recontar(true)} />
+      ) : aba === "historico" ? (
+        <Historico />
       ) : (
         <>
-          <SearchInput value={q} onChange={setQ} placeholder="Buscar por nome, e-mail ou cargo…" className="mb-4" />
+          <SearchInput value={q} onChange={setQ} placeholder="Buscar por nome, e-mail ou função…" className="mb-4" />
           {loading ? (
-            <div className="space-y-2">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-20" />)}</div>
+            <div className="space-y-2">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-20" />
+              ))}
+            </div>
           ) : !lista.length ? (
             <EmptyState
               icon={aba === "espera" ? <Clock className="size-6" /> : <Users className="size-6" />}
               title={aba === "espera" ? "Ninguém na lista de espera" : "Nenhum membro encontrado"}
-              description={aba === "espera" ? "Quando alguém da diretoria se cadastrar, aparece aqui para você aprovar." : undefined}
+              description={aba === "espera" ? "Quando alguém se cadastrar, aparece aqui. Só entra no app quem você aprovar." : undefined}
             />
           ) : (
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
@@ -93,11 +131,21 @@ export default function DiretoriaPage() {
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="truncate font-semibold">{m.nome}</span>
                       {m.is_admin && <Badge tone="tiger">Admin</Badge>}
-                      {m.status === "pendente" && m.cargo_solicitado && <Badge tone="blue">{m.cargo_solicitado}</Badge>}
                       {m.status === "inativo" && <Badge tone="red">Inativo</Badge>}
                     </div>
-                    <div className="truncate text-sm text-ink-500">
-                      {m.status === "pendente" ? `Cadastrou-se ${timeAgo(m.created_at)}` : m.cargo}
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {m.status === "pendente" ? (
+                        <>
+                          <span className="mr-1 text-sm text-ink-500">Cadastrou-se {timeAgo(m.created_at)}, pediu:</span>
+                          {(funcoesSolicitadas(m.cargo_solicitado).length ? funcoesSolicitadas(m.cargo_solicitado) : [m.cargo_solicitado || "—"]).map((f) => (
+                            <Badge key={f} tone="blue">
+                              {f}
+                            </Badge>
+                          ))}
+                        </>
+                      ) : (
+                        funcoesDe(m).map((f) => <Badge key={f}>{f}</Badge>)
+                      )}
                     </div>
                     <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-xs text-ink-500">
                       {m.idade != null && <span>{m.idade} anos</span>}
@@ -144,8 +192,8 @@ export default function DiretoriaPage() {
 function MembroSheet({ membro, unidades, onClose, onSaved }: { membro: Profile | null; unidades: Unidade[]; onClose: () => void; onSaved: () => void }) {
   const auth = useAuth();
   const sb = supabaseBrowser();
-  const [cargo, setCargo] = useState("");
-  const [admin, setAdmin] = useState(false);
+  const [funcoes, setFuncoes] = useState<string[]>([]);
+  const [recusar, setRecusar] = useState(false);
   const [status, setStatus] = useState<Profile["status"]>("ativo");
   const [classes, setClasses] = useState<Set<number>>(new Set());
   const [unids, setUnids] = useState<Set<string>>(new Set());
@@ -156,9 +204,7 @@ function MembroSheet({ membro, unidades, onClose, onSaved }: { membro: Profile |
   useEffect(() => {
     if (!membro) return;
     const pendente = membro.status === "pendente";
-    const c = pendente ? membro.cargo_solicitado || CARGO_INSTRUTOR : membro.cargo;
-    setCargo(CARGOS.includes(c) ? c : CARGO_INSTRUTOR);
-    setAdmin(pendente ? CARGOS_ADMIN.includes(c) : membro.is_admin);
+    setFuncoes(pendente ? funcoesSolicitadas(membro.cargo_solicitado) : funcoesDe(membro));
     setStatus(pendente ? "ativo" : membro.status);
     setClasses(new Set((membro.classes || []).map((x) => x.class_id)));
     setUnids(new Set((membro.unidades || []).map((x) => x.unidade_id)));
@@ -166,19 +212,21 @@ function MembroSheet({ membro, unidades, onClose, onSaved }: { membro: Profile |
   }, [membro]);
 
   const souEu = membro?.id === auth.userId;
-  const cargoFinal = cargo;
-  const ehInstrutor = cargo === CARGO_INSTRUTOR;
-  const ehConselheiro = cargo === CARGO_CONSELHEIRO;
-  function mudarCargo(c: string) {
-    setCargo(c);
-    setAdmin(CARGOS_ADMIN.includes(c));
-  }
+  const ehInstrutor = funcoes.includes(CARGO_INSTRUTOR);
+  const ehConselheiro = funcoes.includes(CARGO_CONSELHEIRO);
+  const admin = funcoes.some((f) => CARGOS_ADMIN.includes(f));
 
   async function salvar() {
     if (!membro) return;
+    if (!funcoes.length) return toast.error("Escolha pelo menos uma função.");
+    if (souEu && !admin) return toast.error("Você não pode tirar o seu próprio acesso de diretor.");
     setSaving(true);
     try {
-      const up = await sb.from("profiles").update({ cargo: cargoFinal, is_admin: souEu ? true : admin, status: souEu ? "ativo" : status }).eq("id", membro.id);
+      // o banco define o cargo principal e o acesso de administrador a partir das funções
+      const up = await sb
+        .from("profiles")
+        .update({ funcoes, cargo: funcoes[0], is_admin: admin, status: souEu ? "ativo" : status })
+        .eq("id", membro.id);
       if (up.error) throw up.error;
       // classes: só para instrutores
       const antes = new Set((membro.classes || []).map((x) => x.class_id));
@@ -209,11 +257,12 @@ function MembroSheet({ membro, unidades, onClose, onSaved }: { membro: Profile |
       const aprovado = membro.status === "pendente" && status === "ativo";
       const nomesClasses = [...depois].map((k) => auth.classes.find((c) => c.id === k)?.nome).filter(Boolean);
       const nomesUnidades = [...depoisU].map((k) => unidades.find((u) => u.id === k)?.nome).filter(Boolean);
-      if (aprovado || ups.length || remover.length || upsU.length || removerU.length || cargo !== membro.cargo) {
+      const mudouFuncoes = funcoes.join() !== funcoesDe(membro).join();
+      if (aprovado || ups.length || remover.length || upsU.length || removerU.length || mudouFuncoes) {
         await notificar(auth.userId!, [membro.id], {
           tipo: "acesso",
           titulo: aprovado ? "Seu acesso foi liberado!" : "Seu acesso foi atualizado",
-          mensagem: `Cargo: ${cargoFinal}.${nomesClasses.length ? ` Classe(s): ${nomesClasses.join(", ")}.` : ""}${nomesUnidades.length ? ` Unidade(s): ${nomesUnidades.join(", ")}.` : ""}`,
+          mensagem: `${funcoes.length > 1 ? "Funções" : "Função"}: ${funcoes.join(", ")}.${nomesClasses.length ? ` Classe(s): ${nomesClasses.join(", ")}.` : ""}${nomesUnidades.length ? ` Unidade(s): ${nomesUnidades.join(", ")}.` : ""}`,
           link: "/painel",
         });
       }
@@ -241,6 +290,11 @@ function MembroSheet({ membro, unidades, onClose, onSaved }: { membro: Profile |
             {!souEu && membro?.status !== "pendente" && (
               <Button variant="ghost" className="mr-auto text-red-600" onClick={() => setRemover(true)}>
                 Remover acesso
+              </Button>
+            )}
+            {membro?.status === "pendente" && (
+              <Button variant="ghost" className="mr-auto text-red-600" icon={<UserX className="size-4" />} onClick={() => setRecusar(true)}>
+                Recusar
               </Button>
             )}
             <Button variant="secondary" onClick={onClose}>
@@ -271,35 +325,28 @@ function MembroSheet({ membro, unidades, onClose, onSaved }: { membro: Profile |
               </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Select label="Cargo no clube" value={cargo} onChange={(e) => mudarCargo(e.target.value)} hint={DESCRICAO_CARGO[cargo]}>
-                {CARGOS.map((c) => (
-                  <option key={c}>{c}</option>
-                ))}
-              </Select>
+            {membro.status === "pendente" && (
+              <p className="rounded-2xl bg-blue-50 p-3 text-sm text-blue-900">
+                No cadastro, pediu: <strong>{membro.cargo_solicitado || "nenhuma função"}</strong>. Confira se a pessoa é mesmo da diretoria antes de aprovar. Se não for, toque em Recusar.
+              </p>
+            )}
+            <FuncoesPicker value={funcoes} onChange={setFuncoes} travadas={souEu ? CARGOS_ADMIN : []} hint="Marque todas as funções. Ex.: diretor que também é instrutor de uma classe." />
+            {admin && (
+              <p className="-mt-3 flex items-center gap-2 rounded-xl bg-tiger-50 px-3 py-2 text-sm text-tiger-800">
+                <ShieldCheck className="size-4 shrink-0" /> Com a função de diretor, tem acesso de administrador: aprova cadastros, valida e mexe em tudo.
+              </p>
+            )}
+            {membro.status !== "pendente" && (
               <Select label="Situação" value={status} onChange={(e) => setStatus(e.target.value as Profile["status"])} disabled={souEu}>
                 <option value="ativo">Ativo</option>
                 <option value="inativo">Inativo (sem acesso)</option>
               </Select>
-            </div>
-            {membro.status === "pendente" && membro.cargo_solicitado && (
-              <p className="-mt-3 text-sm text-ink-500">
-                No cadastro, escolheu <strong className="text-ink-800">{membro.cargo_solicitado}</strong>.
-              </p>
             )}
-
-            <label className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 ${admin ? "border-tiger-300 bg-tiger-50" : "border-ink-200"}`}>
-              <Checkbox checked={admin || souEu} onChange={setAdmin} disabled={souEu} />
-              <span>
-                <span className="block font-semibold">Acesso de administrador</span>
-                <span className="text-sm text-ink-500">Para o diretor e diretores associados: vê todo o clube, aprova cadastros, mexe nas classes e pode mandar refazer.</span>
-              </span>
-            </label>
 
             {ehInstrutor && (
               <div>
                 <div className="mb-1 text-sm font-medium text-ink-800">Classes que coordena</div>
-                <p className="mb-2 text-xs text-ink-500">Só instrutores coordenam classes.</p>
+                <p className="mb-2 text-xs text-ink-500">Aparece porque a pessoa tem a função de instrutor.</p>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {auth.classes.map((c) => {
                     const on = classes.has(c.id);
@@ -331,7 +378,7 @@ function MembroSheet({ membro, unidades, onClose, onSaved }: { membro: Profile |
             {ehConselheiro && (
               <div>
                 <div className="mb-1 text-sm font-medium text-ink-800">Unidades que coordena</div>
-                <p className="mb-2 text-xs text-ink-500">Só conselheiros coordenam unidades.</p>
+                <p className="mb-2 text-xs text-ink-500">Aparece porque a pessoa tem a função de conselheiro.</p>
                 {unidades.length ? (
                   <div className="grid gap-2 sm:grid-cols-2">
                     {unidades.map((u) => {
@@ -401,7 +448,54 @@ function MembroSheet({ membro, unidades, onClose, onSaved }: { membro: Profile |
           onClose();
         }}
       />
+      <RecusarDialog
+        membro={membro}
+        open={recusar}
+        onClose={() => setRecusar(false)}
+        onDone={() => {
+          setRecusar(false);
+          onSaved();
+          onClose();
+        }}
+      />
     </>
+  );
+}
+
+function RecusarDialog({ membro, open, onClose, onDone }: { membro: Profile | null; open: boolean; onClose: () => void; onDone: () => void }) {
+  const [loading, setLoading] = useState(false);
+  return (
+    <Confirm
+      open={open}
+      title="Recusar cadastro?"
+      message={
+        <>
+          A conta de <strong>{membro?.nome}</strong> ({membro?.email}) é apagada e a pessoa não entra no app.
+        </>
+      }
+      confirmLabel="Recusar e apagar"
+      danger
+      loading={loading}
+      onClose={onClose}
+      onConfirm={async () => {
+        if (!membro) return;
+        setLoading(true);
+        try {
+          const {
+            data: { session },
+          } = await supabaseBrowser().auth.getSession();
+          const r = await fetch(`/api/admin/membros?id=${encodeURIComponent(membro.id)}`, { method: "DELETE", headers: { authorization: `Bearer ${session?.access_token || ""}` } });
+          const j = await r.json().catch(() => ({}));
+          if (!r.ok) throw new Error(j.error || "Não foi possível recusar.");
+          toast.success("Cadastro recusado.");
+          onDone();
+        } catch (e) {
+          toast.error((e as Error).message);
+        } finally {
+          setLoading(false);
+        }
+      }}
+    />
   );
 }
 
@@ -416,8 +510,20 @@ function RelacaoClube({ membros }: { membros: Profile[] }) {
         base="relacao-clube"
         descricao="Toda a diretoria (cargo, idade, contato) e todos os desbravadores (classe, pais, telefone)."
         link="/diretoria"
-        excel={async () => clubReportExcel(membros.filter((m) => m.status !== "inativo"), desb || (await getDesbravadores()), classes)}
-        pdf={async () => clubReportPDF(membros.filter((m) => m.status !== "inativo"), desb || (await getDesbravadores()), classes)}
+        excel={async () =>
+          clubReportExcel(
+            membros.filter((m) => m.status !== "inativo"),
+            desb || (await getDesbravadores()),
+            classes,
+          )
+        }
+        pdf={async () =>
+          clubReportPDF(
+            membros.filter((m) => m.status !== "inativo"),
+            desb || (await getDesbravadores()),
+            classes,
+          )
+        }
       />
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {porClasse.map(({ c, n }) => (
@@ -429,21 +535,21 @@ function RelacaoClube({ membros }: { membros: Profile[] }) {
         ))}
       </div>
       <Card className="p-4 text-sm text-ink-600">
-        <strong className="text-ink-900">{membros.filter((m) => m.status === "ativo").length}</strong> membros ativos na diretoria ·{" "}
-        <strong className="text-ink-900">{(desb || []).length}</strong> desbravadores ativos
+        <strong className="text-ink-900">{membros.filter((m) => m.status === "ativo").length}</strong> membros ativos na diretoria · <strong className="text-ink-900">{(desb || []).length}</strong>{" "}
+        desbravadores ativos
       </Card>
     </div>
   );
 }
 
-type NovoForm = { nome: string; email: string; cargo: string; telefone: string; data_nascimento: string; password: string };
-const novoVazio: NovoForm = { nome: "", email: "", cargo: "", telefone: "", data_nascimento: "", password: "" };
+type NovoForm = { nome: string; email: string; funcoes: string[]; telefone: string; data_nascimento: string; password: string };
+const novoVazio: NovoForm = { nome: "", email: "", funcoes: [], telefone: "", data_nascimento: "", password: "" };
 
 function validarNovo(f: NovoForm) {
   const e: Partial<Record<keyof NovoForm, string>> = {};
   if (f.nome.trim().split(/\s+/).length < 2) e.nome = "Informe nome e sobrenome.";
   if (!isValidEmail(f.email)) e.email = "Digite um e-mail válido (sem acentos).";
-  if (!CARGOS.includes(f.cargo)) e.cargo = "Escolha o cargo.";
+  if (!f.funcoes.length) e.funcoes = "Escolha pelo menos uma função.";
   if (f.telefone && !isValidPhone(f.telefone)) e.telefone = "Telefone com DDD, ex.: (11) 98765-4321.";
   if (f.data_nascimento && !brToIso(f.data_nascimento)) e.data_nascimento = "Data no formato dd/mm/aaaa.";
   if (!isStrongPassword(f.password)) e.password = "A senha não atende aos requisitos abaixo.";
@@ -463,11 +569,11 @@ function NovoAcessoSheet({ open, onClose, onSaved }: { open: boolean; onClose: (
   }, [open]);
   const errors = validarNovo(f);
   const show = (k: keyof NovoForm) => (touched[k] ? errors[k] : undefined);
-  const set = (k: keyof NovoForm) => (v: string) => setF((s) => ({ ...s, [k]: v }));
+  const set = (k: keyof NovoForm) => (v: string | string[]) => setF((s) => ({ ...s, [k]: v }));
   const blur = (k: keyof NovoForm) => () => setTouched((t) => ({ ...t, [k]: true }));
 
   async function criar(outro: boolean) {
-    setTouched({ nome: true, email: true, cargo: true, telefone: true, data_nascimento: true, password: true });
+    setTouched({ nome: true, email: true, funcoes: true, telefone: true, data_nascimento: true, password: true });
     if (Object.keys(errors).length) return;
     setSaving(true);
     try {
@@ -531,12 +637,9 @@ function NovoAcessoSheet({ open, onClose, onSaved }: { open: boolean; onClose: (
           error={show("email")}
           required
         />
-        <Select label="Cargo" value={f.cargo} onChange={(e) => set("cargo")(e.target.value)} onBlur={blur("cargo")} error={show("cargo")} hint={DESCRICAO_CARGO[f.cargo]} required>
-          <option value="">Escolha…</option>
-          {CARGOS.map((c) => (
-            <option key={c}>{c}</option>
-          ))}
-        </Select>
+        <div className="sm:col-span-2">
+          <FuncoesPicker value={f.funcoes} onChange={set("funcoes")} error={show("funcoes")} compacto />
+        </div>
         <Input
           label="Telefone (opcional)"
           inputMode="tel"
@@ -560,7 +663,7 @@ function NovoAcessoSheet({ open, onClose, onSaved }: { open: boolean; onClose: (
         </div>
       </div>
       <p className="mt-4 text-sm text-ink-500">
-        Depois de criar, abra a pessoa em <strong>Membros → Gerenciar</strong> para escolher as classes (instrutor) ou unidades (conselheiro).
+        Depois de criar, abra a pessoa em <strong>Membros → Gerenciar</strong> para escolher as classes (instrutor) e as unidades (conselheiro).
       </p>
     </Sheet>
   );

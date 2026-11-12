@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { RotateCcw } from "lucide-react";
+import { Clock, RotateCcw } from "lucide-react";
 import { Avatar, Button, Checkbox, SearchInput, Sheet, Textarea, cn } from "./ui";
+import { AnexosPicker } from "./anexos";
 import { normalize } from "@/lib/format";
 import type { Desbravador } from "@/lib/types";
 
-export type Marca = "feito" | "refazer";
+export type { Marca } from "@/lib/lancamentos";
+import type { Marca } from "@/lib/lancamentos";
 
 /**
  * Folha para marcar quais desbravadores concluíram algo (item do caderno ou especialidade).
@@ -22,6 +24,8 @@ export function StatusSheet({
   initial,
   isAdmin,
   onSave,
+  comAnexos,
+  pendentes,
 }: {
   open: boolean;
   onClose: () => void;
@@ -31,18 +35,24 @@ export function StatusSheet({
   desbravadores: Desbravador[];
   initial: Map<string, Marca>;
   isAdmin: boolean;
-  onSave: (estado: Map<string, Marca | null>, mensagem: string) => Promise<void>;
+  onSave: (estado: Map<string, Marca | null>, mensagem: string, files: File[]) => Promise<void>;
+  /** Pede comprovantes para quem foi marcado agora (especialidades). */
+  comAnexos?: boolean;
+  /** Desbravadores com lançamento aguardando a validação do diretor. */
+  pendentes?: Set<string>;
 }) {
   const [estado, setEstado] = useState<Map<string, Marca | null>>(new Map());
   const [q, setQ] = useState("");
   const [msg, setMsg] = useState("");
   const [saving, setSaving] = useState(false);
+  const [files, setFiles] = useState<File[]>([]);
 
   useEffect(() => {
     if (open) {
       setEstado(new Map(initial));
       setMsg("");
       setQ("");
+      setFiles([]);
     }
   }, [open, initial]);
 
@@ -52,12 +62,17 @@ export function StatusSheet({
   const feitos = [...estado.values()].filter((v) => v === "feito").length;
   const novosRefazer = [...estado.entries()].filter(([id, v]) => v === "refazer" && initial.get(id) !== "refazer").length;
   const all = list.length > 0 && list.every((d) => get(d.id) === "feito");
+  const novosFeitos = [...estado.entries()].filter(([id, v]) => v === "feito" && initial.get(id) !== "feito").length;
+  const pedeAnexo = !!comAnexos && novosFeitos > 0;
+  const faltaAnexo = pedeAnexo && !isAdmin && !files.length;
 
   async function salvar() {
     setSaving(true);
     try {
-      await onSave(estado, msg.trim());
+      await onSave(estado, msg.trim(), files);
       onClose();
+    } catch {
+      /* a tela de origem já mostrou o erro; a folha fica aberta para tentar de novo */
     } finally {
       setSaving(false);
     }
@@ -74,8 +89,8 @@ export function StatusSheet({
           <Button variant="secondary" onClick={onClose}>
             Cancelar
           </Button>
-          <Button onClick={salvar} loading={saving} disabled={novosRefazer > 0 && !msg.trim()}>
-            Salvar
+          <Button onClick={salvar} loading={saving} disabled={(novosRefazer > 0 && !msg.trim()) || faltaAnexo}>
+            {pedeAnexo && !isAdmin ? "Enviar para validação" : "Salvar"}
           </Button>
         </>
       }
@@ -102,14 +117,24 @@ export function StatusSheet({
                 <Avatar nome={d.nome} color={d.classe_cor} size={32} />
                 <button className="min-w-0 flex-1 text-left" onClick={() => set(d.id, v === "feito" ? null : "feito")}>
                   <div className="truncate text-sm font-medium text-ink-900">{d.nome}</div>
-                  <div className="text-xs text-ink-500">{v === "refazer" ? "Devolvido para refazer" : d.unidade || (d.idade != null ? `${d.idade} anos` : "")}</div>
+                  <div className="text-xs text-ink-500">
+                    {v === "refazer" ? (
+                      "Devolvido para refazer"
+                    ) : v === "feito" && pendentes?.has(d.id) && initial.get(d.id) === "feito" ? (
+                      <span className="inline-flex items-center gap-1 font-medium text-amber-700">
+                        <Clock className="size-3" /> Aguardando validação do diretor
+                      </span>
+                    ) : (
+                      d.unidade || (d.idade != null ? `${d.idade} anos` : "")
+                    )}
+                  </div>
                 </button>
                 {isAdmin && (v === "feito" || v === "refazer" || initial.get(d.id)) && (
                   <button
                     onClick={() => set(d.id, v === "refazer" ? "feito" : "refazer")}
                     className={cn(
                       "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold",
-                      v === "refazer" ? "bg-red-600 text-white" : "bg-ink-100 text-ink-600 hover:bg-red-100 hover:text-red-700"
+                      v === "refazer" ? "bg-red-600 text-white" : "bg-ink-100 text-ink-600 hover:bg-red-100 hover:text-red-700",
                     )}
                     aria-pressed={v === "refazer"}
                   >
@@ -121,6 +146,17 @@ export function StatusSheet({
           })}
           {!list.length && <li className="px-3 py-6 text-center text-sm text-ink-500">Nenhum desbravador nesta classe ainda.</li>}
         </ul>
+        {pedeAnexo && (
+          <div className="rounded-2xl border border-ink-200 bg-ink-50/60 p-3">
+            <AnexosPicker files={files} onChange={setFiles} obrigatorio={!isAdmin} />
+            {faltaAnexo && (
+              <p className="mt-2 text-xs font-medium text-amber-800">
+                Anexe o comprovante para enviar {novosFeitos === 1 ? "o desbravador marcado" : `os ${novosFeitos} desbravadores marcados`} para a validação do diretor.
+              </p>
+            )}
+            {novosFeitos > 1 && <p className="mt-2 text-xs text-ink-500">O mesmo comprovante fica guardado para todos os marcados agora.</p>}
+          </div>
+        )}
         {isAdmin && (
           <Textarea
             label={novosRefazer ? "Mensagem para o instrutor (obrigatória)" : "Mensagem para o instrutor (opcional)"}
