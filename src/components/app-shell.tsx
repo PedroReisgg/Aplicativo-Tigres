@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
-import { Award, Bell, BookOpen, Boxes, Flag, HandCoins, Home, Library, LogOut, Menu, ShieldCheck, UserRound, Users, X, Download } from "lucide-react";
+import { Award, Bell, BookOpen, Boxes, CalendarDays, ClipboardList, Flag, HandCoins, Home, Library, LogOut, Menu, ShieldCheck, UserRound, Users, X, Download } from "lucide-react";
 import { useAuth } from "./auth-provider";
 import { Avatar, cn } from "./ui";
 import { funcoesTexto } from "@/lib/types";
@@ -18,6 +18,8 @@ const NAV: Item[] = [
   { href: "/especialidades", label: "Especialidades", icon: Award, show: (a) => a.isActive },
   { href: "/desbravadores", label: "Desbravadores", icon: Users, show: (a) => a.isActive },
   { href: "/unidades", label: "Unidades", icon: Flag, show: (a) => a.isActive },
+  { href: "/agenda", label: "Agenda", icon: CalendarDays, show: (a) => a.isActive },
+  { href: "/programacao", label: "Programação", icon: ClipboardList, show: (a) => a.isActive },
   { href: "/biblioteca", label: "Biblioteca", icon: Library, show: (a) => a.isActive },
   { href: "/inventario", label: "Inventário", icon: Boxes, show: (a) => a.isActive },
   { href: "/vaquinhas", label: "Vaquinhas", icon: HandCoins, show: (a) => a.isActive },

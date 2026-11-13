@@ -300,3 +300,36 @@ export interface VaquinhaEntrada {
   registrado_por: string | null;
   created_at: string;
 }
+
+export interface AgendaEvento {
+  id: string;
+  titulo: string;
+  descricao: string | null;
+  /** aaaa-mm-dd */
+  inicio: string;
+  /** último dia (eventos de vários dias) */
+  fim: string | null;
+  /** hh:mm:ss (vazio = dia inteiro) */
+  hora_inicio: string | null;
+  hora_fim: string | null;
+  cor: string;
+  endereco: string | null;
+  updated_at: string;
+}
+
+export interface ProgramacaoItem {
+  hora: string;
+  atividade: string;
+}
+
+export interface Programacao {
+  id: string;
+  titulo: string;
+  data: string;
+  itens: ProgramacaoItem[];
+  observacao: string | null;
+  criado_por: string | null;
+  created_at: string;
+  atualizado_por: string | null;
+  updated_at: string;
+}

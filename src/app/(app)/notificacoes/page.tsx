@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Bell, CheckCheck, MessageSquarePlus, RotateCcw, Trash2, UserCheck, FileText } from "lucide-react";
+import { Bell, CheckCheck, MessageSquarePlus, RotateCcw, Trash2, UserCheck, FileText, ClipboardList } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/components/auth-provider";
 import { Button, Card, EmptyState, PageHeader, Select, Sheet, Skeleton, Textarea, Input, cn } from "@/components/ui";
@@ -12,7 +12,7 @@ import { getMembros, notificar } from "@/lib/api";
 import { plural, timeAgo } from "@/lib/format";
 import type { Notificacao } from "@/lib/types";
 
-const ICON: Record<string, typeof Bell> = { refazer: RotateCcw, acesso: UserCheck, cadastro: UserCheck, relatorio: FileText };
+const ICON: Record<string, typeof Bell> = { refazer: RotateCcw, acesso: UserCheck, cadastro: UserCheck, relatorio: FileText, programacao: ClipboardList };
 
 export default function NotificacoesPage() {
   const { userId, isActive } = useAuth();
