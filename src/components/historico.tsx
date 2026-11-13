@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Award, BookOpen, Check, Download, History, Minus, Paperclip, Plus, RotateCcw, Trash2 } from "lucide-react";
+import { Award, BookOpen, CalendarClock, Check, Download, History, Minus, Paperclip, Plus, RotateCcw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button, Card, EmptyState, SearchInput, Select, Skeleton, cn } from "./ui";
 import { supabaseBrowser } from "@/lib/supabase/client";
@@ -19,6 +19,7 @@ const ACOES: Record<RegistroAtividade["acao"], { texto: string; icon: typeof Che
   removeu: { texto: "removeu", icon: Trash2, cor: "bg-ink-100 text-ink-600" },
   desmarcou: { texto: "desmarcou", icon: Minus, cor: "bg-ink-100 text-ink-600" },
   anexou: { texto: "anexou um comprovante em", icon: Paperclip, cor: "bg-amber-50 text-amber-700" },
+  editou: { texto: "mudou a data de", icon: CalendarClock, cor: "bg-violet-50 text-violet-700" },
 };
 
 const dataHora = (iso: string) => new Date(iso).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
@@ -140,6 +141,7 @@ export function Historico() {
             <option value="anexou">Anexou</option>
             <option value="removeu">Removeu</option>
             <option value="desmarcou">Desmarcou</option>
+            <option value="editou">Mudou a data</option>
           </Select>
         </div>
         <Button variant="secondary" icon={<Download className="size-4" />} loading={baixando} onClick={baixar} className="sm:mb-0">
@@ -171,7 +173,7 @@ export function Historico() {
                 </span>
                 <div className="min-w-0 flex-1 text-sm">
                   <p className="text-ink-700">
-                    <span className="font-semibold text-ink-900">{r.autor_nome || "Sistema"}</span> {a.texto} {r.tipo === "caderno" ? "o item" : r.acao === "anexou" ? "" : "a especialidade"}{" "}
+                    <span className="font-semibold text-ink-900">{r.autor_nome || "Sistema"}</span> {a.texto} {r.tipo === "caderno" ? "o item" : r.acao === "anexou" || r.acao === "editou" ? "" : "a especialidade"}{" "}
                     <span className="font-semibold text-ink-900">{r.tipo === "caderno" ? r.alvo : r.alvo_nome || r.alvo}</span> de{" "}
                     {r.desbravador_id ? (
                       <Link href={`/desbravadores/${r.desbravador_id}`} className="font-semibold text-ink-900 hover:text-tiger-700">

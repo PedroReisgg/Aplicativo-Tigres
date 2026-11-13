@@ -39,6 +39,32 @@ export function isoToBr(v?: string | null) {
   return `${d}/${m}/${y}`;
 }
 
+/** "25/12/2026 às 10:00" (no fuso de quem está vendo) */
+export function dataHora(iso?: string | null) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return `${d.toLocaleDateString("pt-BR")} às ${d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
+}
+
+/** "25 de dezembro de 2026 às 10:00" */
+export function dataHoraExtenso(iso?: string | null) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return `${d.toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" })} às ${d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
+}
+
+/** Data de hoje no celular de quem usa (aaaa-mm-dd), sem pular para amanhã à noite. */
+export function hojeLocal() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+/** "05/11/2026 às 15:30" a partir de data (aaaa-mm-dd) e hora opcional */
+export function diaEHora(dia?: string | null, hora?: string | null) {
+  if (!dia) return "";
+  return isoToBr(dia) + (hora ? ` às ${hora.slice(0, 5)}` : "");
+}
+
 export function isValidPhone(v: string) {
   const d = onlyDigits(v);
   return d.length === 10 || d.length === 11;

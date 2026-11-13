@@ -3,12 +3,14 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { ArrowLeft, Award, Check, Clock, Paperclip, Pencil, Plus, RotateCcw, Trash2, UserX } from "lucide-react";
+import { ArrowLeft, Award, CalendarClock, Check, Clock, Paperclip, Pencil, Plus, RotateCcw, Trash2, UserX } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/components/auth-provider";
 import { Avatar, Badge, Button, Card, Confirm, EmptyState, ProgressBar, SearchInput, Sheet, Skeleton, Textarea } from "@/components/ui";
 import { AnexosLista, AnexosPicker } from "@/components/anexos";
 import { AcompanhamentoCard } from "@/components/acompanhamento-card";
+import { HistoricoDesbravador } from "@/components/historico-desbravador";
+import { QuandoFez, quandoValido } from "@/components/quando-fez";
 import { EscolhaChips, EscolherEspSheet } from "@/components/escolha-especialidade";
 import { getEscolhas, regraEscolha } from "@/lib/escolhas";
 import { DesbravadorSheet, EspIcon, PhoneLink } from "@/components/domain";
@@ -17,8 +19,8 @@ import { useData } from "@/lib/use-data";
 import { adminIds, getCaderno, getCategorias, getClassEsp, getDesbEsp, getDesbravador, getEspecialidades, getMembros, getProgresso, notificar, staffIdsDaClasse } from "@/lib/api";
 import { enviarArquivos, getAnexos, vincularAnexos } from "@/lib/anexos";
 import { validacaoCaderno } from "@/lib/lancamentos";
-import { isoToBr, normalize, timeAgo } from "@/lib/format";
-import { responsaveisDe, type Anexo, type DesbEsp, type Desbravador, type Especialidade, type RegistroAtividade } from "@/lib/types";
+import { dataHora, diaEHora, hojeLocal, isoToBr, normalize } from "@/lib/format";
+import { responsaveisDe, type Anexo, type DesbEsp, type Desbravador, type Especialidade, type Progresso, type RegistroAtividade } from "@/lib/types";
 
 export default function DesbravadorPage() {
   const { id } = useParams<{ id: string }>();
@@ -74,6 +76,12 @@ export default function DesbravadorPage() {
   const concluidas = esps.filter((e) => e.status === "concluida");
   const escolhidas = (itemId: number) => data.escolhas.filter((e) => e.item_id === itemId).map((e) => e.especialidade_codigo);
   const itemEscolher = escolher != null ? itens.find((i) => i.id === escolher) || null : null;
+  // muda sempre que o caderno ou as especialidades mudam, para o histórico recarregar
+  const versao = [
+    prog.map((p) => `${p.item_id}${p.status}${p.validacao}`).join(","),
+    esps.map((e) => `${e.especialidade_codigo}${e.status}${e.validacao}${e.concluida_em}${e.concluida_hora}`).join(","),
+    data.anexos.length,
+  ].join("|");
 
   async function toggleItem(itemId: number) {
     const atual = feito(itemId);
@@ -189,6 +197,7 @@ export default function DesbravadorPage() {
                       <span className="mr-1.5 font-mono text-xs font-semibold text-ink-400">{it.codigo}</span>
                       <span className={p?.status === "feito" ? "text-ink-500" : "text-ink-800"}>{it.texto}</span>
                       {p?.status === "refazer" && p.observacao && <p className="mt-1 rounded-lg bg-red-50 px-2 py-1 text-xs text-red-700">Refazer: {p.observacao}</p>}
+                      {p?.status === "feito" && <QuemMarcou p={p} nomes={data.nomes} />}
                       {p?.status === "feito" && p.validacao === "pendente" && (
                         <span className="ml-1.5 inline-flex items-center gap-1 rounded-full bg-amber-50 px-1.5 py-px text-[11px] font-semibold text-amber-700">
                           <Clock className="size-3" /> aguardando o diretor
@@ -217,6 +226,7 @@ export default function DesbravadorPage() {
           </Card>
         </section>
 
+        <div className="space-y-6">
         {/* Especialidades */}
         <section>
           <div className="mb-3 flex items-end justify-between">
@@ -294,6 +304,9 @@ export default function DesbravadorPage() {
             </div>
           )}
         </section>
+
+        <HistoricoDesbravador desbravadorId={d.id} versao={versao} />
+        </div>
       </div>
 
       <DesbravadorSheet open={editar} onClose={() => setEditar(false)} desbravador={d} onSaved={() => reload(true)} />
@@ -361,6 +374,31 @@ function Info({ label, value }: { label: string; value?: string | null }) {
   );
 }
 
+/** Embaixo de cada item feito: quem marcou, quem aprovou e quando. */
+function QuemMarcou({ p, nomes }: { p: Progresso; nomes: Map<string, string> }) {
+  const nome = (id?: string | null) => (id && nomes.get(id)) || "alguém da diretoria";
+  const aprovado = p.validacao !== "pendente";
+  const mesmo = aprovado && p.validado_por && p.validado_por === p.marcado_por;
+  return (
+    <p className="mt-1 text-[11px] leading-snug text-ink-400">
+      {mesmo ? (
+        <>
+          Aprovado por <span className="font-medium text-ink-500">{nome(p.validado_por)}</span> em {dataHora(p.validado_em || p.marcado_em)}
+        </>
+      ) : (
+        <>
+          Marcado por <span className="font-medium text-ink-500">{nome(p.marcado_por)}</span> em {dataHora(p.marcado_em)}
+          {aprovado && p.validado_por && (
+            <>
+              <span aria-hidden> · </span>aprovado por <span className="font-medium text-ink-500">{nome(p.validado_por)}</span> em {dataHora(p.validado_em)}
+            </>
+          )}
+        </>
+      )}
+    </p>
+  );
+}
+
 /** Escolhe a especialidade concluída e anexa o comprovante. */
 function RegistrarEspSheet({
   open,
@@ -386,11 +424,15 @@ function RegistrarEspSheet({
   const [files, setFiles] = useState<File[]>([]);
   const [saving, setSaving] = useState(false);
   const [tentou, setTentou] = useState(false);
+  const [dia, setDia] = useState(hojeLocal());
+  const [hora, setHora] = useState("");
   const fechar = () => {
     setEsp(null);
     setFiles([]);
     setQ("");
     setTentou(false);
+    setDia(hojeLocal());
+    setHora("");
     onClose();
   };
   const res = useMemo(() => {
@@ -403,7 +445,7 @@ function RegistrarEspSheet({
   async function salvar() {
     if (!esp) return;
     setTentou(true);
-    if (faltaAnexo) return;
+    if (faltaAnexo || !quandoValido(dia)) return;
     setSaving(true);
     try {
       const arquivos = files.length ? await enviarArquivos(files, auth.userId!) : [];
@@ -414,7 +456,8 @@ function RegistrarEspSheet({
         status: "concluida",
         observacao: null,
         registrado_por: auth.userId,
-        concluida_em: agora.slice(0, 10),
+        concluida_em: dia,
+        concluida_hora: hora || null,
         ...(auth.isAdmin ? { validacao: "aprovada", validado_por: auth.userId, validado_em: agora } : {}),
       });
       if (error) throw new Error(error.message);
@@ -465,6 +508,7 @@ function RegistrarEspSheet({
               <div className="text-ink-500">{auth.isAdmin ? "Você é da diretoria: o registro já sai aprovado." : "O diretor confere o comprovante e valida."}</div>
             </div>
           </div>
+          <QuandoFez dia={dia} hora={hora} onDia={setDia} onHora={setHora} />
           <AnexosPicker files={files} onChange={setFiles} obrigatorio={!auth.isAdmin} erro={tentou && faltaAnexo ? "Anexe pelo menos um comprovante para enviar." : null} />
         </div>
       ) : (
@@ -499,13 +543,14 @@ function RegistrarEspSheet({
 }
 
 const ACAO_TEXTO: Record<RegistroAtividade["acao"], string> = {
-  registrou: "registrou",
-  aprovou: "aprovou",
+  registrou: "colocou no sistema",
+  aprovou: "validou",
   devolveu: "devolveu para refazer",
   removeu: "removeu",
   anexou: "anexou",
   marcou: "marcou",
   desmarcou: "desmarcou",
+  editou: "mudou a data",
 };
 
 /** Detalhes de uma especialidade do desbravador: comprovantes, validação e histórico. */
@@ -538,23 +583,52 @@ function EspDetalheSheet({
   const [msg, setMsg] = useState("");
   const [acao, setAcao] = useState<string | null>(null);
   const [remover, setRemover] = useState(false);
+  const [mudarData, setMudarData] = useState(false);
+  const [dia, setDia] = useState("");
+  const [hora, setHora] = useState("");
+  const [salvandoData, setSalvandoData] = useState(false);
   const { data: historico } = useData(
     async () =>
-      auth.isAdmin && codigo
+      codigo
         ? (((await sb.from("registro_atividades").select("*").eq("desbravador_id", desbravador.id).eq("alvo", codigo).order("created_at", { ascending: false }).limit(30)).data ||
             []) as RegistroAtividade[])
         : [],
-    [codigo, auth.isAdmin, anexos.length, registro?.validacao, registro?.status],
+    [codigo, anexos.length, registro?.validacao, registro?.status, registro?.concluida_em, registro?.concluida_hora],
   );
   if (!codigo || !esp || !registro) return null;
   const pendente = registro.status === "concluida" && registro.validacao === "pendente";
   const podeRemover = auth.isAdmin || (podeEsp && registro.validacao !== "aprovada");
+  // a data em que fez: o diretor sempre pode corrigir; quem lançou, enquanto não foi validada
+  const podeMudarData = registro.status === "concluida" && (auth.isAdmin || (podeEsp && registro.validacao !== "aprovada"));
+  const nome = (id?: string | null) => (id && nomes.get(id)) || "alguém da diretoria";
   const fechar = () => {
     setFiles([]);
     setDevolver(false);
     setMsg("");
+    setMudarData(false);
     onClose();
   };
+
+  function abrirMudarData() {
+    setDia(registro!.concluida_em.slice(0, 10));
+    setHora(registro!.concluida_hora?.slice(0, 5) || "");
+    setMudarData(true);
+  }
+
+  async function salvarData() {
+    if (!quandoValido(dia)) return;
+    setSalvandoData(true);
+    const { error } = await sb
+      .from("desbravador_especialidades")
+      .update({ concluida_em: dia, concluida_hora: hora || null })
+      .eq("desbravador_id", desbravador.id)
+      .eq("especialidade_codigo", esp!.codigo);
+    setSalvandoData(false);
+    if (error) return toast.error(error.message);
+    toast.success("Data atualizada.");
+    setMudarData(false);
+    onSaved();
+  }
 
   async function anexar() {
     setEnviando(true);
@@ -655,19 +729,72 @@ function EspDetalheSheet({
                   <Check className="size-3" /> Validada
                 </Badge>
               )}
-              <div className="text-ink-600">
-                Concluída em {isoToBr(registro.concluida_em)}
-                {registro.registrado_por && nomes.get(registro.registrado_por) ? ` · lançada por ${nomes.get(registro.registrado_por)}` : ""}
-              </div>
-              {registro.validacao === "aprovada" && registro.validado_em && registro.status === "concluida" && (
-                <div className="text-ink-600">
-                  Validada {timeAgo(registro.validado_em)}
-                  {registro.validado_por && nomes.get(registro.validado_por) ? ` por ${nomes.get(registro.validado_por)}` : ""}
-                </div>
-              )}
               {registro.status === "refazer" && registro.observacao && <p className="rounded-lg bg-red-50 px-2 py-1 text-red-700">{registro.observacao}</p>}
             </div>
           </div>
+
+          <dl className="divide-y divide-ink-100 rounded-2xl border border-ink-200 text-sm">
+            <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1 px-4 py-3">
+              <div className="min-w-0">
+                <dt className="text-xs font-semibold uppercase tracking-wide text-ink-400">Quando fez</dt>
+                <dd className="mt-0.5 font-semibold text-ink-900">{diaEHora(registro.concluida_em, registro.concluida_hora)}</dd>
+              </div>
+              {podeMudarData && !mudarData && (
+                <Button size="sm" variant="ghost" icon={<CalendarClock className="size-4" />} onClick={abrirMudarData}>
+                  Mudar data
+                </Button>
+              )}
+            </div>
+            {mudarData && (
+              <div className="space-y-3 px-4 py-3">
+                <QuandoFez dia={dia} hora={hora} onDia={setDia} onHora={setHora} />
+                <div className="flex justify-end gap-2">
+                  <Button size="sm" variant="secondary" onClick={() => setMudarData(false)}>
+                    Cancelar
+                  </Button>
+                  <Button size="sm" loading={salvandoData} disabled={!quandoValido(dia)} onClick={salvarData}>
+                    Salvar data
+                  </Button>
+                </div>
+              </div>
+            )}
+            <div className="px-4 py-3">
+              <dt className="text-xs font-semibold uppercase tracking-wide text-ink-400">Colocada no sistema</dt>
+              <dd className="mt-0.5 text-ink-800">
+                {dataHora(registro.registrado_em || registro.created_at) || "—"}
+                {registro.registrado_por && (
+                  <>
+                    {" "}
+                    por <span className="font-semibold">{nome(registro.registrado_por)}</span>
+                  </>
+                )}
+              </dd>
+            </div>
+            {registro.status === "concluida" && (
+              <div className="px-4 py-3">
+                <dt className="text-xs font-semibold uppercase tracking-wide text-ink-400">Validação do diretor</dt>
+                <dd className="mt-0.5 text-ink-800">
+                  {registro.validacao === "aprovada" ? (
+                    registro.validado_em ? (
+                      <>
+                        {dataHora(registro.validado_em)}
+                        {registro.validado_por && (
+                          <>
+                            {" "}
+                            por <span className="font-semibold">{nome(registro.validado_por)}</span>
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      "Validada"
+                    )
+                  ) : (
+                    <span className="text-amber-700">Ainda não validada</span>
+                  )}
+                </dd>
+              </div>
+            )}
+          </dl>
 
           {devolver && (
             <Textarea
@@ -694,9 +821,8 @@ function EspDetalheSheet({
             )}
           </section>
 
-          {auth.isAdmin && (
-            <section>
-              <h3 className="mb-2 text-sm font-semibold text-ink-800">Histórico</h3>
+          <section>
+              <h3 className="mb-2 text-sm font-semibold text-ink-800">Histórico desta especialidade</h3>
               {!historico?.length ? (
                 <p className="text-sm text-ink-400">Sem registros ainda.</p>
               ) : (
@@ -705,14 +831,14 @@ function EspDetalheSheet({
                     <li key={h.id} className="text-sm">
                       <span className="font-semibold text-ink-800">{h.autor_nome || "Sistema"}</span> <span className="text-ink-600">{ACAO_TEXTO[h.acao] || h.acao}</span>
                       {h.acao === "anexou" && h.detalhe ? <span className="text-ink-600"> “{h.detalhe}”</span> : null}
-                      <span className="text-ink-400"> · {timeAgo(h.created_at)}</span>
+                      <span className="text-ink-400"> · {dataHora(h.created_at)}</span>
                       {h.acao === "devolveu" && h.detalhe && <p className="text-xs text-red-700">{h.detalhe}</p>}
+                      {(h.acao === "registrou" || h.acao === "editou") && h.detalhe && <p className="text-xs text-ink-500">{h.detalhe}</p>}
                     </li>
                   ))}
                 </ol>
               )}
             </section>
-          )}
         </div>
       </Sheet>
       <Confirm
