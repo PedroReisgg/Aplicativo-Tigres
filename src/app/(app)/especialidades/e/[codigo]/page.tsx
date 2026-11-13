@@ -130,10 +130,10 @@ export default function EspecialidadePage() {
   const naClasse = (cid: number) => data.vinc.some((v) => v.class_id === cid);
   const concluiram = (data.feitos || []).filter((f) => f.status === "concluida");
 
-  async function salvar(estado: Map<string, Marca | null>, mensagem: string, files: File[]) {
+  async function salvar(estado: Map<string, Marca | null>, mensagem: string, files: File[], quando: { dia: string; hora: string }) {
     const daTurma = new Map([...estado].filter(([id]) => desbDaClasse.some((d) => d.id === id)));
     try {
-      const r = await salvarEspecialidade({ codigo: esp.codigo, nome: esp.nome, estado: daTurma, initial, mensagem, files, userId: auth.userId!, isAdmin: auth.isAdmin, desbravadores: desbDaClasse });
+      const r = await salvarEspecialidade({ codigo: esp.codigo, nome: esp.nome, estado: daTurma, initial, mensagem, files, userId: auth.userId!, isAdmin: auth.isAdmin, desbravadores: desbDaClasse, quando });
       toast.success(r.pendentes ? "Enviado para a validação do diretor." : "Registro salvo.");
       reload(true);
     } catch (e) {

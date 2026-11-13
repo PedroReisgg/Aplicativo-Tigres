@@ -602,10 +602,10 @@ function EspecialidadesTab({
 
   const pendentesEsp = useMemo(() => new Set(esp ? desbEsp.filter((d) => d.especialidade_codigo === esp.codigo && d.validacao === "pendente").map((d) => d.desbravador_id) : []), [esp, desbEsp]);
 
-  async function salvar(estado: Map<string, Marca | null>, mensagem: string, files: File[]) {
+  async function salvar(estado: Map<string, Marca | null>, mensagem: string, files: File[], quando: { dia: string; hora: string }) {
     if (!esp) return;
     try {
-      const r = await salvarEspecialidade({ codigo: esp.codigo, nome: esp.nome, estado, initial, mensagem, files, userId: userId!, isAdmin, desbravadores: desb });
+      const r = await salvarEspecialidade({ codigo: esp.codigo, nome: esp.nome, estado, initial, mensagem, files, userId: userId!, isAdmin, desbravadores: desb, quando });
       toast.success(r.pendentes ? "Enviado para a validação do diretor." : "Especialidade registrada.");
       onChange();
     } catch (e) {

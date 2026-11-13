@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Clock, RotateCcw } from "lucide-react";
 import { Avatar, Button, Checkbox, SearchInput, Sheet, Textarea, cn } from "./ui";
 import { AnexosPicker } from "./anexos";
-import { normalize } from "@/lib/format";
+import { QuandoFez, quandoValido } from "./quando-fez";
+import { hojeLocal, normalize } from "@/lib/format";
 import type { Desbravador } from "@/lib/types";
 
 export type { Marca } from "@/lib/lancamentos";
@@ -35,7 +36,7 @@ export function StatusSheet({
   desbravadores: Desbravador[];
   initial: Map<string, Marca>;
   isAdmin: boolean;
-  onSave: (estado: Map<string, Marca | null>, mensagem: string, files: File[]) => Promise<void>;
+  onSave: (estado: Map<string, Marca | null>, mensagem: string, files: File[], quando: { dia: string; hora: string }) => Promise<void>;
   /** Pede comprovantes para quem foi marcado agora (especialidades). */
   comAnexos?: boolean;
   /** Desbravadores com lançamento aguardando a validação do diretor. */
@@ -46,6 +47,8 @@ export function StatusSheet({
   const [msg, setMsg] = useState("");
   const [saving, setSaving] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
+  const [dia, setDia] = useState(hojeLocal());
+  const [hora, setHora] = useState("");
 
   useEffect(() => {
     if (open) {
@@ -53,6 +56,8 @@ export function StatusSheet({
       setMsg("");
       setQ("");
       setFiles([]);
+      setDia(hojeLocal());
+      setHora("");
     }
   }, [open, initial]);
 
@@ -69,7 +74,7 @@ export function StatusSheet({
   async function salvar() {
     setSaving(true);
     try {
-      await onSave(estado, msg.trim(), files);
+      await onSave(estado, msg.trim(), files, { dia, hora });
       onClose();
     } catch {
       /* a tela de origem já mostrou o erro; a folha fica aberta para tentar de novo */
@@ -89,7 +94,7 @@ export function StatusSheet({
           <Button variant="secondary" onClick={onClose}>
             Cancelar
           </Button>
-          <Button onClick={salvar} loading={saving} disabled={(novosRefazer > 0 && !msg.trim()) || faltaAnexo}>
+          <Button onClick={salvar} loading={saving} disabled={(novosRefazer > 0 && !msg.trim()) || faltaAnexo || (pedeAnexo && !quandoValido(dia))}>
             {pedeAnexo && !isAdmin ? "Enviar para validação" : "Salvar"}
           </Button>
         </>
@@ -146,6 +151,11 @@ export function StatusSheet({
           })}
           {!list.length && <li className="px-3 py-6 text-center text-sm text-ink-500">Nenhum desbravador nesta classe ainda.</li>}
         </ul>
+        {pedeAnexo && (
+          <div className="rounded-2xl border border-ink-200 bg-ink-50/60 p-3">
+            <QuandoFez dia={dia} hora={hora} onDia={setDia} onHora={setHora} titulo={novosFeitos === 1 ? "Dia em que fez" : "Dia em que fizeram"} />
+          </div>
+        )}
         {pedeAnexo && (
           <div className="rounded-2xl border border-ink-200 bg-ink-50/60 p-3">
             <AnexosPicker files={files} onChange={setFiles} obrigatorio={!isAdmin} />

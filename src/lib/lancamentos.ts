@@ -3,11 +3,10 @@
 import { supabaseBrowser } from "./supabase/client";
 import { adminIds, notificar, staffIdsDaClasse } from "./api";
 import { enviarArquivos, vincularAnexos } from "./anexos";
+import { hojeLocal } from "./format";
 import type { Desbravador } from "./types";
 
 export type Marca = "feito" | "refazer";
-
-const hoje = () => new Date().toISOString().slice(0, 10);
 
 /**
  * Salva quem concluiu (ou deve refazer) uma especialidade, com os comprovantes.
@@ -23,6 +22,8 @@ export async function salvarEspecialidade(o: {
   userId: string;
   isAdmin: boolean;
   desbravadores: Desbravador[];
+  /** dia (aaaa-mm-dd) e hora (HH:MM) em que fizeram; padrão: hoje, sem hora */
+  quando?: { dia: string; hora: string };
 }) {
   const sb = supabaseBrowser();
   const concluidos: string[] = [];
@@ -48,7 +49,8 @@ export async function salvarEspecialidade(o: {
       status: "concluida",
       observacao: null,
       registrado_por: o.userId,
-      concluida_em: hoje(),
+      concluida_em: o.quando?.dia || hojeLocal(),
+      concluida_hora: o.quando?.hora || null,
       ...(o.isAdmin ? { validacao: "aprovada", validado_por: o.userId, validado_em: agora } : {}),
     }));
     const { error } = await sb.from("desbravador_especialidades").upsert(rows);

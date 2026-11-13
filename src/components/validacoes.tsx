@@ -12,7 +12,7 @@ import { supabaseBrowser } from "@/lib/supabase/client";
 import { useData, must } from "@/lib/use-data";
 import { getDesbravadores, getEspecialidades, notificar, staffIdsDaClasse } from "@/lib/api";
 import { getAnexos } from "@/lib/anexos";
-import { plural, timeAgo } from "@/lib/format";
+import { dataHora, diaEHora, plural } from "@/lib/format";
 import type { CadernoItem, DesbEsp, Desbravador, Profile, Progresso } from "@/lib/types";
 
 type Devolver = { tipo: "esp"; reg: DesbEsp } | { tipo: "cad"; reg: Progresso };
@@ -213,7 +213,7 @@ export function Validacoes({ membros, onChange }: { membros: Profile[]; onChange
                         {d?.unidade ? ` · ${d.unidade}` : ""}
                       </div>
                       <div className="mt-0.5 text-xs text-ink-400">
-                        Lançada por {nomes.get(r.registrado_por || "") || "—"} {timeAgo(r.updated_at || r.created_at || r.concluida_em)}
+                        Fez em {diaEHora(r.concluida_em, r.concluida_hora)} · colocada no sistema por {nomes.get(r.registrado_por || "") || "—"} em {dataHora(r.registrado_em || r.updated_at || r.created_at)}
                       </div>
                     </div>
                   </div>
@@ -270,7 +270,7 @@ export function Validacoes({ membros, onChange }: { membros: Profile[]; onChange
                             <span className="mr-1 font-mono text-xs font-semibold text-ink-400">{it?.codigo}</span>
                             <span className="text-ink-800">{it?.texto}</span>
                             <div className="text-xs text-ink-400">
-                              {nomes.get(r.marcado_por || "") || "—"} · {timeAgo(r.marcado_em)}
+                              {nomes.get(r.marcado_por || "") || "—"} · {dataHora(r.marcado_em)}
                             </div>
                           </div>
                           <button

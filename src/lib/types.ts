@@ -119,8 +119,12 @@ export interface DesbEsp {
   especialidade_codigo: string;
   status: "concluida" | "refazer";
   concluida_em: string;
+  /** hora em que fez (opcional, "HH:MM:SS") */
+  concluida_hora?: string | null;
   observacao: string | null;
   registrado_por?: string | null;
+  /** quando foi colocada no sistema */
+  registrado_em?: string | null;
   created_at?: string;
   updated_at?: string;
   validacao?: Validacao;
@@ -145,7 +149,7 @@ export interface RegistroAtividade {
   created_at: string;
   autor_id: string | null;
   autor_nome: string | null;
-  acao: "registrou" | "aprovou" | "devolveu" | "removeu" | "anexou" | "marcou" | "desmarcou";
+  acao: "registrou" | "aprovou" | "devolveu" | "removeu" | "anexou" | "marcou" | "desmarcou" | "editou";
   tipo: "especialidade" | "caderno";
   desbravador_id: string | null;
   desbravador_nome: string | null;
