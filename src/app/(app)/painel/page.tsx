@@ -10,8 +10,12 @@ import { plural, timeAgo } from "@/lib/format";
 import type { Notificacao } from "@/lib/types";
 
 function saudacao() {
-  const h = new Date().getHours();
-  return h < 12 ? "Bom dia" : h < 18 ? "Boa tarde" : "Boa noite";
+  // bom dia das 6h30 às 11h59, boa tarde das 12h às 18h29, boa noite das 18h30 às 6h29
+  const agora = new Date();
+  const min = agora.getHours() * 60 + agora.getMinutes();
+  if (min >= 6 * 60 + 30 && min < 12 * 60) return "Bom dia";
+  if (min >= 12 * 60 && min < 18 * 60 + 30) return "Boa tarde";
+  return "Boa noite";
 }
 
 export default function PainelPage() {
